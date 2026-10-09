@@ -1,0 +1,30 @@
+Prompt History
+==============
+
+User: Create new folder from the top called "Assignment 2 (chess game)"
+Assistant: Created the folder Assignment 2 (chess game) in the workspace root.
+
+User: [[PLAN]] help me create a design plan for recreating the game chess. Suggest a good language to implement the game.
+Assistant: Asked what kind of chess game to plan for. User chose a desktop/web graphical game. Asked whether it should be local two-player or include a computer opponent. User chose local two-player only.
+Assistant: Proposed Python with Pygame, a graphical desktop game for local two-player play, standard chess rules, and a rules engine separate from the UI. Saved the detailed design plan as a session artifact and presented it for approval.
+
+User: [Approved the plan]
+Assistant: Confirmed the plan was ready and recommended Python with Pygame for the initial design.
+
+User: save this plan in the assignment 2 folder
+Assistant: Saved the plan to Assignment 2 (chess game)/design_plan.md.
+
+User: i havent used pygame before. is there another good gui language?
+Assistant: Explained that Pygame is a Python library, not a language, and suggested Python with Tkinter, Java with JavaFX, or C# with Windows Forms. Recommended Tkinter for staying with Python or JavaFX to use a different language.
+
+User: lets change the plan to C#
+Assistant: Asked which C# desktop UI framework to use. User chose Windows Forms. Updated Assignment 2 (chess game)/design_plan.md to use C# with Windows Forms and corrected the project and UI todos.
+
+User: Is VSCode the best free IDE for this project?
+Assistant: Recommended Visual Studio Community for Windows Forms because it includes a visual designer; noted VS Code is an option for users comfortable creating the UI in code.
+
+User: get me a download link
+Assistant: Shared the official Visual Studio Community download page: https://visualstudio.microsoft.com/vs/community/
+
+User: save this session to a prompt_history file in the working folder
+Assistant: Initially saved the history in the workspace root; the user clarified it belongs in the Assignment 2 folder.
