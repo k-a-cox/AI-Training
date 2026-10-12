@@ -141,97 +141,97 @@ namespace AiAssistedChess.Engine
 
         private IEnumerable<Move> GeneratePseudoLegalMoves(Position from, ChessPiece piece)
         {
-            var list = new List<Move>();
-            int r = from.Row, c = from.Col;
+            var moves = new List<Move>();
+            int row = from.Row, col = from.Col;
             if (piece.Type == PieceType.Pawn)
             {
-                int dir = piece.Color == PieceColor.White ? -1 : 1;
-                var one = new Position(r + dir, c);
-                if (one.IsValid && state.GetPiece(one).IsEmpty) list.Add(new Move(from, one));
+                int forwardDir = piece.Color == PieceColor.White ? -1 : 1;
+                var oneStep = new Position(row + forwardDir, col);
+                if (oneStep.IsValid && state.GetPiece(oneStep).IsEmpty) moves.Add(new Move(from, oneStep));
                 // two squares
-                var two = new Position(r + 2*dir, c);
-                int startRow = piece.Color == PieceColor.White ? 6 : 1;
-                if (r == startRow && two.IsValid && state.GetPiece(one).IsEmpty && state.GetPiece(two).IsEmpty) list.Add(new Move(from, two));
+                var twoStep = new Position(row + 2 * forwardDir, col);
+                int startingRow = piece.Color == PieceColor.White ? 6 : 1;
+                if (row == startingRow && twoStep.IsValid && state.GetPiece(oneStep).IsEmpty && state.GetPiece(twoStep).IsEmpty) moves.Add(new Move(from, twoStep));
                 // captures
-                var capL = new Position(r + dir, c -1);
-                var capR = new Position(r + dir, c +1);
-                if (capL.IsValid)
+                var captureLeft = new Position(row + forwardDir, col - 1);
+                var captureRight = new Position(row + forwardDir, col + 1);
+                if (captureLeft.IsValid)
                 {
-                    var p = state.GetPiece(capL);
-                    if (!p.IsEmpty && p.Color != piece.Color) list.Add(new Move(from, capL));
+                    var targetPiece = state.GetPiece(captureLeft);
+                    if (!targetPiece.IsEmpty && targetPiece.Color != piece.Color) moves.Add(new Move(from, captureLeft));
                 }
-                if (capR.IsValid)
+                if (captureRight.IsValid)
                 {
-                    var p = state.GetPiece(capR);
-                    if (!p.IsEmpty && p.Color != piece.Color) list.Add(new Move(from, capR));
+                    var targetPiece = state.GetPiece(captureRight);
+                    if (!targetPiece.IsEmpty && targetPiece.Color != piece.Color) moves.Add(new Move(from, captureRight));
                 }
                 // en passant
                 if (state.EnPassantTarget.HasValue)
                 {
                     var ep = state.EnPassantTarget.Value;
-                    if (ep.Row == r + dir && Math.Abs(ep.Col - c) == 1) list.Add(new Move(from, ep));
+                    if (ep.Row == row + forwardDir && Math.Abs(ep.Col - col) == 1) moves.Add(new Move(from, ep));
                 }
             }
             else if (piece.Type == PieceType.Knight)
             {
-                int[] drs = { -2, -1, 1, 2 };
-                foreach (var dr in drs)
-                    foreach (var dc in drs)
+                int[] deltaRows = { -2, -1, 1, 2 };
+                foreach (var deltaRow in deltaRows)
+                    foreach (var deltaCol in deltaRows)
                     {
-                        if (Math.Abs(dr) == Math.Abs(dc)) continue;
-                        var np = new Position(r + dr, c + dc);
-                        if (!np.IsValid) continue;
-                        var p = state.GetPiece(np);
-                        if (p.IsEmpty || p.Color != piece.Color) list.Add(new Move(from, np));
+                        if (Math.Abs(deltaRow) == Math.Abs(deltaCol)) continue;
+                        var knightTarget = new Position(row + deltaRow, col + deltaCol);
+                        if (!knightTarget.IsValid) continue;
+                        var targetPiece = state.GetPiece(knightTarget);
+                        if (targetPiece.IsEmpty || targetPiece.Color != piece.Color) moves.Add(new Move(from, knightTarget));
                     }
             }
             else if (piece.Type == PieceType.Bishop || piece.Type == PieceType.Rook || piece.Type == PieceType.Queen)
             {
-                (int dr, int dc)[] dirs;
-                if (piece.Type == PieceType.Bishop) dirs = new (int,int)[] { (-1,-1),(-1,1),(1,-1),(1,1) };
-                else if (piece.Type == PieceType.Rook) dirs = new (int,int)[] { (-1,0),(1,0),(0,-1),(0,1) };
-                else dirs = new (int,int)[] { (-1,-1),(-1,1),(1,-1),(1,1),(-1,0),(1,0),(0,-1),(0,1) };
-                foreach (var (dr,dc) in dirs)
+                (int dRow, int dCol)[] directions;
+                if (piece.Type == PieceType.Bishop) directions = new (int,int)[] { (-1,-1),(-1,1),(1,-1),(1,1) };
+                else if (piece.Type == PieceType.Rook) directions = new (int,int)[] { (-1,0),(1,0),(0,-1),(0,1) };
+                else directions = new (int,int)[] { (-1,-1),(-1,1),(1,-1),(1,1),(-1,0),(1,0),(0,-1),(0,1) };
+                foreach (var (dRow,dCol) in directions)
                 {
-                    int rr = r+dr, cc = c+dc;
-                    while (rr >=0 && rr<8 && cc>=0 && cc<8)
+                    int nextRow = row + dRow, nextCol = col + dCol;
+                    while (nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8)
                     {
-                        var p = state.GetPiece(new Position(rr,cc));
-                        if (p.IsEmpty) list.Add(new Move(from, new Position(rr,cc)));
-                        else { if (p.Color != piece.Color) list.Add(new Move(from, new Position(rr,cc))); break; }
-                        rr += dr; cc += dc;
+                        var encountered = state.GetPiece(new Position(nextRow,nextCol));
+                        if (encountered.IsEmpty) moves.Add(new Move(from, new Position(nextRow,nextCol)));
+                        else { if (encountered.Color != piece.Color) moves.Add(new Move(from, new Position(nextRow,nextCol))); break; }
+                        nextRow += dRow; nextCol += dCol;
                     }
                 }
             }
             else if (piece.Type == PieceType.King)
             {
-                for (int dr = -1; dr <= 1; dr++) for (int dc = -1; dc <= 1; dc++)
+                for (int dRow = -1; dRow <= 1; dRow++) for (int dCol = -1; dCol <= 1; dCol++)
                 {
-                    if (dr == 0 && dc == 0) continue;
-                    var np = new Position(r+dr, c+dc);
-                    if (!np.IsValid) continue;
-                    var p = state.GetPiece(np);
-                    if (p.IsEmpty || p.Color != piece.Color) list.Add(new Move(from, np));
+                    if (dRow == 0 && dCol == 0) continue;
+                    var kingTarget = new Position(row + dRow, col + dCol);
+                    if (!kingTarget.IsValid) continue;
+                    var targetPiece = state.GetPiece(kingTarget);
+                    if (targetPiece.IsEmpty || targetPiece.Color != piece.Color) moves.Add(new Move(from, kingTarget));
                 }
                 // castling
                 if (piece.Color == PieceColor.White)
                 {
-                    if (state.WhiteCanCastleKingSide && IsPathClearForCastling(7,4,7,7)) list.Add(new Move(from, new Position(7,6)));
-                    if (state.WhiteCanCastleQueenSide && IsPathClearForCastling(7,4,7,0)) list.Add(new Move(from, new Position(7,2)));
+                    if (state.WhiteCanCastleKingSide && IsPathClearForCastling(7,4,7,7)) moves.Add(new Move(from, new Position(7,6)));
+                    if (state.WhiteCanCastleQueenSide && IsPathClearForCastling(7,4,7,0)) moves.Add(new Move(from, new Position(7,2)));
                 }
                 else
                 {
-                    if (state.BlackCanCastleKingSide && IsPathClearForCastling(0,4,0,7)) list.Add(new Move(from, new Position(0,6)));
-                    if (state.BlackCanCastleQueenSide && IsPathClearForCastling(0,4,0,0)) list.Add(new Move(from, new Position(0,2)));
+                    if (state.BlackCanCastleKingSide && IsPathClearForCastling(0,4,0,7)) moves.Add(new Move(from, new Position(0,6)));
+                    if (state.BlackCanCastleQueenSide && IsPathClearForCastling(0,4,0,0)) moves.Add(new Move(from, new Position(0,2)));
                 }
             }
 
             // Handle promotions: if pawn reaches last rank, add promotion options
             var results = new List<Move>();
-            foreach (var m in list)
+            foreach (var m in moves)
             {
-                var p = state.GetPiece(from);
-                if (p.Type == PieceType.Pawn && (m.To.Row == 0 || m.To.Row == 7))
+                var currentPiece = state.GetPiece(from);
+                if (currentPiece.Type == PieceType.Pawn && (m.To.Row == 0 || m.To.Row == 7))
                 {
                     results.Add(new Move(m.From, m.To, PieceType.Queen));
                     results.Add(new Move(m.From, m.To, PieceType.Rook));
