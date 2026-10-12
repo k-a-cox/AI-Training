@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using AiAssistedChess.Engine;
@@ -15,6 +16,7 @@ namespace AiAssistedChess.UI
 
         private Position? selected;
         private List<Position> legal = new();
+        private readonly Dictionary<string, Image> pieceImages = new();
 
         public event Action? GameChanged;
 
@@ -24,52 +26,101 @@ namespace AiAssistedChess.UI
             BackColor = Color.White;
             this.Width = 400;
             this.Height = 400;
+            LoadPieceImages();
+        }
+
+        private void LoadPieceImages()
+        {
+            try
+            {
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var imagesDir = Path.Combine(baseDir, "Images", "pieces");
+                if (!Directory.Exists(imagesDir)) return;
+                var pieceTypes = new[] { "pawn", "knight", "bishop", "rook", "queen", "king" };
+                var colors = new[] { "white", "black" };
+                foreach (var colorName in colors)
+                foreach (var pieceTypeName in pieceTypes)
+                {
+                    var fileName = Path.Combine(imagesDir, $"{colorName}_{pieceTypeName}.png");
+                    if (File.Exists(fileName))
+                    {
+                        try { pieceImages[$"{colorName}_{pieceTypeName}"] = Image.FromFile(fileName); } catch { }
+                    }
+                }
+            }
+            catch { /* ignore image load errors */ }
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            var g = e.Graphics;
+            var graphics = e.Graphics;
+            graphics.Clear(BackColor);
             int squareSize = Math.Min(Width, Height) / 8;
-            for (int r = 0; r < 8; r++)
-            for (int c = 0; c < 8; c++)
+            for (int rowIndex = 0; rowIndex < 8; rowIndex++)
+            for (int colIndex = 0; colIndex < 8; colIndex++)
             {
-                var rect = new Rectangle(c * squareSize, r * squareSize, squareSize, squareSize);
-                bool light = (r + c) % 2 == 0;
-                using var brush = new SolidBrush(light ? Color.Beige : Color.Sienna);
-                g.FillRectangle(brush, rect);
+                var rect = new Rectangle(colIndex * squareSize, rowIndex * squareSize, squareSize, squareSize);
+                bool isLightSquare = (rowIndex + colIndex) % 2 == 0;
+                using var tileBrush = new SolidBrush(isLightSquare ? Color.Beige : Color.Sienna);
+                graphics.FillRectangle(tileBrush, rect);
 
-                var pos = new Position(r, c);
+                var pos = new Position(rowIndex, colIndex);
                 if (selected.HasValue && selected.Value == pos)
                 {
-                    using var hb = new SolidBrush(Color.FromArgb(120, Color.CornflowerBlue));
-                    g.FillRectangle(hb, rect);
+                    using var highlightBrush = new SolidBrush(Color.FromArgb(120, Color.CornflowerBlue));
+                    graphics.FillRectangle(highlightBrush, rect);
                 }
                 else if (legal.Contains(pos))
                 {
-                    using var hb = new SolidBrush(Color.FromArgb(120, Color.LightGreen));
-                    g.FillRectangle(hb, rect);
+                    using var highlightBrush = new SolidBrush(Color.FromArgb(120, Color.LightGreen));
+                    graphics.FillRectangle(highlightBrush, rect);
                 }
 
-                // draw piece
+                // draw piece (image fallback to unicode glyphs)
                 if (Game != null)
                 {
                     var piece = Game.Board.GetPiece(pos);
                     if (!piece.IsEmpty)
                     {
-                        string text = piece.ToString();
-                        using var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-                        var font = new Font(FontFamily.GenericSansSerif, squareSize * 0.32f, FontStyle.Bold);
-                        var fore = piece.Color == PieceColor.White ? Brushes.White : Brushes.Black;
-                        var outline = piece.Color == PieceColor.White ? Brushes.Black : Brushes.White;
-                        // draw outline for readability
-                        var textRect = new RectangleF(rect.X + 1, rect.Y + 1, rect.Width - 2, rect.Height - 2);
-                        g.DrawString(text, font, outline, textRect, sf);
-                        g.DrawString(text, font, fore, textRect, sf);
+                        var key = (piece.Color == PieceColor.White ? "white_" : "black_") + (piece.Type.ToString().ToLower());
+                        if (pieceImages.TryGetValue(key, out var pieceImage) && pieceImage != null)
+                        {
+                            // draw image centered and scaled
+                            var imageRect = new RectangleF(rect.X + squareSize * 0.05f, rect.Y + squareSize * 0.05f, squareSize * 0.9f, squareSize * 0.9f);
+                            graphics.DrawImage(pieceImage, imageRect);
+                        }
+                        else
+                        {
+                            // fallback: draw unicode chess characters
+                            string glyph = piece.Color == PieceColor.White ? piece.Type switch
+                            {
+                                PieceType.King => "♔",
+                                PieceType.Queen => "♕",
+                                PieceType.Rook => "♖",
+                                PieceType.Bishop => "♗",
+                                PieceType.Knight => "♘",
+                                PieceType.Pawn => "♙",
+                                _ => "?"
+                            } : piece.Type switch
+                            {
+                                PieceType.King => "♚",
+                                PieceType.Queen => "♛",
+                                PieceType.Rook => "♜",
+                                PieceType.Bishop => "♝",
+                                PieceType.Knight => "♞",
+                                PieceType.Pawn => "♟",
+                                _ => "?"
+                            };
+                            using var stringFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                            var glyphFont = new Font(FontFamily.GenericSansSerif, squareSize * 0.6f, FontStyle.Regular);
+                            var glyphBrush = piece.Color == PieceColor.White ? Brushes.White : Brushes.Black;
+                            graphics.DrawString(glyph, glyphFont, glyphBrush, rect, stringFormat);
+                        }
                     }
                 }
 
-                g.DrawRectangle(Pens.Black, rect);
+                graphics.DrawRectangle(Pens.Black, rect);
             }
         }
 
@@ -78,10 +129,10 @@ namespace AiAssistedChess.UI
             base.OnMouseClick(e);
             if (Game == null) return;
             int squareSize = Math.Min(Width, Height) / 8;
-            int col = e.X / squareSize;
-            int row = e.Y / squareSize;
-            if (col < 0 || col > 7 || row < 0 || row > 7) return;
-            var pos = new Position(row, col);
+            int clickedCol = e.X / squareSize;
+            int clickedRow = e.Y / squareSize;
+            if (clickedCol < 0 || clickedCol > 7 || clickedRow < 0 || clickedRow > 7) return;
+            var pos = new Position(clickedRow, clickedCol);
 
             if (!selected.HasValue)
             {
@@ -116,8 +167,8 @@ namespace AiAssistedChess.UI
                         using var dlg = new PawnPromotionForm();
                         if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            var pt = dlg.Selected;
-                            chosen = promoMoves.FirstOrDefault(m => m.Promotion == pt);
+                            var selectedPromotion = dlg.Selected;
+                            chosen = promoMoves.FirstOrDefault(m => m.Promotion == selectedPromotion);
                         }
                     }
                     else chosen = moves[0];
