@@ -1,0 +1,31 @@
+.vs/
+# Visual Studio temporary files, build results, and user-specific files
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+# NuGet packages
+packages/
+# Build assets
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+# NuGet package files
+*.nupkg
+# Test output
+TestResults/
+# Rider/IDE files
+.idea/
+.Rider/
+.vscode/
+# Local settings and secrets
+local.settings.json
+secrets.json
+appsettings.Development.json
+# Debug symbols (optional)
+*.pdb
+# Database and logs
+*.db
+*.log
