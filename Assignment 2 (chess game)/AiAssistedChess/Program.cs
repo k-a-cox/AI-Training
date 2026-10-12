@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace AiAssistedChess
 {
     internal static class Program
