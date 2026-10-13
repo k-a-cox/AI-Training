@@ -88,7 +88,10 @@ namespace AiAssistedChess.Engine
         private static bool IsSquareAttacked(BoardState board, Position square, PieceColor attacker)
         {
             // Pawns
-            int pawnDir = attacker == PieceColor.White ? -1 : 1;
+            // For a given attacker color, a pawn that attacks 'square' must be one rank
+            // behind it from the pawn's perspective. For white pawns that means the pawn
+            // is at square.Row + 1; for black pawns it is at square.Row - 1.
+            int pawnDir = attacker == PieceColor.White ? 1 : -1;
             var p1 = new Position(square.Row + pawnDir, square.Col - 1);
             var p2 = new Position(square.Row + pawnDir, square.Col + 1);
             if (p1.IsValid)
