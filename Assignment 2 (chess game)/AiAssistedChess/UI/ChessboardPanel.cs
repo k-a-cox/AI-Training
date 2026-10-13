@@ -86,13 +86,23 @@ namespace AiAssistedChess.UI
                         var key = (piece.Color == PieceColor.White ? "white_" : "black_") + (piece.Type.ToString().ToLower());
                         if (pieceImages.TryGetValue(key, out var pieceImage) && pieceImage != null)
                         {
-                            // draw image centered and scaled
+                            // draw image centered and scaled with a subtle drop shadow to improve contrast on light tiles
                             var imageRect = new RectangleF(rect.X + squareSize * 0.05f, rect.Y + squareSize * 0.05f, squareSize * 0.9f, squareSize * 0.9f);
+
+                            // shadow is slightly offset and semi-transparent
+                            var shadowOffset = squareSize * 0.06f;
+                            var shadowRect = new RectangleF(imageRect.X + shadowOffset, imageRect.Y + shadowOffset, imageRect.Width, imageRect.Height);
+
+                            using var shadowBrush = new SolidBrush(Color.FromArgb(100, 0, 0, 0));
+
+                            // draw soft elliptical shadow under the piece image
+                            graphics.FillEllipse(shadowBrush, shadowRect);
+
                             graphics.DrawImage(pieceImage, imageRect);
                         }
                         else
                         {
-                            // fallback: draw unicode chess characters
+                            // fallback: draw unicode chess characters with a drop shadow for better contrast
                             string glyph = piece.Color == PieceColor.White ? piece.Type switch
                             {
                                 PieceType.King => "♔",
@@ -112,9 +122,22 @@ namespace AiAssistedChess.UI
                                 PieceType.Pawn => "♟",
                                 _ => "?"
                             };
+
                             using var stringFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+
                             var glyphFont = new Font(FontFamily.GenericSansSerif, squareSize * 0.6f, FontStyle.Regular);
+
+                            // draw shadow behind the glyph to improve contrast on light tiles
+                            var shadowOffsetPixels = Math.Max(1f, squareSize * 0.04f);
+                            var shadowLayoutRect = new RectangleF(rect.X + shadowOffsetPixels, rect.Y + shadowOffsetPixels, rect.Width, rect.Height);
+
+                            using var glyphShadowBrush = new SolidBrush(Color.FromArgb(140, 0, 0, 0));
+
+                            graphics.DrawString(glyph, glyphFont, glyphShadowBrush, shadowLayoutRect, stringFormat);
+
+                            // draw main glyph (white stays white, black stays black)
                             var glyphBrush = piece.Color == PieceColor.White ? Brushes.White : Brushes.Black;
+
                             graphics.DrawString(glyph, glyphFont, glyphBrush, rect, stringFormat);
                         }
                     }
