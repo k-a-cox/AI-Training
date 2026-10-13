@@ -86,17 +86,8 @@ namespace AiAssistedChess.UI
                         var key = (piece.Color == PieceColor.White ? "white_" : "black_") + (piece.Type.ToString().ToLower());
                         if (pieceImages.TryGetValue(key, out var pieceImage) && pieceImage != null)
                         {
-                            // draw image centered and scaled with a subtle drop shadow to improve contrast on light tiles
+                            // draw image centered and scaled (no drop shadow for image assets)
                             var imageRect = new RectangleF(rect.X + squareSize * 0.05f, rect.Y + squareSize * 0.05f, squareSize * 0.9f, squareSize * 0.9f);
-
-                            // shadow is slightly offset and semi-transparent
-                            var shadowOffset = squareSize * 0.06f;
-                            var shadowRect = new RectangleF(imageRect.X + shadowOffset, imageRect.Y + shadowOffset, imageRect.Width, imageRect.Height);
-
-                            using var shadowBrush = new SolidBrush(Color.FromArgb(100, 0, 0, 0));
-
-                            // draw soft elliptical shadow under the piece image
-                            graphics.FillEllipse(shadowBrush, shadowRect);
 
                             graphics.DrawImage(pieceImage, imageRect);
                         }
