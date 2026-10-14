@@ -4,9 +4,9 @@ Work through the steps in order. Add and run focused unit tests as each model or
 
 ## 1. Define the board state
 
-- [ ] Represent the 81 cell values, which cells are givens, and the selected cell.
-- [ ] Represent candidate notes separately from cell values.
-- [ ] Add unit tests for an empty board and basic cell-value state.
+- [x] Represent the 81 cell values, which cells are givens, and the selected cell.
+- [x] Represent candidate notes separately from cell values.
+- [x] Add unit tests for an empty board and basic cell-value state.
 
 **Done when:** The board model can be created and inspected in a unit test.
 
@@ -34,8 +34,11 @@ Work through the steps in order. Add and run focused unit tests as each model or
 - [ ] Add an explicit **Confirm givens** action.
 - [ ] Validate givens against row, column, and 3×3-box rules before confirming.
 - [ ] Add unit tests for valid givens and duplicate clues in rows, columns, and boxes. Invalid givens must not be confirmed.
+- [ ] After clue conflicts are ruled out, count valid complete solutions, stopping once two are found.
+- [ ] Accept and lock givens only when exactly one solution exists; explain and reject puzzles with no solution or multiple solutions.
+- [ ] Add unit tests for unique, unsolvable, and multiple-solution givens, and verify that only a unique puzzle can be confirmed.
 
-**Done when:** Valid clues can be confirmed, while conflicting clues are reported and remain editable.
+**Done when:** Only conflict-free givens with exactly one solution can be confirmed; rejected givens remain editable.
 
 ## 5. Lock and distinguish confirmed givens
 
