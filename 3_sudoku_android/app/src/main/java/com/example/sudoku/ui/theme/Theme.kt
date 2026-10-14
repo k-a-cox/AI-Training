@@ -53,4 +53,6 @@ fun SudokuTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        co
+        content = content
+    )
+}
