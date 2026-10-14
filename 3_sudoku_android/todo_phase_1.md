@@ -1,0 +1,87 @@
+# Phase 1: Playable Manual Sudoku Game
+
+Work through the steps in order. Add and run focused unit tests as each model or rule is introduced; do not defer completeness and conflict tests until the end.
+
+## 1. Define the board state
+
+- [ ] Represent the 81 cell values, which cells are givens, and the selected cell.
+- [ ] Represent candidate notes separately from cell values.
+- [ ] Add unit tests for an empty board and basic cell-value state.
+
+**Done when:** The board model can be created and inspected in a unit test.
+
+## 2. Display and select cells
+
+- [ ] Display the 9×9 board.
+- [ ] Make cells selectable and visibly indicate the selection.
+- [ ] Convert the selected cell to a row and column consistently.
+- [ ] Add UI tests for selecting cells, if supported by the current test setup.
+
+**Done when:** Tapping cells selects the intended cell.
+
+## 3. Add on-screen number and erase controls
+
+- [ ] Add on-screen number buttons for entering digits 1–9.
+- [ ] Add an on-screen erase control for the selected editable cell.
+- [ ] Do not require or invoke the software keyboard for cell input.
+- [ ] Add unit tests for entering and erasing values in the board model.
+
+**Done when:** Values can be entered and corrected using only on-screen controls.
+
+## 4. Add givens-entry and confirmation flow
+
+- [ ] Let the player enter initial clues into the empty board.
+- [ ] Add an explicit **Confirm givens** action.
+- [ ] Validate givens against row, column, and 3×3-box rules before confirming.
+- [ ] Add unit tests for valid givens and duplicate clues in rows, columns, and boxes. Invalid givens must not be confirmed.
+
+**Done when:** Valid clues can be confirmed, while conflicting clues are reported and remain editable.
+
+## 5. Lock and distinguish confirmed givens
+
+- [ ] Display confirmed given values in bold.
+- [ ] Make confirmed givens read-only during play.
+- [ ] Keep non-given cells editable.
+- [ ] Add a **Start over** action to clear the puzzle and enter new givens.
+- [ ] Add unit tests for clue locking and start-over state.
+
+**Done when:** On-screen number and erase controls cannot change a confirmed given.
+
+## 6. Add candidate notes
+
+- [ ] Add an on-screen **Notes** toggle that changes the number buttons to toggle candidate digits 1–9.
+- [ ] Allow notes only in empty, non-given cells.
+- [ ] Show notes within their selected cell.
+- [ ] Clear a cell's notes when entering a value there.
+- [ ] Add unit tests for toggling notes, note eligibility, and clearing notes on value entry.
+
+**Done when:** Candidate notes can be entered and edited using on-screen controls, without the keyboard.
+
+## 7. Implement completeness-first verification
+
+- [ ] Add a **Verify** action for confirmed puzzles.
+- [ ] Check for empty cells before checking for duplicates.
+- [ ] If any cells are empty, prompt the player to fill the board and do not report conflicts.
+- [ ] Add unit tests for incomplete boards, including a board that also contains duplicate values. The result should report incompleteness only.
+
+**Done when:** Every incomplete board produces an incomplete result before conflict checking.
+
+## 8. Check conflicts on full boards
+
+- [ ] For a full board, report duplicates in each affected row, column, and 3×3 box.
+- [ ] Identify the conflicting numbers and cell locations.
+- [ ] Accept a full board as solved only when it has no row, column, or box conflicts.
+- [ ] Add unit tests for row conflicts, column conflicts, box conflicts, and a valid completed board.
+
+**Done when:** Full invalid boards identify their conflicts and a valid full board is accepted.
+
+## 9. Exercise the complete game flow
+
+- [ ] In the emulator, enter givens, confirm them, and verify they are bold and locked.
+- [ ] Solve cells manually with on-screen controls and use notes where desired.
+- [ ] Verify that an incomplete board asks for completion before conflict feedback.
+- [ ] Verify that a complete invalid board shows conflicts and a correct solution is accepted.
+- [ ] Check that cell and note input never opens or requires the software keyboard.
+- [ ] Run the Android build and all unit tests created in earlier steps.
+
+**Done when:** The manual game works end-to-end on the emulator and its model/rule tests pass.
