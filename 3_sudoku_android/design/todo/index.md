@@ -19,7 +19,7 @@ Folder: [phase_1/](phase_1)
 
 | Step | Status | File |
 |---|---|---|
-| 1. Define the board state | todo | [01](phase_1/01_board_state.md) |
+| 1. Define the board state | done | [01](phase_1/01_board_state.md) |
 | 2. Display and select cells | todo | [02](phase_1/02_display_select_cells.md) |
 | 3. On-screen number and erase controls | todo | [03](phase_1/03_number_erase_controls.md) |
 | 4. Givens-entry and confirmation flow | todo | [04](phase_1/04_givens_confirmation.md) |
