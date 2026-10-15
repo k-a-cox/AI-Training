@@ -12,9 +12,9 @@ Work through the steps in order. Add and run focused unit tests as each model or
 
 ## 2. Display and select cells
 
-- [ ] Display the 9×9 board.
-- [ ] Make cells selectable and visibly indicate the selection.
-- [ ] Convert the selected cell to a row and column consistently.
+- [x] Display the 9×9 board.
+- [x] Make cells selectable and visibly indicate the selection.
+- [x] Convert the selected cell to a row and column consistently.
 - [ ] Add UI tests for selecting cells, if supported by the current test setup.
 
 **Done when:** Tapping cells selects the intended cell.
