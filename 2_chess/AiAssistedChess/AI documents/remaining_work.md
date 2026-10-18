@@ -1,46 +1,78 @@
 # Remaining Chess Project Work
 
-## Current implementation status
+## Project status
 
-- The chess rules are separated from the Windows Forms UI in the `Engine` namespace.
-- The engine supports standard piece movement, check detection, castling, en passant, promotion, undo, and checkmate/stalemate status detection.
-- The WinForms UI includes a clickable chessboard, legal-destination highlighting, current-player and game-status labels, undo/restart controls, and a pawn-promotion choice dialog.
-- Five engine tests currently cover an initial pawn double move, en passant, kingside castling, Fool's Mate checkmate, and undo.
-- `AiAssistedChess.csproj` copies files under `Images\**` to the output directory, and `ChessboardPanel` looks for `white_<piece>.png` and `black_<piece>.png`. Actual piece PNG availability has not been confirmed; the Unicode glyph fallback remains available.
-- The pawn attack-direction change intended to fix the kingside castling test has not been verified by a test run after that change.
+### Implemented
+
+- A .NET 10 Windows Forms application with a separate `Engine` namespace for chess rules and board state.
+- Engine representation for pieces, positions, moves, an 8x8 board, current player, move history, castling rights, and en-passant target state.
+- Pseudo-legal movement generation for pawns, knights, bishops, rooks, queens, and kings, followed by filtering moves that leave the moving side's king in check.
+- Special-move implementation for castling, en passant, and promotion to queen, rook, bishop, or knight.
+- Check, checkmate, and stalemate status calculation, plus reset and undo operations.
+- Clickable board UI with legal-destination highlights, selection, piece images, and a Unicode fallback. Piece PNGs have been confirmed working; the project copies `Images\**` into build output.
+- Promotion-choice dialog, current-player and game-status labels, undo button, and restart button.
+- The `2_chess`-level README already records the piece-image source: the Maestro BW set from Kadagaden/chess-pieces.
+
+### Existing automated tests
+
+The xUnit project currently has five tests:
+
+- Initial pawn double move.
+- En-passant capture.
+- White kingside castling.
+- Fool's Mate checkmate detection.
+- Undo restoring a pawn to its original square.
+
+The castling test initially failed because its setup attempted to move the f1 bishop to c4 while the e2 pawn still blocked its path. The setup was corrected to move e2 to e4 first. The latest test run passed all five tests.
+
+### Verified baseline
+
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 5 passed, 0 failed.
+- `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
+- `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
+- The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
 
 ## Remaining work
 
-### 1. Verify the current build and tests
+### 1. Establish a verified baseline
 
-- [ ] Run the engine test suite and confirm whether the kingside castling test passes after the pawn attack-direction change.
-- [ ] Build the WinForms project and address any current build failures.
-- [ ] Record test/build outcomes here after verification.
+- [x] Run all engine tests; the corrected kingside-castling test passes.
+- [x] Build the WinForms project and solution successfully.
+- [x] Record the baseline test and build outcomes above.
 
-### 2. Strengthen chess-rule correctness and test coverage
+### 2. Complete engine correctness and coverage
 
-- [ ] Add focused tests for each piece's movement, captures, and blocked paths.
-- [ ] Add tests for both castling sides, castling through/into check, and castling rights after a rook or king moves or a rook is captured.
-- [ ] Add tests for promotion choices and promotion undo, and for en passant expiration and undo.
-- [ ] Add tests for check, checkmate, stalemate, and undo over multiple moves.
-- [ ] Correct legal-move generation for a requested color: `GetAllLegalMoves(color)` currently calls `GetLegalMoves(position)`, which only generates moves for `CurrentPlayer`. Ensure status detection can assess either color correctly.
-- [ ] Review board-state cloning and undo for all special-move state, including en passant targets, castling rights, captures, and promotion.
+- [ ] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
+- [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines.
+- [ ] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` currently delegates to `GetLegalMoves(position)`, which rejects pieces not belonging to `CurrentPlayer`; status detection should be able to enumerate the requested side's moves consistently.
+- [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.
+- [ ] Test both kingside and queenside castling for both colors, and reject castling while in check, through check, or into check.
+- [ ] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
+- [ ] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
+- [ ] Test en-passant availability for exactly one reply, invalid en-passant attempts, and undo of an en-passant capture.
+- [ ] Test undo over multiple plies and verify restoration of captures, turn, castling rights, en-passant state, and game status.
+- [ ] Prevent further moves after checkmate or stalemate, if the current game API/UI permits moves after a terminal status.
+- [ ] Review `BoardState.Clone()` and move-history behavior to ensure simulations cannot mutate live game state and undo restores all special-move state.
 
-### 3. Confirm piece images and attribution
+### 3. Verify and polish the UI
 
-- [ ] Verify that the 12 expected PNGs exist in `Images\pieces` and are valid transparent images with the filenames expected by `ChessboardPanel`.
-- [ ] If adding icons from an external collection, check its license and attribution requirements and record the source and required attribution in the `2_chess`-level README.
-- [ ] Run the UI and confirm image loading works from the build output; otherwise retain the Unicode fallback without treating images as installed.
+- [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
+- [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
+- [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.
+- [ ] Test rendering when the control is resized and verify click-to-square mapping matches the displayed board at different sizes.
+- [ ] Confirm images remain correctly loaded from the build output and glyph fallback remains usable when an image is absent.
+- [ ] Check disposal and file-lock behavior for loaded piece images when the board control or application closes.
+- [ ] Verify board and form layout at common window sizes and check piece contrast, borders, and selected/legal-move overlays.
 
-### 4. Manually exercise the application
+### 4. Finish project documentation and usability checks
 
-- [ ] Play through normal moves and confirm legal-destination highlighting, turn changes, and status updates.
-- [ ] Exercise castling, en passant, all promotion choices, checkmate, stalemate, undo, and restart through the UI.
-- [ ] Check board rendering and interactions at the form's supported sizes, including piece contrast and selection highlights.
+- [x] Record the piece-image source in the `2_chess`-level README.
+- [ ] Keep this checklist updated as verification and fixes are completed.
+- [ ] Consider optional enhancements only after the required rules and UI behavior are verified: move history display, last-move highlighting, board coordinates, animations, sound, or save/load.
 
 ## Suggested order
 
-1. Run tests and build to establish the current baseline.
-2. Fix engine defects revealed by the tests and expand focused rule coverage.
-3. Confirm or install the licensed piece images and attribution.
-4. Manually verify complete local two-player games and UI behavior.
+1. Fix engine issues and add focused tests, starting with requested-color legal-move generation and castling/status correctness.
+2. Complete special-move and undo coverage.
+3. Manually verify standard play, special moves, terminal states, and UI interactions.
+4. Record outcomes here; then consider optional enhancements.
