@@ -21,10 +21,10 @@ Work through the steps in order. Add and run focused unit tests as each model or
 
 ## 3. Add on-screen number and erase controls
 
-- [ ] Add on-screen number buttons for entering digits 1–9.
-- [ ] Add an on-screen erase control for the selected editable cell.
-- [ ] Do not require or invoke the software keyboard for cell input.
-- [ ] Add unit tests for entering and erasing values in the board model.
+- [x] Add on-screen number buttons for entering digits 1–9.
+- [x] Add an on-screen erase control for the selected editable cell.
+- [x] Do not require or invoke the software keyboard for cell input.
+- [x] Add unit tests for entering and erasing values in the board model.
 
 **Done when:** Values can be entered and corrected using only on-screen controls.
 
@@ -56,6 +56,7 @@ Work through the steps in order. Add and run focused unit tests as each model or
 - [ ] Allow notes only in empty, non-given cells.
 - [ ] Show notes within their selected cell.
 - [ ] Clear a cell's notes when entering a value there.
+- [ ] Revisit erase behavior: currently `setValue(null)` also clears notes. Decide whether erase should clear notes only when a cell has notes and no value, and update the Notes-mode controls accordingly.
 - [ ] Add unit tests for toggling notes, note eligibility, and clearing notes on value entry.
 
 **Done when:** Candidate notes can be entered and edited using on-screen controls, without the keyboard.
