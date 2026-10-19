@@ -84,6 +84,7 @@ Manual movement/capture replay sequences for the visible board:
 - [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
 - [x] Manually replay pasted coordinate castling test sequences using Load, Next, and Back; verified the sequences work on the visible board.
 - [x] Manually replay legal check sequences for pawn, knight, bishop, rook, and queen attacks; each sequence reaches check while legal moves remain.
+- [ ] Manually verify the custom board-position GUI: load a valid position, reject invalid input without changing the board, then move/undo/restart.
 - [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
 - [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
 - [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.

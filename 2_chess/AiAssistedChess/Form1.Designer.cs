@@ -14,6 +14,9 @@
         private System.Windows.Forms.Button buttonNextMove;
         private System.Windows.Forms.Button buttonClearSequence;
         private System.Windows.Forms.Label labelSequenceStatus;
+        private System.Windows.Forms.TextBox textBoxCustomPosition;
+        private System.Windows.Forms.Button buttonLoadPosition;
+        private System.Windows.Forms.Label labelPositionStatus;
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -29,7 +32,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.Text = "Ai Assisted Chess";
-            this.ClientSize = new System.Drawing.Size(1100, 650);
+            this.ClientSize = new System.Drawing.Size(1100, 820);
             this.chessBoardPanel = new AiAssistedChess.UI.ChessboardPanel();
             this.labelCurrentPlayer = new System.Windows.Forms.Label();
             this.labelStatus = new System.Windows.Forms.Label();
@@ -41,6 +44,9 @@
             this.buttonNextMove = new System.Windows.Forms.Button();
             this.buttonClearSequence = new System.Windows.Forms.Button();
             this.labelSequenceStatus = new System.Windows.Forms.Label();
+            this.textBoxCustomPosition = new System.Windows.Forms.TextBox();
+            this.buttonLoadPosition = new System.Windows.Forms.Button();
+            this.labelPositionStatus = new System.Windows.Forms.Label();
 
             // chessBoardPanel
             this.chessBoardPanel.Location = new System.Drawing.Point(20, 30);
@@ -110,6 +116,25 @@
             this.labelSequenceStatus.AutoSize = false;
             this.labelSequenceStatus.Text = "Paste coordinate moves like e2-e4, e7-e5. Separate moves with spaces, commas, or new lines.";
 
+            // textBoxCustomPosition
+            this.textBoxCustomPosition.Location = new System.Drawing.Point(630, 610);
+            this.textBoxCustomPosition.Multiline = true;
+            this.textBoxCustomPosition.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxCustomPosition.Size = new System.Drawing.Size(430, 110);
+            this.textBoxCustomPosition.PlaceholderText = "white:king=c6,queen=b6; black:king=a8; turn=black";
+
+            // buttonLoadPosition
+            this.buttonLoadPosition.Location = new System.Drawing.Point(630, 735);
+            this.buttonLoadPosition.Size = new System.Drawing.Size(120, 32);
+            this.buttonLoadPosition.Text = "Load position";
+            this.buttonLoadPosition.Click += new System.EventHandler(this.ButtonLoadPosition_Click);
+
+            // labelPositionStatus
+            this.labelPositionStatus.Location = new System.Drawing.Point(760, 735);
+            this.labelPositionStatus.Size = new System.Drawing.Size(300, 60);
+            this.labelPositionStatus.AutoSize = false;
+            this.labelPositionStatus.Text = "List pieces by color and square; omitted squares are empty. Restart restores the normal board.";
+
             // Form1
             this.Controls.Add(this.chessBoardPanel);
             this.Controls.Add(this.labelCurrentPlayer);
@@ -122,6 +147,9 @@
             this.Controls.Add(this.buttonNextMove);
             this.Controls.Add(this.buttonClearSequence);
             this.Controls.Add(this.labelSequenceStatus);
+            this.Controls.Add(this.textBoxCustomPosition);
+            this.Controls.Add(this.buttonLoadPosition);
+            this.Controls.Add(this.labelPositionStatus);
         }
 
         #endregion

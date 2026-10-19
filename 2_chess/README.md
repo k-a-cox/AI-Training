@@ -30,6 +30,16 @@ Run the chess-engine test project from the repository root:
 dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj
 ```
 
+## Load a custom board position
+
+In the application, paste a temporary position description into the custom-position box and select **Load position**. List each occupied square by color and piece; all squares not listed are empty. The position must include exactly one king per color and specify which side moves next.
+
+```text
+white:king=c6,queen=b6; black:king=a8; turn=black
+```
+
+Use `white` or `black` before the colon, and `king`, `queen`, `rook`, `bishop`, `knight`, or `pawn` before `=`. Separate pieces with commas and sections with semicolons. Loading a custom position clears move-sequence replay history and enables manual moves and Undo. **Restart** returns to the normal starting position. This syntax is temporary and may change as the UI is polished.
+
 ## Project status
 
 See [AI documents/remaining_work.md](AiAssistedChess/AI%20documents/remaining_work.md) for the implementation status, verification needs, and prioritized remaining work.

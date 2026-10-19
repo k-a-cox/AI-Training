@@ -23,6 +23,23 @@ namespace AiAssistedChess.Engine
 
         public void Reset() { state.Reset(); UpdateStatus(); }
 
+        public bool LoadPosition(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            var positionPieces = pieces.ToList();
+            var whiteKingCount = positionPieces.Count(entry => entry.Piece.Type == PieceType.King && entry.Piece.Color == PieceColor.White);
+            var blackKingCount = positionPieces.Count(entry => entry.Piece.Type == PieceType.King && entry.Piece.Color == PieceColor.Black);
+
+            if (whiteKingCount != 1 || blackKingCount != 1 || (currentPlayer != PieceColor.White && currentPlayer != PieceColor.Black)) return false;
+
+            if (positionPieces.Any(entry => !entry.Position.IsValid || entry.Piece.IsEmpty || (entry.Piece.Color != PieceColor.White && entry.Piece.Color != PieceColor.Black))) return false;
+
+            if (positionPieces.Select(entry => entry.Position).Distinct().Count() != positionPieces.Count) return false;
+
+            state.SetPosition(positionPieces, currentPlayer);
+            UpdateStatus();
+            return true;
+        }
+
         public IEnumerable<Move> GetLegalMoves(Position from)
         {
             var piece = state.GetPiece(from);
@@ -74,7 +91,7 @@ namespace AiAssistedChess.Engine
 
         internal void SetPositionForTesting(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
         {
-            state.SetPositionForTesting(pieces, currentPlayer);
+            state.SetPosition(pieces, currentPlayer);
             UpdateStatus();
         }
 

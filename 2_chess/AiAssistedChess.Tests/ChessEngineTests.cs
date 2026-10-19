@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Xunit;
 using AiAssistedChess.Engine;
+using AiAssistedChess.UI;
 
 namespace AiAssistedChess.Tests
 {
@@ -491,6 +492,70 @@ namespace AiAssistedChess.Tests
             Assert.Equal(GameStatus.Stalemate, game.Status);
             Assert.Empty(game.GetAllLegalMoves(PieceColor.Black));
             Assert.False(game.TryMakeMove(new Move(new Position(0, 7), new Position(0, 6))));
+        }
+
+        [Fact]
+        public void LoadPositionSetsCustomBoardAndSideToMove()
+        {
+            var game = new ChessGame();
+            var pieces = new[]
+            {
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(2, 2), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(2, 1), new ChessPiece(PieceType.Queen, PieceColor.White))
+            };
+
+            Assert.True(game.LoadPosition(pieces, PieceColor.Black));
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Stalemate, game.Status);
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(0, 0)).Type);
+            Assert.True(game.Board.GetPiece(new Position(7, 4)).IsEmpty);
+        }
+
+        [Fact]
+        public void LoadPositionRejectsInvalidPositionWithoutChangingBoard()
+        {
+            var game = new ChessGame();
+            var invalidPieces = new[]
+            {
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(2, 2), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(2, 2), new ChessPiece(PieceType.Queen, PieceColor.White))
+            };
+
+            Assert.False(game.LoadPosition(invalidPieces, PieceColor.Black));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(7, 4)).Type);
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(0, 4)).Type);
+        }
+
+        [Fact]
+        public void CustomPositionParserAcceptsGenericPieceAndTurnSyntax()
+        {
+            Assert.True(CustomBoardPositionParser.TryParse(
+                "white:king=c6,queen=b6; black:king=a8; turn=black",
+                out var position,
+                out var errorMessage));
+
+            Assert.Empty(errorMessage);
+            Assert.NotNull(position);
+            Assert.Equal(PieceColor.Black, position!.CurrentPlayer);
+            Assert.Equal(3, position.Pieces.Count);
+        }
+
+        [Theory]
+        [InlineData("white:king=c6; black:king=a8; turn=black")]
+        [InlineData("white:king=c6,queen=b6; black:king=a8,rook=b6; turn=black")]
+        [InlineData("white:king=c6,queen=z9; black:king=a8; turn=black")]
+        [InlineData("white:king=c6,dragon=b6; black:king=a8; turn=black")]
+        [InlineData("white:king=c6,queen=b6; black:king=a8; turn=red")]
+        public void CustomPositionParserRejectsInvalidPositionSyntax(string input)
+        {
+            Assert.False(CustomBoardPositionParser.TryParse(input, out _, out var errorMessage));
+
+            Assert.NotEmpty(errorMessage);
         }
 
         [Fact]

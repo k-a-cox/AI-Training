@@ -21,6 +21,30 @@ namespace AiAssistedChess
             UpdateStatusLabels();
         }
 
+        private void ButtonLoadPosition_Click(object? sender, EventArgs e)
+        {
+            if (!CustomBoardPositionParser.TryParse(textBoxCustomPosition.Text, out var customPosition, out var errorMessage))
+            {
+                labelPositionStatus.Text = errorMessage;
+                return;
+            }
+
+            if (!game.LoadPosition(customPosition!.Pieces, customPosition.CurrentPlayer))
+            {
+                labelPositionStatus.Text = "Position is invalid: use a valid board with exactly one king per color and no duplicate squares.";
+                return;
+            }
+            moveSequencePlayer.Discard();
+            chessBoardPanel.SetInputEnabled(true);
+            chessBoardPanel.Invalidate();
+
+            labelPositionStatus.Text = "Custom position loaded. Manual moves and Undo are enabled.";
+            labelSequenceStatus.Text = "Move replay cleared because a custom position was loaded.";
+
+            UpdateSequenceControls();
+            UpdateStatusLabels();
+        }
+
         private void OnGameChanged()
         {
             UpdateStatusLabels();

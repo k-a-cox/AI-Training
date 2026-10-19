@@ -94,6 +94,12 @@ namespace AiAssistedChess.UI
         public void Clear()
         {
             game.Reset();
+
+            Discard();
+        }
+
+        public void Discard()
+        {
             moves.Clear();
             CurrentIndex = 0;
         }
