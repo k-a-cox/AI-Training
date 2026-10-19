@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has fifty-seven tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
+The xUnit project currently has fifty-nine tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
 
 - [ ] Initial pawn double move and pawn movement restrictions.
 - [ ] Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -30,6 +30,7 @@ The xUnit project currently has fifty-seven tests. Items marked `[ ]` still need
 - [ ] Undoing an intervening move restores the en-passant target and legal capture.
 - [ ] Undoing a five-move sequence containing an en-passant capture restores the captured pawn, side to move, and en-passant target at each step.
 - [ ] Repeated legal-move simulations preserve the live board, en-passant target, and undo history.
+- [x] A king cannot move onto a rook-attacked square or next to the opposing king; user confirmed both UI checks.
 - [x] A pinned rook cannot move off the file and expose its king to check; user confirmed the UI rejects the move and preserves the position.
 - [x] Cloning a board creates an independent position without copying its undo history; user confirmed the test flags looked correct.
 - [ ] Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; the rejected moves preserve the board and target.
@@ -45,7 +46,7 @@ The xUnit project currently has fifty-seven tests. Items marked `[ ]` still need
 - [ ] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
 - [ ] Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
 
-The latest test run passed all fifty-seven tests.
+The latest test run passed all fifty-nine tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -87,7 +88,7 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Review `BoardState.Clone()` and move-history behavior; repeated legal-move simulations preserve live state, and undo still restores the previous move and special state.
 - [x] Directly test that `BoardState.Clone()` is independent from the original board and starts without copied move history.
 - [x] Verify pinned non-king pieces cannot move if doing so exposes their own king to check.
-- [ ] Verify kings cannot move onto attacked squares, including squares attacked by the opposing king.
+- [x] Verify kings cannot move onto attacked squares, including squares attacked by the opposing king.
 - [ ] Verify every legal response to check actually resolves check, including double-check positions.
 - [ ] Test rejecting moves from empty squares, opponent pieces, and off-board destinations without changing game state.
 - [ ] Test that a pawn cannot advance two squares when its intermediate square is blocked.

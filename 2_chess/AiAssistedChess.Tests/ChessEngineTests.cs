@@ -543,6 +543,45 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void KingCannotMoveOntoSquareAttackedByRook()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 5), new ChessPiece(PieceType.Rook, PieceColor.Black)));
+            var kingPosition = new Position(7, 4);
+            var attackedSquare = new Position(7, 5);
+
+            Assert.DoesNotContain(game.GetLegalMoves(kingPosition), move => move.To == attackedSquare);
+            Assert.False(game.TryMakeMove(new Move(kingPosition, attackedSquare)));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(kingPosition));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.Black), game.Board.GetPiece(new Position(0, 5)));
+        }
+
+        [Fact]
+        public void KingCannotMoveAdjacentToOpposingKing()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(5, 5), new ChessPiece(PieceType.King, PieceColor.Black)));
+            var kingPosition = new Position(7, 4);
+            var attackedSquare = new Position(6, 4);
+
+            Assert.DoesNotContain(game.GetLegalMoves(kingPosition), move => move.To == attackedSquare);
+            Assert.False(game.TryMakeMove(new Move(kingPosition, attackedSquare)));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(kingPosition));
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.Black), game.Board.GetPiece(new Position(5, 5)));
+        }
+
+        [Fact]
         public void PieceBetweenRookAndKingPreventsCheckStatus()
         {
             var game = new ChessGame();
