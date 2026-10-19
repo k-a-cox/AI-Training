@@ -10,7 +10,8 @@
 - Special-move implementation for castling, en passant, and promotion to queen, rook, bishop, or knight.
 - Check, checkmate, and stalemate status calculation, plus reset and undo operations.
 - Clickable board UI with legal-destination highlights, selection, piece images, and a Unicode fallback. Piece PNGs have been confirmed working; the project copies `Images\**` into build output.
-- Promotion-choice dialog, current-player and game-status labels, undo button, and restart button.
+- Promotion-choice dialog, current-player and game-status labels, undo and restart buttons, and a move-replay control that can switch to manual play without resetting the current position.
+- Legal move generation does not allow capturing the opposing king; the game ends by checkmate.
 - The `2_chess`-level README already records the piece-image source: the Maestro BW set from Kadagaden/chess-pieces.
 
 ### Existing automated tests
@@ -56,8 +57,9 @@ The xUnit project currently has eighty-three tests. Items marked `[ ]` still nee
 - [x] Black pawn promotion to queen, rook, bishop, and knight. User confirmed all four promotion choices in the UI.
 - [ ] Rejecting promotion moves without a promotion choice and non-promotion moves with an inappropriate promotion choice.
 - [x] Custom position validation rejects pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom position loading disables castling rights. User confirmed the GUI scenarios.
+- [ ] A move cannot capture the opposing king; checkmate ends the game without capturing the king.
 
-The latest test run passed all eighty-two tests.
+The latest test run passed all eighty-three tests.
 
 Manual movement/capture replay sequences for the visible board:
 

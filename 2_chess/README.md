@@ -9,8 +9,8 @@ A local two-player chess game for Windows, built with C#, Windows Forms, and .NE
 - Clickable chessboard with legal destination highlighting.
 - Standard piece movement and move validation, including check detection.
 - Castling, en passant, and player-selected pawn promotion.
-- Checkmate and stalemate status, current-player display, undo, and restart controls.
-- Replay coordinate move sequences with Load, Next, and Back controls.
+- Checkmate and stalemate detection; kings are not captured. The UI displays the current player and game status, with undo and restart controls.
+- Replay coordinate move sequences with Load moves, Next, Back, and Clear replay controls; swap to manual play without resetting the current position.
 - PNG chess-piece images with a Unicode glyph fallback.
 
 ## Run the application
@@ -33,7 +33,7 @@ dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj
 
 ## Replay a move sequence
 
-Paste coordinate moves into the move-sequence box, separated by spaces, commas, or new lines, then select **Load sequence**. Use **Next** and **Back** to step through the game.
+Paste coordinate moves into the move-sequence box, separated by spaces, commas, or new lines, then select **Load moves**. Use **Next** and **Back** to step through the game. **Swap to manual game** discards the remaining replay moves while preserving the current board position. **Clear replay** discards the sequence and resets the board.
 
 ```text
 e2-e4, e7-e5, g1-f3
@@ -47,7 +47,7 @@ In the application, paste a temporary position description into the custom-posit
 white:king=c6,queen=b6; black:king=a8; turn=black
 ```
 
-Use `white` or `black` before the colon, and `king`, `queen`, `rook`, `bishop`, `knight`, or `pawn` before `=`. Separate pieces with commas and sections with semicolons. Loading a custom position clears move-sequence replay history and enables manual moves and Undo. **Restart** returns to the normal starting position. This syntax is temporary and may change as the UI is polished.
+Use `white` or `black` before the colon, and `king`, `queen`, `rook`, `bishop`, `knight`, or `pawn` before `=`. Separate pieces with commas and sections with semicolons. Loading a custom position clears move-sequence replay history and enables manual moves and Undo. Custom positions must not contain pawns on a promotion rank, adjacent kings, or a checked king that is not the side to move. Loading a custom position disables castling rights because the format does not encode them. **Restart** returns to the normal starting position. This syntax is temporary and may change as the UI is polished.
 
 ## Project status
 

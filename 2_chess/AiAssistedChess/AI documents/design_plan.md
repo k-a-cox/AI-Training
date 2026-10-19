@@ -29,3 +29,10 @@ Create a graphical chess game for two people sharing one computer. Implement the
 - Treat promotion as a player choice; present a small choice UI rather than silently selecting a piece.
 - Test rules independently with focused positions before relying on full-game manual testing.
 - Keep chess rules testable independently from the Windows Forms event handlers.
+
+## Impromptu additions
+
+- Load custom board positions using the established text syntax. Position loading validates the kings and rejects pawns on promotion ranks, adjacent kings, or a checked king that is not the side to move; custom positions disable castling rights.
+- Replay coordinate move sequences with Load moves, Next, Back, and Clear replay controls. Swap to manual game preserves the current board position while discarding the remaining replay moves.
+- Display board coordinates along all four edges and use chess-piece images with a Unicode fallback.
+- Prevent moves from capturing the opposing king; the game ends by checkmate instead.
