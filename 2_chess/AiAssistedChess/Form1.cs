@@ -126,9 +126,21 @@ namespace AiAssistedChess
         {
             moveSequencePlayer.Clear();
             chessBoardPanel.SetInputEnabled(true);
-            chessBoardPanel.Invalidate();
+            chessBoardPanel.ClearSelection();
 
-            labelSequenceStatus.Text = "Replay cleared. You can now play moves manually.";
+            labelSequenceStatus.Text = "Replay cleared. The board has been reset; you can now play moves manually.";
+
+            UpdateSequenceControls();
+            UpdateStatusLabels();
+        }
+
+        private void ButtonSwapToManualGame_Click(object? sender, EventArgs e)
+        {
+            moveSequencePlayer.Discard();
+            chessBoardPanel.SetInputEnabled(true);
+            chessBoardPanel.ClearSelection();
+
+            labelSequenceStatus.Text = "Switched to manual play at the current position.";
 
             UpdateSequenceControls();
             UpdateStatusLabels();
@@ -140,6 +152,7 @@ namespace AiAssistedChess
             buttonPreviousMove.Enabled = moveSequencePlayer.CurrentIndex > 0;
             buttonNextMove.Enabled = moveSequencePlayer.IsLoaded && moveSequencePlayer.CurrentIndex < moveSequencePlayer.MoveCount;
             buttonClearSequence.Enabled = moveSequencePlayer.IsLoaded;
+            buttonSwapToManualGame.Enabled = moveSequencePlayer.IsLoaded;
         }
     }
 }

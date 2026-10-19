@@ -13,6 +13,7 @@
         private System.Windows.Forms.Button buttonPreviousMove;
         private System.Windows.Forms.Button buttonNextMove;
         private System.Windows.Forms.Button buttonClearSequence;
+        private System.Windows.Forms.Button buttonSwapToManualGame;
         private System.Windows.Forms.Label labelSequenceStatus;
         private System.Windows.Forms.TextBox textBoxCustomPosition;
         private System.Windows.Forms.Button buttonLoadPosition;
@@ -43,6 +44,7 @@
             this.buttonPreviousMove = new System.Windows.Forms.Button();
             this.buttonNextMove = new System.Windows.Forms.Button();
             this.buttonClearSequence = new System.Windows.Forms.Button();
+            this.buttonSwapToManualGame = new System.Windows.Forms.Button();
             this.labelSequenceStatus = new System.Windows.Forms.Label();
             this.textBoxCustomPosition = new System.Windows.Forms.TextBox();
             this.buttonLoadPosition = new System.Windows.Forms.Button();
@@ -110,6 +112,13 @@
             this.buttonClearSequence.Enabled = false;
             this.buttonClearSequence.Click += new System.EventHandler(this.ButtonClearSequence_Click);
 
+            // buttonSwapToManualGame
+            this.buttonSwapToManualGame.Location = new System.Drawing.Point(630, 420);
+            this.buttonSwapToManualGame.Size = new System.Drawing.Size(180, 30);
+            this.buttonSwapToManualGame.Text = "Swap to manual game";
+            this.buttonSwapToManualGame.Enabled = false;
+            this.buttonSwapToManualGame.Click += new System.EventHandler(this.ButtonSwapToManualGame_Click);
+
             // labelSequenceStatus
             this.labelSequenceStatus.Location = new System.Drawing.Point(630, 375);
             this.labelSequenceStatus.Size = new System.Drawing.Size(430, 45);
@@ -146,6 +155,7 @@
             this.Controls.Add(this.buttonPreviousMove);
             this.Controls.Add(this.buttonNextMove);
             this.Controls.Add(this.buttonClearSequence);
+            this.Controls.Add(this.buttonSwapToManualGame);
             this.Controls.Add(this.labelSequenceStatus);
             this.Controls.Add(this.textBoxCustomPosition);
             this.Controls.Add(this.buttonLoadPosition);

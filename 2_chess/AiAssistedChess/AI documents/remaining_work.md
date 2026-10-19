@@ -123,7 +123,7 @@ Manual movement/capture replay sequences for the visible board:
 - [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
 - [ ] Manually verify the custom board-position GUI: load a valid position, reject invalid input without changing the board, then move/undo/restart.
 - [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
-- [ ] Allow manual play to continue after a predefined move sequence has been loaded and replayed; currently the user reports the board is not manually playable afterward.
+- [x] Confirm “Swap to manual game” exits replay while preserving the current board and enables manual moves; confirm “Clear replay” still resets the board. User confirmed both behaviors.
 - [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
 - [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.
 - [ ] Test rendering when the control is resized and verify click-to-square mapping matches the displayed board at different sizes.
