@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has eighty-two tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
+The xUnit project currently has eighty-three tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
 
 - [ ] Initial pawn double move and pawn movement restrictions.
 - [x] Rejecting moves from empty squares, opponent pieces, and off-board destinations; blocked pawn double-step. User confirmed all four scenarios in the UI.
@@ -111,6 +111,7 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Test undoing castling restores the king, rook, castling rights, and turn.
 - [x] Test undoing a move that caused checkmate or stalemate restores the prior status and allows play to continue.
 - [x] Test custom-position validation for pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom-position loading disables castling.
+- [x] Reject moves that would capture the opposing king; checkmate ends the game without capturing the king.
 
 ### 2.5. Manually review all engine unit tests again
 

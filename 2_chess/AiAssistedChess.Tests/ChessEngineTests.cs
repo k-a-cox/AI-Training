@@ -720,6 +720,27 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void MoveCannotCaptureOpposingKing()
+        {
+            var blackKingPosition = new Position(0, 0);
+            var whiteRookPosition = new Position(7, 0);
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (blackKingPosition, new ChessPiece(PieceType.King, PieceColor.Black)),
+                (whiteRookPosition, new ChessPiece(PieceType.Rook, PieceColor.White)));
+            var attemptedKingCapture = new Move(whiteRookPosition, blackKingPosition);
+
+            Assert.DoesNotContain(game.GetLegalMoves(whiteRookPosition), move => move.To == blackKingPosition);
+            Assert.False(game.TryMakeMove(attemptedKingCapture));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.Black), game.Board.GetPiece(blackKingPosition));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.White), game.Board.GetPiece(whiteRookPosition));
+        }
+
+        [Fact]
         public void KingCannotMoveOntoSquareAttackedByRook()
         {
             var game = MakeBoard(

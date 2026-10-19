@@ -65,6 +65,8 @@ namespace AiAssistedChess.Engine
             var legal = new List<Move>();
             foreach (var m in moves)
             {
+                if (board.GetPiece(m.To).Type == PieceType.King) continue;
+
                 var copy = board.Clone();
                 copy.MakeMove(m);
                 // we need to check if own king is in check in copy
