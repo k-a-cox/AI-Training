@@ -422,6 +422,24 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void QueensideCastlingIsAllowedWhenOnlyTheBFileSquareIsAttacked()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game,
+                "a2-a4", "b7-b5",
+                "b1-c3", "b5-a4",
+                "d2-d4", "a4-a3",
+                "c1-f4", "a3-a2",
+                "d1-d2", "h7-h6",
+                "e1-c1");
+
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 2)));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.White), game.Board.GetPiece(new Position(7, 3)));
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+        }
+
+        [Fact]
         public void CastlingIsRejectedWhenKingIsInCheck()
         {
             var game = new ChessGame();
@@ -525,6 +543,24 @@ namespace AiAssistedChess.Tests
             Assert.True(board.WhiteCanCastleQueenSide);
             Assert.Equal(PieceType.Rook, board.GetPiece(new Position(0, 0)).Type);
             Assert.Equal(PieceType.Rook, board.GetPiece(new Position(7, 0)).Type);
+        }
+
+        [Fact]
+        public void CapturingRookOnKingsideHomeSquareClearsAndUndoRestoresCastlingRights()
+        {
+            var board = new BoardState();
+
+            board.MakeMove(new Move(new Position(0, 7), new Position(7, 7)));
+
+            Assert.False(board.BlackCanCastleKingSide);
+            Assert.False(board.WhiteCanCastleKingSide);
+
+            board.Undo();
+
+            Assert.True(board.BlackCanCastleKingSide);
+            Assert.True(board.WhiteCanCastleKingSide);
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.Black), board.GetPiece(new Position(0, 7)));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.White), board.GetPiece(new Position(7, 7)));
         }
 
         [Fact]
@@ -763,6 +799,28 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void UndoCastlingRestoresKingRookRightsAndTurn()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "a7-a6", "g1-f3", "a6-a5", "f1-c4", "h7-h6");
+
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 4), new Position(7, 6))));
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.False(game.Board.WhiteCanCastleKingSide);
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.White), game.Board.GetPiece(new Position(7, 7)));
+            Assert.True(game.Board.GetPiece(new Position(7, 6)).IsEmpty);
+            Assert.True(game.Board.GetPiece(new Position(7, 5)).IsEmpty);
+            Assert.True(game.Board.WhiteCanCastleKingSide);
+        }
+
+        [Fact]
         public void WhiteCanCastleQueenSide()
         {
             var game = new ChessGame();
@@ -849,6 +907,53 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void UndoingCheckmateRestoresPreviousPositionAndAllowsPlay()
+        {
+            var game = new ChessGame();
+            var whiteQueenSquareAfterUndo = new Position(3, 7);
+            var blackPawnSquareAfterUndo = new Position(1, 5);
+            var queenFollowUpTarget = new Position(4, 7);
+
+            PlayMoves(game, "e2-e4", "e7-e5", "f1-c4", "b8-c6", "d1-h5", "g8-f6", "h5-f7");
+
+            Assert.Equal(GameStatus.Checkmate, game.Status);
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+
+            game.Undo();
+
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.Queen, PieceColor.White), game.Board.GetPiece(whiteQueenSquareAfterUndo));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(blackPawnSquareAfterUndo));
+            Assert.True(game.TryMakeMove(new Move(whiteQueenSquareAfterUndo, queenFollowUpTarget)));
+        }
+
+        [Fact]
+        public void UndoingStalemateRestoresPreviousPositionAndAllowsPlay()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(2, 2), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(3, 1), new ChessPiece(PieceType.Queen, PieceColor.White)));
+            var whiteQueenStart = new Position(3, 1);
+            var stalemateMoveTarget = new Position(2, 1);
+            var queenFollowUpTarget = new Position(4, 1);
+
+            Assert.True(game.TryMakeMove(new Move(whiteQueenStart, stalemateMoveTarget)));
+
+            Assert.Equal(GameStatus.Stalemate, game.Status);
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+
+            game.Undo();
+
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.Queen, PieceColor.White), game.Board.GetPiece(whiteQueenStart));
+            Assert.True(game.TryMakeMove(new Move(whiteQueenStart, queenFollowUpTarget)));
+        }
+
+        [Fact]
         public void StalemateDetectedWithBlackKingInCorner()
         {
             var game = MakeBoard(
@@ -911,6 +1016,82 @@ namespace AiAssistedChess.Tests
             Assert.Equal(PieceColor.White, game.CurrentPlayer);
             Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(7, 4)).Type);
             Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(0, 4)).Type);
+        }
+
+        [Fact]
+        public void LoadPositionRejectsPawnOnPromotionRankWithoutChangingBoard()
+        {
+            var game = new ChessGame();
+            var invalidPieces = new[]
+            {
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 4), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 0), new ChessPiece(PieceType.Pawn, PieceColor.White))
+            };
+
+            Assert.False(game.LoadPosition(invalidPieces, PieceColor.White));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.Black), game.Board.GetPiece(new Position(0, 4)));
+        }
+
+        [Fact]
+        public void LoadPositionRejectsInactiveKingInCheckWithoutChangingBoard()
+        {
+            var game = new ChessGame();
+            var invalidPieces = new[]
+            {
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 4), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(1, 4), new ChessPiece(PieceType.Rook, PieceColor.White))
+            };
+
+            Assert.False(game.LoadPosition(invalidPieces, PieceColor.White));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.Black), game.Board.GetPiece(new Position(0, 4)));
+        }
+
+        [Fact]
+        public void LoadPositionRejectsAdjacentKingsWithoutChangingBoard()
+        {
+            var game = new ChessGame();
+            var invalidPieces = new[]
+            {
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(6, 4), new ChessPiece(PieceType.King, PieceColor.Black))
+            };
+
+            Assert.False(game.LoadPosition(invalidPieces, PieceColor.White));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.Black), game.Board.GetPiece(new Position(0, 4)));
+        }
+
+        [Fact]
+        public void LoadingCustomPositionDisablesCastlingRights()
+        {
+            var game = new ChessGame();
+            var pieces = new[]
+            {
+                (new Position(7, 0), new ChessPiece(PieceType.Rook, PieceColor.White)),
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(7, 7), new ChessPiece(PieceType.Rook, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.Rook, PieceColor.Black)),
+                (new Position(0, 4), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 7), new ChessPiece(PieceType.Rook, PieceColor.Black))
+            };
+
+            Assert.True(game.LoadPosition(pieces, PieceColor.White));
+
+            Assert.False(game.Board.WhiteCanCastleKingSide);
+            Assert.False(game.Board.WhiteCanCastleQueenSide);
+            Assert.False(game.Board.BlackCanCastleKingSide);
+            Assert.False(game.Board.BlackCanCastleQueenSide);
+            Assert.DoesNotContain(game.GetLegalMoves(new Position(7, 4)), move => move.To == new Position(7, 6) || move.To == new Position(7, 2));
         }
 
         [Fact]
@@ -1022,6 +1203,42 @@ namespace AiAssistedChess.Tests
 
             Assert.Equal(PieceType.Pawn, game.Board.GetPiece(new Position(1, 0)).Type);
             Assert.True(game.Board.GetPiece(new Position(0, 0)).IsEmpty);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+        }
+
+        [Fact]
+        public void PawnRejectsPromotionWithoutChoice()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(1, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+            var pawnPosition = new Position(1, 0);
+            var promotionSquare = new Position(0, 0);
+
+            Assert.False(game.TryMakeMove(new Move(pawnPosition, promotionSquare)));
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(pawnPosition));
+            Assert.True(game.Board.GetPiece(promotionSquare).IsEmpty);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+        }
+
+        [Fact]
+        public void NonPromotionMoveRejectsPromotionChoice()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(6, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+            var pawnPosition = new Position(6, 0);
+            var destination = new Position(5, 0);
+
+            Assert.False(game.TryMakeMove(new Move(pawnPosition, destination, PieceType.Queen)));
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(pawnPosition));
+            Assert.True(game.Board.GetPiece(destination).IsEmpty);
             Assert.Equal(PieceColor.White, game.CurrentPlayer);
         }
 

@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has seventy-one tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
+The xUnit project currently has eighty-two tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
 
 - [ ] Initial pawn double move and pawn movement restrictions.
 - [x] Rejecting moves from empty squares, opponent pieces, and off-board destinations; blocked pawn double-step. User confirmed all four scenarios in the UI.
@@ -25,6 +25,7 @@ The xUnit project currently has seventy-one tests. Items marked `[ ]` still need
 - [ ] En-passant capture.
 - [x] Black en-passant captures from either side of the target. User confirmed both sides in the UI.
 - [ ] White kingside castling.
+- [x] Queenside castling remains legal when only the b-file square is attacked; user confirmed the GUI scenario.
 - [ ] Fool's Mate checkmate detection.
 - [ ] Undo restoring a pawn to its original square.
 - [ ] Legal move enumeration for a non-current player.
@@ -41,16 +42,22 @@ The xUnit project currently has seventy-one tests. Items marked `[ ]` still need
 - [ ] White queenside castling and black kingside/queenside castling.
 - [ ] Rejecting castling when the king is in check or the destination square is attacked.
 - [ ] Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
+- [ ] Capturing a rook on its kingside home square clears and undo restores the corresponding castling rights.
+- [x] Undoing castling restores the king, rook, castling rights, and turn; user confirmed the GUI scenario.
 - [ ] Undoing a later reply and a king move restores the king's original square and both castling rights.
 - [ ] Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available.
 - [x] Rook-check responses resolve check, including bishop interposition; double check allows only king moves even when a rook could block one line.
 - [ ] A blocked rook attack line does not put the king in check.
 - [ ] Scholar's Mate checkmate detection and rejection of further moves after checkmate.
+- [x] Undoing checkmate and stalemate restores the prior status and allows play to continue; user confirmed both GUI scenarios.
 - [ ] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
 - [ ] Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
+- [x] White pawn promotion offers Queen, Rook, Bishop, and Knight; canceling the dialog leaves the pawn unmoved. User confirmed the GUI scenario.
 - [x] Black pawn promotion to queen, rook, bishop, and knight. User confirmed all four promotion choices in the UI.
+- [ ] Rejecting promotion moves without a promotion choice and non-promotion moves with an inappropriate promotion choice.
+- [x] Custom position validation rejects pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom position loading disables castling rights. User confirmed the GUI scenarios.
 
-The latest test run passed all seventy-one tests.
+The latest test run passed all eighty-two tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -98,12 +105,12 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Test that a pawn cannot advance two squares when its intermediate square is blocked.
 - [x] Test legal en-passant captures for Black and captures on both sides of the en-passant target.
 - [x] Test Black pawn promotion to all four legal piece types.
-- [ ] Test rejecting promotion moves with a missing promotion choice and non-promotion moves with an inappropriate promotion choice.
-- [ ] Verify queenside castling remains legal when only the b-file square is attacked.
-- [ ] Test that capturing a rook on its kingside home square clears and undo restores the corresponding castling rights.
-- [ ] Test undoing castling restores the king, rook, castling rights, and turn.
-- [ ] Test undoing a move that caused checkmate or stalemate restores the prior status and allows play to continue.
-- [ ] Test custom-position validation for pawns on promotion ranks, an inactive king already in check, and adjacent kings; document whether loading custom positions disables castling.
+- [x] Test rejecting promotion moves with a missing promotion choice and non-promotion moves with an inappropriate promotion choice.
+- [x] Verify queenside castling remains legal when only the b-file square is attacked.
+- [x] Test that capturing a rook on its kingside home square clears and undo restores the corresponding castling rights.
+- [x] Test undoing castling restores the king, rook, castling rights, and turn.
+- [x] Test undoing a move that caused checkmate or stalemate restores the prior status and allows play to continue.
+- [x] Test custom-position validation for pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom-position loading disables castling.
 
 ### 2.5. Manually review all engine unit tests again
 

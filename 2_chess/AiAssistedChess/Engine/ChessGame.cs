@@ -35,6 +35,14 @@ namespace AiAssistedChess.Engine
 
             if (positionPieces.Select(entry => entry.Position).Distinct().Count() != positionPieces.Count) return false;
 
+            if (positionPieces.Any(entry => entry.Piece.Type == PieceType.Pawn && (entry.Position.Row == 0 || entry.Position.Row == 7))) return false;
+
+            var candidateState = new BoardState();
+
+            candidateState.SetPosition(positionPieces, currentPlayer);
+
+            if (IsKingInCheck(candidateState, Opposite(currentPlayer))) return false;
+
             state.SetPosition(positionPieces, currentPlayer);
             UpdateStatus();
             return true;
