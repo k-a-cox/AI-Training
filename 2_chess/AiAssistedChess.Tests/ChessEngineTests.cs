@@ -388,6 +388,28 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void PinnedRookCannotMoveOffFileAndExposeItsKingToCheck()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(6, 4), new ChessPiece(PieceType.Rook, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 4), new ChessPiece(PieceType.Rook, PieceColor.Black)));
+            var pinnedRookPosition = new Position(6, 4);
+            var exposedFileMove = new Move(pinnedRookPosition, new Position(6, 3));
+
+            Assert.DoesNotContain(game.GetLegalMoves(pinnedRookPosition), move => move.To == exposedFileMove.To);
+            Assert.False(game.TryMakeMove(exposedFileMove));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.White), game.Board.GetPiece(pinnedRookPosition));
+            Assert.Equal(new ChessPiece(PieceType.Rook, PieceColor.Black), game.Board.GetPiece(new Position(0, 4)));
+        }
+
+        [Fact]
         public void CastlingRightsAreClearedAndRestoredByUndo()
         {
             var board = new BoardState();
