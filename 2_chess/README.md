@@ -34,6 +34,10 @@ dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj
 
 See [AI documents/remaining_work.md](AiAssistedChess/AI%20documents/remaining_work.md) for the implementation status, verification needs, and prioritized remaining work.
 
+## AI Hand holdiness
+
+I will prompt for the next steps, but let GPT 6 Luna generate the development plan and changes. I'll read the generated changes before asking GPT to make the commits for me.
+
 ## Assets
 
 The application uses the Maestro BW chess piece set from
