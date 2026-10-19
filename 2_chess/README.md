@@ -10,6 +10,7 @@ A local two-player chess game for Windows, built with C#, Windows Forms, and .NE
 - Standard piece movement and move validation, including check detection.
 - Castling, en passant, and player-selected pawn promotion.
 - Checkmate and stalemate status, current-player display, undo, and restart controls.
+- Replay coordinate move sequences with Load, Next, and Back controls.
 - PNG chess-piece images with a Unicode glyph fallback.
 
 ## Run the application
@@ -30,6 +31,14 @@ Run the chess-engine test project from the repository root:
 dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj
 ```
 
+## Replay a move sequence
+
+Paste coordinate moves into the move-sequence box, separated by spaces, commas, or new lines, then select **Load sequence**. Use **Next** and **Back** to step through the game.
+
+```text
+e2-e4, e7-e5, g1-f3
+```
+
 ## Load a custom board position
 
 In the application, paste a temporary position description into the custom-position box and select **Load position**. List each occupied square by color and piece; all squares not listed are empty. The position must include exactly one king per color and specify which side moves next.
@@ -46,7 +55,7 @@ See [AI documents/remaining_work.md](AiAssistedChess/AI%20documents/remaining_wo
 
 ## AI Hand holdiness
 
-I will prompt for the next steps, but let GPT 6 Luna generate the development plan and changes. I'll read the generated changes before asking GPT to make the commits for me.
+I will prompt GPT 6 Luna for the next steps, but let the model generate the development plan and implement changes. I'll sanity check the generated changes before asking GPT to make the commits for me.
 
 ## Assets
 
