@@ -167,6 +167,62 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void WhiteEnPassantIsRejectedWhenItExposesKingToRookCheck()
+        {
+            var game = MakeBoard(
+                PieceColor.Black,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 4), new ChessPiece(PieceType.Rook, PieceColor.Black)),
+                (new Position(3, 4), new ChessPiece(PieceType.Pawn, PieceColor.White)),
+                (new Position(1, 3), new ChessPiece(PieceType.Pawn, PieceColor.Black)));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 3), new Position(3, 3))));
+
+            var enPassantTarget = new Position(2, 3);
+            var attemptedMove = new Move(new Position(3, 4), enPassantTarget);
+
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.DoesNotContain(game.GetLegalMoves(new Position(3, 4)), move => move.To == enPassantTarget);
+            Assert.False(game.TryMakeMove(attemptedMove));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(3, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(3, 3)));
+            Assert.True(game.Board.GetPiece(enPassantTarget).IsEmpty);
+        }
+
+        [Fact]
+        public void BlackEnPassantIsRejectedWhenItExposesKingToRookCheck()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 0), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(7, 4), new ChessPiece(PieceType.Rook, PieceColor.White)),
+                (new Position(0, 4), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(4, 4), new ChessPiece(PieceType.Pawn, PieceColor.Black)),
+                (new Position(6, 3), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(4, 3))));
+
+            var enPassantTarget = new Position(5, 3);
+            var attemptedMove = new Move(new Position(4, 4), enPassantTarget);
+
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.DoesNotContain(game.GetLegalMoves(new Position(4, 4)), move => move.To == enPassantTarget);
+            Assert.False(game.TryMakeMove(attemptedMove));
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(4, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(4, 3)));
+            Assert.True(game.Board.GetPiece(enPassantTarget).IsEmpty);
+        }
+
+        [Fact]
         public void UndoEnPassantRestoresBothPawns()
         {
             var game = new ChessGame();

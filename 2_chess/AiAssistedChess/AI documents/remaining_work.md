@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has forty-nine tests:
+The xUnit project currently has fifty-one tests:
 
 - Initial pawn double move and pawn movement restrictions.
 - Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -27,6 +27,7 @@ The xUnit project currently has forty-nine tests:
 - Undo restoring a pawn to its original square.
 - Legal move enumeration for a non-current player.
 - En-passant expiration after one reply.
+- Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; the rejected moves preserve the board and target.
 - Undo restoring both pawns and the turn after en passant.
 - Rejecting kingside castling when its transit square is attacked.
 - White queenside castling and black kingside/queenside castling.
@@ -38,7 +39,7 @@ The xUnit project currently has forty-nine tests:
 - Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
 - Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all forty-nine tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all fifty-one tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -74,8 +75,8 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
 - [x] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
 - [x] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
-- [x] Test en-passant availability expires after exactly one reply and undo restores the en-passant capture.
-- [ ] Test additional invalid en-passant attempts and en-passant undo state after other move sequences.
+- [x] Test en-passant availability expires after exactly one reply, reject en-passant captures that expose the moving king to a rook attack for both colors, and undo the en-passant capture.
+- [ ] Test en-passant undo state after other move sequences.
 - [ ] Test undo over multiple plies and verify restoration of captures, turn, castling rights, en-passant state, and game status.
 - [x] Prevent further moves after checkmate or stalemate; post-checkmate rejection is covered by a regression test.
 - [ ] Review `BoardState.Clone()` and move-history behavior to ensure simulations cannot mutate live game state and undo restores all special-move state.
