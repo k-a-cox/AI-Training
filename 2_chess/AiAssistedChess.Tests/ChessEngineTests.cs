@@ -543,6 +543,73 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void LegalResponsesToRookCheckOnlyMoveKingOrBlockTheCheckingFile()
+        {
+            var rookCheckPieces = new (Position Position, ChessPiece Piece)[]
+            {
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(4, 2), new ChessPiece(PieceType.Bishop, PieceColor.White)),
+                (new Position(6, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 4), new ChessPiece(PieceType.Rook, PieceColor.Black)),
+                (new Position(1, 0), new ChessPiece(PieceType.Pawn, PieceColor.Black))
+            };
+            var rookCheckGame = MakeBoard(PieceColor.White, rookCheckPieces);
+
+            var whiteKingPosition = new Position(7, 4);
+
+            var legalResponsesToRookCheck = rookCheckGame.GetAllLegalMoves(PieceColor.White).ToList();
+
+            Assert.Equal(GameStatus.Check, rookCheckGame.Status);
+
+            Assert.NotEmpty(legalResponsesToRookCheck);
+
+            Assert.All(legalResponsesToRookCheck, move =>
+            {
+                Assert.True(move.From == whiteKingPosition ||
+                    (move.From == new Position(4, 2) && move.To.Col == whiteKingPosition.Col && move.To.Row < whiteKingPosition.Row));
+            });
+
+            Assert.Contains(legalResponsesToRookCheck, move => move.From == new Position(4, 2) && move.To == new Position(6, 4));
+
+            Assert.DoesNotContain(legalResponsesToRookCheck, move => move.From == new Position(6, 0));
+
+            foreach (var response in legalResponsesToRookCheck)
+            {
+                var responseGame = MakeBoard(PieceColor.White, rookCheckPieces);
+
+                Assert.True(responseGame.TryMakeMove(response));
+
+                Assert.NotEqual(GameStatus.Check, responseGame.Status);
+
+                Assert.True(responseGame.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+            }
+        }
+
+        [Fact]
+        public void DoubleCheckAllowsOnlyKingResponses()
+        {
+            var doubleCheckGame = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(0, 4), new ChessPiece(PieceType.Rook, PieceColor.Black)),
+                (new Position(4, 1), new ChessPiece(PieceType.Bishop, PieceColor.Black)),
+                (new Position(7, 3), new ChessPiece(PieceType.Rook, PieceColor.White)));
+            var whiteKingPosition = new Position(7, 4);
+
+            var legalResponsesToDoubleCheck = doubleCheckGame.GetAllLegalMoves(PieceColor.White).ToList();
+
+            Assert.Equal(GameStatus.Check, doubleCheckGame.Status);
+
+            Assert.NotEmpty(legalResponsesToDoubleCheck);
+
+            Assert.All(legalResponsesToDoubleCheck, move => Assert.Equal(whiteKingPosition, move.From));
+
+            Assert.DoesNotContain(legalResponsesToDoubleCheck, move => move.From == new Position(7, 3) && move.To == new Position(6, 3));
+        }
+
+        [Fact]
         public void KingCannotMoveOntoSquareAttackedByRook()
         {
             var game = MakeBoard(
