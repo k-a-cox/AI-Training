@@ -16,6 +16,13 @@ namespace AiAssistedChess.UI
         [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public ChessGame? Game { get; set; }
 
+        private bool isInputEnabled = true;
+
+        public void SetInputEnabled(bool isEnabled)
+        {
+            isInputEnabled = isEnabled;
+        }
+
         private Position? selected;
         private List<Position> legal = new();
         private readonly Dictionary<string, Image> pieceImages = new();
@@ -158,7 +165,7 @@ namespace AiAssistedChess.UI
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
-            if (Game == null) return;
+            if (Game == null || !isInputEnabled) return;
             int squareSize = Math.Min(Width - CoordinateGutterSize, Height - CoordinateGutterSize) / 8;
             int clickedCol = (e.X - CoordinateGutterSize) / squareSize;
             int clickedRow = (e.Y - CoordinateGutterSize) / squareSize;

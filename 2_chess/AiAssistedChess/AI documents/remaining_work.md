@@ -65,6 +65,8 @@ The original castling test setup was corrected to move e2 to e4 before developin
 ### 3. Verify and polish the UI
 
 - [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
+- [x] Manually replay pasted coordinate castling test sequences using Load, Next, and Back; verified the sequences work on the visible board.
+- [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
 - [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
 - [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.
 - [ ] Test rendering when the control is resized and verify click-to-square mapping matches the displayed board at different sizes.
