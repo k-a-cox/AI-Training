@@ -100,6 +100,90 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void CastlingIsRejectedWhenKingIsInCheck()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 5), new Position(4, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 4), new Position(3, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 6), new Position(5, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(2, 0), new Position(3, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 5), new Position(4, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 3), new Position(4, 7))));
+
+            Assert.Equal(GameStatus.Check, game.Status);
+            Assert.DoesNotContain(game.GetLegalMoves(new Position(7, 4)), move => move.To == new Position(7, 6));
+        }
+
+        [Fact]
+        public void CastlingIsRejectedWhenDestinationSquareIsAttacked()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 4), new Position(3, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 1), new Position(5, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 1), new Position(2, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 5), new Position(4, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 5), new Position(3, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(5, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 3), new Position(2, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 6), new Position(5, 7))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 5), new Position(5, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(2, 0), new Position(3, 0))));
+
+            Assert.DoesNotContain(game.GetLegalMoves(new Position(7, 4)), move => move.To == new Position(7, 6));
+            Assert.False(game.TryMakeMove(new Move(new Position(7, 4), new Position(7, 6))));
+        }
+
+        [Fact]
+        public void CastlingRightsAreClearedAndRestoredByUndo()
+        {
+            var board = new BoardState();
+
+            board.MakeMove(new Move(new Position(7, 4), new Position(6, 4)));
+
+            Assert.False(board.WhiteCanCastleKingSide);
+            Assert.False(board.WhiteCanCastleQueenSide);
+
+            board.Undo();
+
+            Assert.True(board.WhiteCanCastleKingSide);
+            Assert.True(board.WhiteCanCastleQueenSide);
+
+            board.MakeMove(new Move(new Position(7, 7), new Position(6, 7)));
+
+            Assert.False(board.WhiteCanCastleKingSide);
+            Assert.True(board.WhiteCanCastleQueenSide);
+
+            board.Undo();
+
+            Assert.True(board.WhiteCanCastleKingSide);
+            Assert.True(board.WhiteCanCastleQueenSide);
+        }
+
+        [Fact]
+        public void CapturingRookOnHomeSquareClearsAndUndoRestoresBothCastlingRights()
+        {
+            var board = new BoardState();
+
+            board.MakeMove(new Move(new Position(0, 0), new Position(7, 0)));
+
+            Assert.False(board.BlackCanCastleQueenSide);
+            Assert.False(board.WhiteCanCastleQueenSide);
+
+            board.Undo();
+
+            Assert.True(board.BlackCanCastleQueenSide);
+            Assert.True(board.WhiteCanCastleQueenSide);
+            Assert.Equal(PieceType.Rook, board.GetPiece(new Position(0, 0)).Type);
+            Assert.Equal(PieceType.Rook, board.GetPiece(new Position(7, 0)).Type);
+        }
+
+        [Fact]
         public void CastlingKingSide()
         {
             var g = new ChessGame();
@@ -127,6 +211,66 @@ namespace AiAssistedChess.Tests
 
             Assert.Equal(PieceType.King, g.Board.GetPiece(new Position(7, 6)).Type);
             Assert.Equal(PieceType.Rook, g.Board.GetPiece(new Position(7, 5)).Type);
+        }
+
+        [Fact]
+        public void WhiteCanCastleQueenSide()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(4, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 4), new Position(3, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 1), new Position(5, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 6), new Position(2, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 2), new Position(4, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 3), new Position(6, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 7), new Position(2, 7))));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 4), new Position(7, 2))));
+
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(7, 2)).Type);
+            Assert.Equal(PieceType.Rook, game.Board.GetPiece(new Position(7, 3)).Type);
+        }
+
+        [Fact]
+        public void BlackCanCastleKingSide()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 4), new Position(3, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 6), new Position(5, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 6), new Position(2, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 5), new Position(4, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 5), new Position(3, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(5, 3))));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 4), new Position(0, 6))));
+
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(0, 6)).Type);
+            Assert.Equal(PieceType.Rook, game.Board.GetPiece(new Position(0, 5)).Type);
+        }
+
+        [Fact]
+        public void BlackCanCastleQueenSide()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 3), new Position(3, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 6), new Position(5, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 1), new Position(2, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(5, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 2), new Position(3, 5))));
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 5), new Position(6, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 3), new Position(1, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 7), new Position(5, 7))));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 4), new Position(0, 2))));
+
+            Assert.Equal(PieceType.King, game.Board.GetPiece(new Position(0, 2)).Type);
+            Assert.Equal(PieceType.Rook, game.Board.GetPiece(new Position(0, 3)).Type);
         }
 
         [Fact]

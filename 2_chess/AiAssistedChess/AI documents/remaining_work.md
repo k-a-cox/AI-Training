@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has nine tests:
+The xUnit project currently has sixteen tests:
 
 - Initial pawn double move.
 - En-passant capture.
@@ -26,12 +26,15 @@ The xUnit project currently has nine tests:
 - En-passant expiration after one reply.
 - Undo restoring both pawns and the turn after en passant.
 - Rejecting kingside castling when its transit square is attacked.
+- White queenside castling and black kingside/queenside castling.
+- Rejecting castling when the king is in check or the destination square is attacked.
+- Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
 
-The castling test initially failed because its setup attempted to move the f1 bishop to c4 while the e2 pawn still blocked its path. The setup was corrected to move e2 to e4 first. The latest test run passed all nine tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all sixteen tests.
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 9 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 16 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -50,9 +53,8 @@ The castling test initially failed because its setup attempted to move the f1 bi
 - [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines.
 - [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
 - [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.
-- [x] Test white kingside castling through an attacked transit square is rejected.
-- [ ] Test kingside and queenside castling for both colors, including rejection while in check and into check.
-- [ ] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
+- [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
+- [x] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
 - [ ] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
 - [x] Test en-passant availability expires after exactly one reply and undo restores the en-passant capture.
 - [ ] Test additional invalid en-passant attempts and en-passant undo state after other move sequences.
