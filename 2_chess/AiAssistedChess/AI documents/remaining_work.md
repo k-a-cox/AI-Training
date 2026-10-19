@@ -15,19 +15,23 @@
 
 ### Existing automated tests
 
-The xUnit project currently has five tests:
+The xUnit project currently has nine tests:
 
 - Initial pawn double move.
 - En-passant capture.
 - White kingside castling.
 - Fool's Mate checkmate detection.
 - Undo restoring a pawn to its original square.
+- Legal move enumeration for a non-current player.
+- En-passant expiration after one reply.
+- Undo restoring both pawns and the turn after en passant.
+- Rejecting kingside castling when its transit square is attacked.
 
-The castling test initially failed because its setup attempted to move the f1 bishop to c4 while the e2 pawn still blocked its path. The setup was corrected to move e2 to e4 first. The latest test run passed all five tests.
+The castling test initially failed because its setup attempted to move the f1 bishop to c4 while the e2 pawn still blocked its path. The setup was corrected to move e2 to e4 first. The latest test run passed all nine tests.
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 5 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 9 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -44,12 +48,14 @@ The castling test initially failed because its setup attempted to move the f1 bi
 
 - [ ] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
 - [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines.
-- [ ] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` currently delegates to `GetLegalMoves(position)`, which rejects pieces not belonging to `CurrentPlayer`; status detection should be able to enumerate the requested side's moves consistently.
+- [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
 - [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.
-- [ ] Test both kingside and queenside castling for both colors, and reject castling while in check, through check, or into check.
+- [x] Test white kingside castling through an attacked transit square is rejected.
+- [ ] Test kingside and queenside castling for both colors, including rejection while in check and into check.
 - [ ] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
 - [ ] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
-- [ ] Test en-passant availability for exactly one reply, invalid en-passant attempts, and undo of an en-passant capture.
+- [x] Test en-passant availability expires after exactly one reply and undo restores the en-passant capture.
+- [ ] Test additional invalid en-passant attempts and en-passant undo state after other move sequences.
 - [ ] Test undo over multiple plies and verify restoration of captures, turn, castling rights, en-passant state, and game status.
 - [ ] Prevent further moves after checkmate or stalemate, if the current game API/UI permits moves after a terminal status.
 - [ ] Review `BoardState.Clone()` and move-history behavior to ensure simulations cannot mutate live game state and undo restores all special-move state.
@@ -72,7 +78,7 @@ The castling test initially failed because its setup attempted to move the f1 bi
 
 ## Suggested order
 
-1. Fix engine issues and add focused tests, starting with requested-color legal-move generation and castling/status correctness.
-2. Complete special-move and undo coverage.
+1. Add coverage for remaining castling sides/colors, promotion, and terminal-state edge cases.
+2. Complete movement, check-detection, and multi-ply undo coverage.
 3. Manually verify standard play, special moves, terminal states, and UI interactions.
-4. Record outcomes here; then consider optional enhancements.
+4. Record outcomes here as work is implemented and verified; then consider optional enhancements.
