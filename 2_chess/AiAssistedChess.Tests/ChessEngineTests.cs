@@ -190,6 +190,37 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void LegalMoveSimulationDoesNotMutateLiveBoardOrUndoHistory()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "a7-a6", "e4-e5", "d7-d5");
+
+            var enPassantTarget = new Position(2, 3);
+            var whitePawnPosition = new Position(3, 4);
+            var blackPawnPosition = new Position(3, 3);
+
+            Assert.Contains(game.GetLegalMoves(whitePawnPosition), move => move.To == enPassantTarget);
+            Assert.NotEmpty(game.GetAllLegalMoves(PieceColor.White));
+            Assert.NotEmpty(game.GetAllLegalMoves(PieceColor.Black));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(whitePawnPosition));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(blackPawnPosition));
+            Assert.True(game.Board.GetPiece(enPassantTarget).IsEmpty);
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Null(game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(1, 3)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(whitePawnPosition));
+            Assert.True(game.Board.GetPiece(blackPawnPosition).IsEmpty);
+        }
+
+        [Fact]
         public void WhiteEnPassantIsRejectedWhenItExposesKingToRookCheck()
         {
             var game = MakeBoard(

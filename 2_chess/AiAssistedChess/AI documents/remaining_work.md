@@ -15,34 +15,35 @@
 
 ### Existing automated tests
 
-The xUnit project currently has fifty-four tests:
+The xUnit project currently has fifty-five tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior:
 
-- Initial pawn double move and pawn movement restrictions.
-- Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
-- Bishop, queen, and rook movement after paths are opened; king step legality.
-- Pawn, queen, and knight captures.
-- En-passant capture.
-- White kingside castling.
-- Fool's Mate checkmate detection.
-- Undo restoring a pawn to its original square.
-- Legal move enumeration for a non-current player.
-- En-passant expiration after one reply.
-- Undoing an intervening move restores the en-passant target and legal capture.
-- Undoing a five-move sequence containing an en-passant capture restores the captured pawn, side to move, and en-passant target at each step.
-- Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; the rejected moves preserve the board and target.
-- Undo restoring both pawns and the turn after en passant.
-- Rejecting kingside castling when its transit square is attacked.
-- White queenside castling and black kingside/queenside castling.
-- Rejecting castling when the king is in check or the destination square is attacked.
-- Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
-- Undoing a later reply and a king move restores the king's original square and both castling rights.
-- Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available.
-- A blocked rook attack line does not put the king in check.
-- Scholar's Mate checkmate detection and rejection of further moves after checkmate.
-- Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
-- Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
+- [ ] Initial pawn double move and pawn movement restrictions.
+- [ ] Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
+- [ ] Bishop, queen, and rook movement after paths are opened; king step legality.
+- [ ] Pawn, queen, and knight captures.
+- [ ] En-passant capture.
+- [ ] White kingside castling.
+- [ ] Fool's Mate checkmate detection.
+- [ ] Undo restoring a pawn to its original square.
+- [ ] Legal move enumeration for a non-current player.
+- [ ] En-passant expiration after one reply.
+- [ ] Undoing an intervening move restores the en-passant target and legal capture.
+- [ ] Undoing a five-move sequence containing an en-passant capture restores the captured pawn, side to move, and en-passant target at each step.
+- [ ] Repeated legal-move simulations preserve the live board, en-passant target, and undo history.
+- [ ] Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; the rejected moves preserve the board and target.
+- [ ] Undo restoring both pawns and the turn after en passant.
+- [ ] Rejecting kingside castling when its transit square is attacked.
+- [ ] White queenside castling and black kingside/queenside castling.
+- [ ] Rejecting castling when the king is in check or the destination square is attacked.
+- [ ] Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
+- [ ] Undoing a later reply and a king move restores the king's original square and both castling rights.
+- [ ] Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available.
+- [ ] A blocked rook attack line does not put the king in check.
+- [ ] Scholar's Mate checkmate detection and rejection of further moves after checkmate.
+- [ ] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
+- [ ] Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all fifty-four tests.
+The latest test run passed all fifty-five tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -81,14 +82,16 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Test en-passant availability expires after exactly one reply, undo restores the target and capture opportunity after an intervening move, reject en-passant captures that expose the moving king to a rook attack for both colors, and undo the en-passant capture.
 - [x] Extend undo coverage across multiple individual moves to verify restoration of castling-right changes; tests verify king position, castling rights, captured pieces, turn, active status, and en-passant target restoration.
 - [x] Prevent further moves after checkmate or stalemate; post-checkmate rejection is covered by a regression test.
-- [ ] Review `BoardState.Clone()` and move-history behavior to ensure simulations cannot mutate live game state and undo restores all special-move state.
+- [x] Review `BoardState.Clone()` and move-history behavior; repeated legal-move simulations preserve live state, and undo still restores the previous move and special state.
+
+### 2.5. Manually review all engine unit tests again
+
+- [ ] After engine-test work is declared complete, manually review every unit test in the UI, confirming each test's setup, action, and expected behavior.
+- [ ] Record manual confirmation for each reviewed test here; do not carry forward earlier test-specific confirmations.
 
 ### 3. Verify and polish the UI
 
 - [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
-- [x] Manually replay pasted coordinate castling test sequences using Load, Next, and Back; verified the sequences work on the visible board.
-- [x] Manually replay legal check sequences for pawn, knight, bishop, rook, and queen attacks; each sequence reaches check while legal moves remain.
-- [x] Manually verify the en-passant capture undo sequence; user confirmed the board state, turn, and restored target match the test intent.
 - [ ] Manually verify the custom board-position GUI: load a valid position, reject invalid input without changing the board, then move/undo/restart.
 - [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
 - [ ] Allow manual play to continue after a predefined move sequence has been loaded and replayed; currently the user reports the board is not manually playable afterward.
