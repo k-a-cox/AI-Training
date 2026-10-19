@@ -725,6 +725,44 @@ namespace AiAssistedChess.Tests
             Assert.Equal(PieceColor.White, p.Color);
         }
 
+        [Fact]
+        public void UndoAcrossSeveralMovesRestoresEnPassantCaptureAndState()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "a7-a6", "e4-e5", "d7-d5", "e5-d6");
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(2, 3)));
+            Assert.True(game.Board.GetPiece(new Position(3, 3)).IsEmpty);
+            Assert.Null(game.Board.EnPassantTarget);
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new Position(2, 3), game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(3, 3)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(3, 4)));
+            Assert.Contains(game.GetLegalMoves(new Position(3, 4)), move => move.To == new Position(2, 3));
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Null(game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(1, 3)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(3, 4)));
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Null(game.Board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(4, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(1, 3)));
+        }
+
         private static void PlayMoves(ChessGame game, params string[] coordinateMoves)
         {
             foreach (var coordinateMove in coordinateMoves)
