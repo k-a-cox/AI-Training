@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has thirty-two tests:
+The xUnit project currently has forty-eight tests:
 
 - Initial pawn double move and pawn movement restrictions.
 - Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -36,8 +36,9 @@ The xUnit project currently has thirty-two tests:
 - A blocked rook attack line does not put the king in check.
 - Scholar's Mate checkmate detection and rejection of further moves after checkmate.
 - Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
+- Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all thirty-two tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all forty-eight tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -51,7 +52,7 @@ Manual movement/capture replay sequences for the visible board:
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 32 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 48 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -72,7 +73,7 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves. Checkmate is covered for Fool's Mate and Scholar's Mate; two mirrored stalemate positions are covered.
 - [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
 - [x] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
-- [ ] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
+- [x] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
 - [x] Test en-passant availability expires after exactly one reply and undo restores the en-passant capture.
 - [ ] Test additional invalid en-passant attempts and en-passant undo state after other move sequences.
 - [ ] Test undo over multiple plies and verify restoration of captures, turn, castling rights, en-passant state, and game status.

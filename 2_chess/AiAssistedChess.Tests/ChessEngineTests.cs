@@ -546,7 +546,7 @@ namespace AiAssistedChess.Tests
         }
 
         [Theory]
-        [InlineData("white:king=c6; black:king=a8; turn=black")]
+        [InlineData("white:king=c6,queen=b6; black:king=a8; turn=black; turn=white")]
         [InlineData("white:king=c6,queen=b6; black:king=a8,rook=b6; turn=black")]
         [InlineData("white:king=c6,queen=z9; black:king=a8; turn=black")]
         [InlineData("white:king=c6,dragon=b6; black:king=a8; turn=black")]
@@ -556,6 +556,69 @@ namespace AiAssistedChess.Tests
             Assert.False(CustomBoardPositionParser.TryParse(input, out _, out var errorMessage));
 
             Assert.NotEmpty(errorMessage);
+        }
+
+        [Theory]
+        [InlineData(PieceType.Queen)]
+        [InlineData(PieceType.Rook)]
+        [InlineData(PieceType.Bishop)]
+        [InlineData(PieceType.Knight)]
+        public void PawnPromotesToEachLegalPieceType(PieceType promotionType)
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(1, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(0, 0), promotionType)));
+
+            Assert.Equal(promotionType, game.Board.GetPiece(new Position(0, 0)).Type);
+            Assert.Equal(PieceColor.White, game.Board.GetPiece(new Position(0, 0)).Color);
+            Assert.True(game.Board.GetPiece(new Position(1, 0)).IsEmpty);
+        }
+
+        [Fact]
+        public void PawnCanPromoteByCaptureAndUndoRestoresPawnAndCapturedPiece()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(1, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)),
+                (new Position(0, 1), new ChessPiece(PieceType.Rook, PieceColor.Black)));
+
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(0, 1), PieceType.Knight)));
+
+            Assert.Equal(PieceType.Knight, game.Board.GetPiece(new Position(0, 1)).Type);
+            Assert.Equal(PieceColor.White, game.Board.GetPiece(new Position(0, 1)).Color);
+
+            game.Undo();
+
+            Assert.Equal(PieceType.Pawn, game.Board.GetPiece(new Position(1, 0)).Type);
+            Assert.Equal(PieceColor.White, game.Board.GetPiece(new Position(1, 0)).Color);
+            Assert.Equal(PieceType.Rook, game.Board.GetPiece(new Position(0, 1)).Type);
+            Assert.Equal(PieceColor.Black, game.Board.GetPiece(new Position(0, 1)).Color);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+        }
+
+        [Theory]
+        [InlineData(PieceType.Pawn)]
+        [InlineData(PieceType.King)]
+        [InlineData(PieceType.None)]
+        public void PawnRejectsInvalidPromotionType(PieceType promotionType)
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(1, 0), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+
+            Assert.False(game.TryMakeMove(new Move(new Position(1, 0), new Position(0, 0), promotionType)));
+
+            Assert.Equal(PieceType.Pawn, game.Board.GetPiece(new Position(1, 0)).Type);
+            Assert.True(game.Board.GetPiece(new Position(0, 0)).IsEmpty);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
         }
 
         [Fact]
