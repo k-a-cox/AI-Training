@@ -370,6 +370,34 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void UndoAcrossMultipleMovesRestoresKingAndCastlingRights()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "a7-a6", "e1-e2", "a6-a5");
+
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(6, 4)));
+            Assert.False(game.Board.WhiteCanCastleKingSide);
+            Assert.False(game.Board.WhiteCanCastleQueenSide);
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(6, 4)));
+            Assert.False(game.Board.WhiteCanCastleKingSide);
+            Assert.False(game.Board.WhiteCanCastleQueenSide);
+
+            game.Undo();
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.King, PieceColor.White), game.Board.GetPiece(new Position(7, 4)));
+            Assert.True(game.Board.GetPiece(new Position(6, 4)).IsEmpty);
+            Assert.True(game.Board.WhiteCanCastleKingSide);
+            Assert.True(game.Board.WhiteCanCastleQueenSide);
+        }
+
+        [Fact]
         public void PawnAttackSetsCheckStatusWhileLegalResponsesRemain()
         {
             var game = new ChessGame();
