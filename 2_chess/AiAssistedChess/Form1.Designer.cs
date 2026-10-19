@@ -81,7 +81,6 @@
             this.textBoxMoveSequence.Multiline = true;
             this.textBoxMoveSequence.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxMoveSequence.Size = new System.Drawing.Size(430, 180);
-            this.textBoxMoveSequence.Text = "e2-e4, e7-e5, g1-f3";
             this.textBoxMoveSequence.PlaceholderText = "e2-e4, e7-e5, g1-f3";
 
             // buttonLoadSequence
@@ -122,7 +121,6 @@
             this.textBoxCustomPosition.Multiline = true;
             this.textBoxCustomPosition.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxCustomPosition.Size = new System.Drawing.Size(430, 110);
-            this.textBoxCustomPosition.Text = "white:king=c6,queen=b6; black:king=a8; turn=black";
             this.textBoxCustomPosition.PlaceholderText = "white:king=c6,queen=b6; black:king=a8; turn=black";
 
             // buttonLoadPosition
