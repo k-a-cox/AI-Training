@@ -341,6 +341,17 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void KingAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(4, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(3, 4), new ChessPiece(PieceType.King, PieceColor.Black)));
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
         public void PieceBetweenRookAndKingPreventsCheckStatus()
         {
             var game = new ChessGame();

@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has forty-eight tests:
+The xUnit project currently has forty-nine tests:
 
 - Initial pawn double move and pawn movement restrictions.
 - Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -32,13 +32,13 @@ The xUnit project currently has forty-eight tests:
 - White queenside castling and black kingside/queenside castling.
 - Rejecting castling when the king is in check or the destination square is attacked.
 - Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
-- Check detection for pawn, knight, bishop, rook, and queen attacks, each with legal responses available.
+- Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available.
 - A blocked rook attack line does not put the king in check.
 - Scholar's Mate checkmate detection and rejection of further moves after checkmate.
 - Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
 - Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all forty-eight tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all forty-nine tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -68,7 +68,7 @@ Manual movement/capture replay sequences for the visible board:
 ### 2. Complete engine correctness and coverage
 
 - [x] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
-- [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines. Automated tests cover pawn/knight/bishop/rook/queen checks and blocked rook lines; king attack still needs a focused test position.
+- [x] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines. Automated tests cover pawn/knight/king/bishop/rook/queen checks and blocked rook lines.
 - [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
 - [x] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves. Checkmate is covered for Fool's Mate and Scholar's Mate; two mirrored stalemate positions are covered.
 - [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
