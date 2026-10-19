@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has twenty-three tests:
+The xUnit project currently has twenty-nine tests:
 
 - Initial pawn double move and pawn movement restrictions.
 - Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -32,17 +32,24 @@ The xUnit project currently has twenty-three tests:
 - White queenside castling and black kingside/queenside castling.
 - Rejecting castling when the king is in check or the destination square is attacked.
 - Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
+- Check detection for pawn, knight, bishop, rook, and queen attacks, each with legal responses available.
+- A blocked rook attack line does not put the king in check.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all twenty-three tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all twenty-nine tests.
 
 Manual movement/capture replay sequences for the visible board:
 
 - Basic development and sliding-piece movement: `e2-e4, e7-e5, g1-f3, b8-c6, f1-c4, g8-f6, d2-d3, f8-c5, b1-c3, d7-d6`.
 - Pawn captures on d5, then a knight captures Black's queen: `e2-e4, d7-d5, e4-d5, d8-d5, b1-c3, a7-a6, c3-d5`.
+- Pawn check: `d2-d4, e7-e5, a2-a3, e5-d4, a3-a4, d4-d3, h2-h3, d3-d2`.
+- Knight check: `d2-d4, b8-c6, a2-a3, c6-e5, a3-a4, e5-d3`.
+- Bishop check: `d2-d4, e7-e6, a2-a3, f8-b4`.
+- Rook check: `e2-e4, e7-e5, d2-d4, e5-d4, e4-e5, d7-d6, e5-d6, a7-a6, g1-f3, a6-a5, f1-c4, h7-h6, e1-g1, h6-h5, f1-e1`.
+- Queen check: `f2-f4, e7-e5, g1-f3, a7-a6, e2-e4, a6-a5, f1-c4, d8-h4`.
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 23 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 29 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -58,7 +65,7 @@ Manual movement/capture replay sequences for the visible board:
 ### 2. Complete engine correctness and coverage
 
 - [x] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
-- [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines.
+- [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines. Automated tests cover pawn/knight/bishop/rook/queen checks and blocked rook lines; king attack still needs a focused test position.
 - [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
 - [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.
 - [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
@@ -74,6 +81,7 @@ Manual movement/capture replay sequences for the visible board:
 
 - [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
 - [x] Manually replay pasted coordinate castling test sequences using Load, Next, and Back; verified the sequences work on the visible board.
+- [x] Manually replay legal check sequences for pawn, knight, bishop, rook, and queen attacks; each sequence reaches check while legal moves remain.
 - [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
 - [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
 - [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.

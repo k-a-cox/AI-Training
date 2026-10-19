@@ -290,6 +290,66 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void PawnAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "d2-d4", "e7-e5", "a2-a3", "e5-d4", "a3-a4", "d4-d3", "h2-h3", "d3-d2");
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
+        public void KnightAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "d2-d4", "b8-c6", "a2-a3", "c6-e5", "a3-a4", "e5-d3");
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
+        public void BishopAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "d2-d4", "e7-e6", "a2-a3", "f8-b4");
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
+        public void RookAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "e7-e5", "d2-d4", "e5-d4", "e4-e5", "d7-d6", "e5-d6", "a7-a6", "g1-f3", "a6-a5", "f1-c4", "h7-h6", "e1-g1", "h6-h5", "f1-e1");
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
+        public void QueenAttackSetsCheckStatusWhileLegalResponsesRemain()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "f2-f4", "e7-e5", "g1-f3", "a7-a6", "e2-e4", "a6-a5", "f1-c4", "d8-h4");
+
+            AssertCheckWithLegalResponses(game);
+        }
+
+        [Fact]
+        public void PieceBetweenRookAndKingPreventsCheckStatus()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "e7-e5", "g1-f3", "a7-a6", "f1-c4", "a6-a5", "e1-g1", "h7-h6", "f1-e1", "b7-b6");
+
+            Assert.Equal(GameStatus.Active, game.Status);
+        }
+
+        [Fact]
         public void CastlingKingSide()
         {
             var g = new ChessGame();
@@ -406,6 +466,33 @@ namespace AiAssistedChess.Tests
             Assert.False(p.IsEmpty);
             Assert.Equal(PieceType.Pawn, p.Type);
             Assert.Equal(PieceColor.White, p.Color);
+        }
+
+        private static void PlayMoves(ChessGame game, params string[] coordinateMoves)
+        {
+            foreach (var coordinateMove in coordinateMoves)
+            {
+                var squares = coordinateMove.Split('-');
+
+                var from = ParseSquare(squares[0]);
+                var to = ParseSquare(squares[1]);
+
+                Assert.True(game.TryMakeMove(new Move(from, to)), $"Move {coordinateMove} should be legal.");
+            }
+        }
+
+        private static Position ParseSquare(string algebraicSquare)
+        {
+            var file = char.ToLowerInvariant(algebraicSquare[0]) - 'a';
+            var rank = algebraicSquare[1] - '0';
+
+            return new Position(8 - rank, file);
+        }
+
+        private static void AssertCheckWithLegalResponses(ChessGame game)
+        {
+            Assert.Equal(GameStatus.Check, game.Status);
+            Assert.NotEmpty(game.GetAllLegalMoves(game.CurrentPlayer));
         }
     }
 }
