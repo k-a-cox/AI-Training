@@ -221,6 +221,37 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void BoardStateCloneHasIndependentBoardAndNoCopiedUndoHistory()
+        {
+            var board = new BoardState();
+
+            board.MakeMove(new Move(new Position(6, 4), new Position(4, 4)));
+
+            var clonedBoard = board.Clone();
+
+            clonedBoard.Undo();
+
+            Assert.Equal(PieceColor.Black, clonedBoard.CurrentPlayer);
+            Assert.Equal(new Position(5, 4), clonedBoard.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), clonedBoard.GetPiece(new Position(4, 4)));
+            Assert.Equal(PieceColor.Black, board.CurrentPlayer);
+            Assert.Equal(new Position(5, 4), board.EnPassantTarget);
+
+            clonedBoard.MakeMove(new Move(new Position(1, 3), new Position(3, 3)));
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), clonedBoard.GetPiece(new Position(3, 3)));
+            Assert.True(board.GetPiece(new Position(3, 3)).IsEmpty);
+
+            board.Undo();
+
+            Assert.Equal(PieceColor.White, board.CurrentPlayer);
+            Assert.Null(board.EnPassantTarget);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), board.GetPiece(new Position(6, 4)));
+            Assert.True(board.GetPiece(new Position(4, 4)).IsEmpty);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), clonedBoard.GetPiece(new Position(4, 4)));
+        }
+
+        [Fact]
         public void WhiteEnPassantIsRejectedWhenItExposesKingToRookCheck()
         {
             var game = MakeBoard(
