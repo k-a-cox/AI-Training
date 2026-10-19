@@ -36,7 +36,7 @@ namespace AiAssistedChess
             }
             moveSequencePlayer.Discard();
             chessBoardPanel.SetInputEnabled(true);
-            chessBoardPanel.Invalidate();
+            chessBoardPanel.ClearSelection();
 
             labelPositionStatus.Text = "Custom position loaded. Manual moves and Undo are enabled.";
             labelSequenceStatus.Text = "Move replay cleared because a custom position was loaded.";

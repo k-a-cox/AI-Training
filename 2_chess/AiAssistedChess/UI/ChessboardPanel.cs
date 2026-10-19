@@ -23,6 +23,13 @@ namespace AiAssistedChess.UI
             isInputEnabled = isEnabled;
         }
 
+        public void ClearSelection()
+        {
+            selected = null;
+            legal.Clear();
+            Invalidate();
+        }
+
         private Position? selected;
         private List<Position> legal = new();
         private readonly Dictionary<string, Image> pieceImages = new();

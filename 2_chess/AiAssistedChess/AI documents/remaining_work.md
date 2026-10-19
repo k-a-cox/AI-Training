@@ -15,13 +15,15 @@
 
 ### Existing automated tests
 
-The xUnit project currently has sixty-one tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
+The xUnit project currently has seventy-one tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
 
 - [ ] Initial pawn double move and pawn movement restrictions.
+- [x] Rejecting moves from empty squares, opponent pieces, and off-board destinations; blocked pawn double-step. User confirmed all four scenarios in the UI.
 - [ ] Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
 - [ ] Bishop, queen, and rook movement after paths are opened; king step legality.
 - [ ] Pawn, queen, and knight captures.
 - [ ] En-passant capture.
+- [x] Black en-passant captures from either side of the target. User confirmed both sides in the UI.
 - [ ] White kingside castling.
 - [ ] Fool's Mate checkmate detection.
 - [ ] Undo restoring a pawn to its original square.
@@ -46,8 +48,9 @@ The xUnit project currently has sixty-one tests. Items marked `[ ]` still need m
 - [ ] Scholar's Mate checkmate detection and rejection of further moves after checkmate.
 - [ ] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
 - [ ] Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
+- [x] Black pawn promotion to queen, rook, bishop, and knight. User confirmed all four promotion choices in the UI.
 
-The latest test run passed all sixty-one tests.
+The latest test run passed all seventy-one tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -91,10 +94,10 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Verify pinned non-king pieces cannot move if doing so exposes their own king to check.
 - [x] Verify kings cannot move onto attacked squares, including squares attacked by the opposing king.
 - [x] Verify every legal response to rook check actually resolves check; test bishop interposition and confirm double check allows only king moves, even with a rook able to block one line.
-- [ ] Test rejecting moves from empty squares, opponent pieces, and off-board destinations without changing game state.
-- [ ] Test that a pawn cannot advance two squares when its intermediate square is blocked.
-- [ ] Test legal en-passant captures for Black and captures on both sides of the en-passant target.
-- [ ] Test Black pawn promotion to all four legal piece types.
+- [x] Test rejecting moves from empty squares, opponent pieces, and off-board destinations without changing game state.
+- [x] Test that a pawn cannot advance two squares when its intermediate square is blocked.
+- [x] Test legal en-passant captures for Black and captures on both sides of the en-passant target.
+- [x] Test Black pawn promotion to all four legal piece types.
 - [ ] Test rejecting promotion moves with a missing promotion choice and non-promotion moves with an inappropriate promotion choice.
 - [ ] Verify queenside castling remains legal when only the b-file square is attacked.
 - [ ] Test that capturing a rook on its kingside home square clears and undo restores the corresponding castling rights.

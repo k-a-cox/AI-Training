@@ -41,6 +41,48 @@ namespace AiAssistedChess.Tests
             Assert.DoesNotContain(new Position(7, 0), pawnMoves);
         }
 
+        [Theory]
+        [InlineData(4, 4, 3, 4)]
+        [InlineData(1, 4, 2, 4)]
+        [InlineData(6, 4, 8, 4)]
+        public void InvalidMoveSourcesAndDestinationsPreserveGameState(int fromRow, int fromCol, int toRow, int toCol)
+        {
+            var game = new ChessGame();
+            var attemptedMove = new Move(new Position(fromRow, fromCol), new Position(toRow, toCol));
+
+            Assert.False(game.TryMakeMove(attemptedMove));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(6, 4)));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(new Position(1, 4)));
+
+            game.Undo();
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(6, 4)));
+        }
+
+        [Fact]
+        public void PawnCannotAdvanceTwoSquaresWhenIntermediateSquareIsBlocked()
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 4), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 4), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(6, 4), new ChessPiece(PieceType.Pawn, PieceColor.White)),
+                (new Position(5, 4), new ChessPiece(PieceType.Pawn, PieceColor.White)));
+            var pawnPosition = new Position(6, 4);
+            var blockedDestination = new Position(4, 4);
+
+            Assert.False(game.TryMakeMove(new Move(pawnPosition, blockedDestination)));
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(GameStatus.Active, game.Status);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(pawnPosition));
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(new Position(5, 4)));
+            Assert.True(game.Board.GetPiece(blockedDestination).IsEmpty);
+        }
+
         [Fact]
         public void BishopCanMoveDiagonallyAfterPathIsCleared()
         {
@@ -149,6 +191,38 @@ namespace AiAssistedChess.Tests
             Assert.True(g.TryMakeMove(new Move(new Position(1,3), new Position(3,3))));
             // White: e5xd6 en passant
             Assert.True(g.TryMakeMove(new Move(new Position(3,4), new Position(2,3))));
+        }
+
+        [Theory]
+        [InlineData(3, 4, 4)]
+        [InlineData(5, 4, 4)]
+        public void BlackCanCaptureEnPassantOnEitherSideOfTheTarget(int blackPawnCol, int whitePawnCol, int targetCol)
+        {
+            var game = MakeBoard(
+                PieceColor.White,
+                (new Position(7, 0), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(6, whitePawnCol), new ChessPiece(PieceType.Pawn, PieceColor.White)),
+                (new Position(4, blackPawnCol), new ChessPiece(PieceType.Pawn, PieceColor.Black)));
+            var whitePawnStart = new Position(6, whitePawnCol);
+            var enPassantTarget = new Position(4, whitePawnCol);
+            var blackPawnPosition = new Position(4, blackPawnCol);
+            var capturedWhitePawnPosition = new Position(4, whitePawnCol);
+            var blackEnPassantDestination = new Position(5, targetCol);
+
+            Assert.True(game.TryMakeMove(new Move(whitePawnStart, enPassantTarget)));
+
+            var enPassantMove = new Move(blackPawnPosition, blackEnPassantDestination);
+
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+            Assert.Equal(new Position(5, whitePawnCol), game.Board.EnPassantTarget);
+            Assert.Contains(game.GetLegalMoves(blackPawnPosition), move => move.To == blackEnPassantDestination);
+            Assert.True(game.TryMakeMove(enPassantMove));
+
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.Black), game.Board.GetPiece(blackEnPassantDestination));
+            Assert.True(game.Board.GetPiece(blackPawnPosition).IsEmpty);
+            Assert.True(game.Board.GetPiece(capturedWhitePawnPosition).IsEmpty);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
         }
 
         [Fact]
@@ -884,6 +958,28 @@ namespace AiAssistedChess.Tests
             Assert.Equal(promotionType, game.Board.GetPiece(new Position(0, 0)).Type);
             Assert.Equal(PieceColor.White, game.Board.GetPiece(new Position(0, 0)).Color);
             Assert.True(game.Board.GetPiece(new Position(1, 0)).IsEmpty);
+        }
+
+        [Theory]
+        [InlineData(PieceType.Queen)]
+        [InlineData(PieceType.Rook)]
+        [InlineData(PieceType.Bishop)]
+        [InlineData(PieceType.Knight)]
+        public void BlackPawnPromotesToEachLegalPieceType(PieceType promotionType)
+        {
+            var game = MakeBoard(
+                PieceColor.Black,
+                (new Position(7, 7), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(6, 0), new ChessPiece(PieceType.Pawn, PieceColor.Black)));
+            var blackPawnPosition = new Position(6, 0);
+            var promotionSquare = new Position(7, 0);
+
+            Assert.True(game.TryMakeMove(new Move(blackPawnPosition, promotionSquare, promotionType)));
+
+            Assert.Equal(new ChessPiece(promotionType, PieceColor.Black), game.Board.GetPiece(promotionSquare));
+            Assert.True(game.Board.GetPiece(blackPawnPosition).IsEmpty);
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
         }
 
         [Fact]
