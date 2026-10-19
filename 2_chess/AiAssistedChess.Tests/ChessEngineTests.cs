@@ -455,6 +455,17 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void ScholarsMate_CheckmateDetectedAndFurtherMovesRejected()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "e7-e5", "f1-c4", "b8-c6", "d1-h5", "g8-f6", "h5-f7");
+
+            Assert.Equal(GameStatus.Checkmate, game.Status);
+            Assert.False(game.TryMakeMove(new Move(new Position(0, 1), new Position(2, 2))));
+        }
+
+        [Fact]
         public void UndoRestoresState()
         {
             var g = new ChessGame();

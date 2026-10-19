@@ -61,6 +61,8 @@ namespace AiAssistedChess.Engine
 
         public bool TryMakeMove(Move move)
         {
+            if (Status == GameStatus.Checkmate || Status == GameStatus.Stalemate) return false;
+
             var legal = GetLegalMoves(move.From).Any(m => m.To == move.To && m.Promotion == move.Promotion);
             if (!legal) return false;
             state.MakeMove(move);

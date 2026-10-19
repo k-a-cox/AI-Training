@@ -15,7 +15,7 @@
 
 ### Existing automated tests
 
-The xUnit project currently has twenty-nine tests:
+The xUnit project currently has thirty tests:
 
 - Initial pawn double move and pawn movement restrictions.
 - Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
@@ -34,8 +34,9 @@ The xUnit project currently has twenty-nine tests:
 - Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
 - Check detection for pawn, knight, bishop, rook, and queen attacks, each with legal responses available.
 - A blocked rook attack line does not put the king in check.
+- Scholar's Mate checkmate detection and rejection of further moves after checkmate.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all twenty-nine tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all thirty tests.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -49,7 +50,7 @@ Manual movement/capture replay sequences for the visible board:
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 29 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 30 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -67,14 +68,14 @@ Manual movement/capture replay sequences for the visible board:
 - [x] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
 - [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines. Automated tests cover pawn/knight/bishop/rook/queen checks and blocked rook lines; king attack still needs a focused test position.
 - [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
-- [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.
+- [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves. Checkmate is covered for Fool's Mate and Scholar's Mate; further stalemate positions remain.
 - [x] Test castling for both sides and colors; reject castling through attacked transit squares, while in check, and onto an attacked destination.
 - [x] Test castling rights after a king/rook moves, after a rook is captured on its original square, and after undo.
 - [ ] Test promotion to all four legal piece types, promotion captures, invalid promotion types, and undo after promotion.
 - [x] Test en-passant availability expires after exactly one reply and undo restores the en-passant capture.
 - [ ] Test additional invalid en-passant attempts and en-passant undo state after other move sequences.
 - [ ] Test undo over multiple plies and verify restoration of captures, turn, castling rights, en-passant state, and game status.
-- [ ] Prevent further moves after checkmate or stalemate, if the current game API/UI permits moves after a terminal status.
+- [x] Prevent further moves after checkmate or stalemate; post-checkmate rejection is covered by a regression test.
 - [ ] Review `BoardState.Clone()` and move-history behavior to ensure simulations cannot mutate live game state and undo restores all special-move state.
 
 ### 3. Verify and polish the UI
