@@ -167,6 +167,29 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void UndoRestoresEnPassantTargetAfterAnInterveningMove()
+        {
+            var game = new ChessGame();
+
+            PlayMoves(game, "e2-e4", "a7-a6", "e4-e5", "d7-d5", "a2-a3");
+
+            Assert.Null(game.Board.EnPassantTarget);
+            Assert.Equal(PieceColor.Black, game.CurrentPlayer);
+
+            game.Undo();
+
+            var enPassantTarget = new Position(2, 3);
+            var enPassantMove = new Move(new Position(3, 4), enPassantTarget);
+
+            Assert.Equal(PieceColor.White, game.CurrentPlayer);
+            Assert.Equal(enPassantTarget, game.Board.EnPassantTarget);
+            Assert.Contains(game.GetLegalMoves(new Position(3, 4)), move => move.To == enPassantTarget);
+            Assert.True(game.TryMakeMove(enPassantMove));
+            Assert.True(game.Board.GetPiece(new Position(3, 3)).IsEmpty);
+            Assert.Equal(new ChessPiece(PieceType.Pawn, PieceColor.White), game.Board.GetPiece(enPassantTarget));
+        }
+
+        [Fact]
         public void WhiteEnPassantIsRejectedWhenItExposesKingToRookCheck()
         {
             var game = MakeBoard(
