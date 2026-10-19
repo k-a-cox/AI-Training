@@ -78,6 +78,7 @@ Manual movement/capture replay sequences for the visible board:
 - [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
 - [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.
 - [ ] Test rendering when the control is resized and verify click-to-square mapping matches the displayed board at different sizes.
+- [x] Display board coordinates along all four edges; user confirmed the updated UI looks good.
 - [ ] Confirm images remain correctly loaded from the build output and glyph fallback remains usable when an image is absent.
 - [ ] Check disposal and file-lock behavior for loaded piece images when the board control or application closes.
 - [ ] Verify board and form layout at common window sizes and check piece contrast, borders, and selected/legal-move overlays.

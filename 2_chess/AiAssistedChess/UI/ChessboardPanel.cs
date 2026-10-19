@@ -65,7 +65,7 @@ namespace AiAssistedChess.UI
             base.OnPaint(e);
             var graphics = e.Graphics;
             graphics.Clear(BackColor);
-            int squareSize = Math.Min(Width - CoordinateGutterSize, Height - CoordinateGutterSize) / 8;
+            int squareSize = Math.Min(Width - 2 * CoordinateGutterSize, Height - 2 * CoordinateGutterSize) / 8;
             var boardOriginX = CoordinateGutterSize;
             var boardOriginY = CoordinateGutterSize;
             using var annotationFont = new Font(Font.FontFamily, 9, FontStyle.Regular);
@@ -154,11 +154,15 @@ namespace AiAssistedChess.UI
 
             for (int index = 0; index < 8; index++)
             {
-                var fileLabelRect = new RectangleF(boardOriginX + index * squareSize, 0, squareSize, CoordinateGutterSize);
-                var rankLabelRect = new RectangleF(0, boardOriginY + index * squareSize, CoordinateGutterSize, squareSize);
+                var topFileLabelRect = new RectangleF(boardOriginX + index * squareSize, 0, squareSize, CoordinateGutterSize);
+                var bottomFileLabelRect = new RectangleF(boardOriginX + index * squareSize, boardOriginY + 8 * squareSize, squareSize, CoordinateGutterSize);
+                var leftRankLabelRect = new RectangleF(0, boardOriginY + index * squareSize, CoordinateGutterSize, squareSize);
+                var rightRankLabelRect = new RectangleF(boardOriginX + 8 * squareSize, boardOriginY + index * squareSize, CoordinateGutterSize, squareSize);
 
-                graphics.DrawString(((char)('a' + index)).ToString(), annotationFont, annotationBrush, fileLabelRect, annotationFormat);
-                graphics.DrawString((8 - index).ToString(), annotationFont, annotationBrush, rankLabelRect, annotationFormat);
+                graphics.DrawString(((char)('a' + index)).ToString(), annotationFont, annotationBrush, topFileLabelRect, annotationFormat);
+                graphics.DrawString(((char)('a' + index)).ToString(), annotationFont, annotationBrush, bottomFileLabelRect, annotationFormat);
+                graphics.DrawString((8 - index).ToString(), annotationFont, annotationBrush, leftRankLabelRect, annotationFormat);
+                graphics.DrawString((8 - index).ToString(), annotationFont, annotationBrush, rightRankLabelRect, annotationFormat);
             }
         }
 
@@ -166,7 +170,7 @@ namespace AiAssistedChess.UI
         {
             base.OnMouseClick(e);
             if (Game == null || !isInputEnabled) return;
-            int squareSize = Math.Min(Width - CoordinateGutterSize, Height - CoordinateGutterSize) / 8;
+            int squareSize = Math.Min(Width - 2 * CoordinateGutterSize, Height - 2 * CoordinateGutterSize) / 8;
             int clickedCol = (e.X - CoordinateGutterSize) / squareSize;
             int clickedRow = (e.Y - CoordinateGutterSize) / squareSize;
             if (clickedCol < 0 || clickedCol > 7 || clickedRow < 0 || clickedRow > 7) return;
