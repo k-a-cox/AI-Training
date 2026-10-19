@@ -15,9 +15,12 @@
 
 ### Existing automated tests
 
-The xUnit project currently has sixteen tests:
+The xUnit project currently has twenty-three tests:
 
-- Initial pawn double move.
+- Initial pawn double move and pawn movement restrictions.
+- Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
+- Bishop, queen, and rook movement after paths are opened; king step legality.
+- Pawn, queen, and knight captures.
 - En-passant capture.
 - White kingside castling.
 - Fool's Mate checkmate detection.
@@ -30,11 +33,16 @@ The xUnit project currently has sixteen tests:
 - Rejecting castling when the king is in check or the destination square is attacked.
 - Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
 
-The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all sixteen tests.
+The original castling test setup was corrected to move e2 to e4 before developing the f1 bishop. The latest test run passed all twenty-three tests.
+
+Manual movement/capture replay sequences for the visible board:
+
+- Basic development and sliding-piece movement: `e2-e4, e7-e5, g1-f3, b8-c6, f1-c4, g8-f6, d2-d3, f8-c5, b1-c3, d7-d6`.
+- Pawn captures on d5, then a knight captures Black's queen: `e2-e4, d7-d5, e4-d5, d8-d5, b1-c3, a7-a6, c3-d5`.
 
 ### Verified baseline
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 16 passed, 0 failed.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 23 passed, 0 failed.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
 - `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
 - The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
@@ -49,7 +57,7 @@ The original castling test setup was corrected to move e2 to e4 before developin
 
 ### 2. Complete engine correctness and coverage
 
-- [ ] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
+- [x] Add focused movement tests for every piece, covering legal moves, captures, board edges, and blocked paths.
 - [ ] Add check-detection tests for attacks by pawns, knights, kings, and sliding pieces, including blocked attack lines.
 - [x] Fix color-specific legal-move enumeration. `GetAllLegalMoves(color)` now evaluates moves for the requested side without changing `CurrentPlayer`; a regression test verifies querying Black's moves while White is to move.
 - [ ] Test checkmate and stalemate with more than one position each, including positions where the side to move has no legal moves.

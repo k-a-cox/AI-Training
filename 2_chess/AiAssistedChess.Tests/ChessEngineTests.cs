@@ -17,6 +17,112 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void InitialPositionHasBlockedSlidingPiecesAndEdgeKnightMoves()
+        {
+            var game = new ChessGame();
+
+            Assert.Empty(game.GetLegalMoves(new Position(7, 0)));
+            Assert.Empty(game.GetLegalMoves(new Position(7, 2)));
+            Assert.Empty(game.GetLegalMoves(new Position(7, 3)));
+            Assert.Equal(new[] { new Position(5, 0), new Position(5, 2) }, game.GetLegalMoves(new Position(7, 1)).Select(move => move.To).OrderBy(position => position.Col));
+        }
+
+        [Fact]
+        public void PawnCannotMoveSidewaysOrCaptureAnEmptySquare()
+        {
+            var game = new ChessGame();
+            var pawnMoves = game.GetLegalMoves(new Position(6, 0)).Select(move => move.To).ToList();
+
+            Assert.Contains(new Position(5, 0), pawnMoves);
+            Assert.Contains(new Position(4, 0), pawnMoves);
+            Assert.DoesNotContain(new Position(6, 1), pawnMoves);
+            Assert.DoesNotContain(new Position(5, 1), pawnMoves);
+            Assert.DoesNotContain(new Position(7, 0), pawnMoves);
+        }
+
+        [Fact]
+        public void BishopCanMoveDiagonallyAfterPathIsCleared()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+
+            var bishopDestinations = game.GetLegalMoves(new Position(7, 5)).Select(move => move.To).ToList();
+
+            Assert.Contains(new Position(6, 4), bishopDestinations);
+            Assert.Contains(new Position(5, 3), bishopDestinations);
+            Assert.Contains(new Position(4, 2), bishopDestinations);
+            Assert.Contains(new Position(3, 1), bishopDestinations);
+            Assert.Contains(new Position(2, 0), bishopDestinations);
+        }
+
+        [Fact]
+        public void QueenCanMoveAlongClearedFile()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 3), new Position(4, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+
+            var queenDestinations = game.GetLegalMoves(new Position(7, 3)).Select(move => move.To).ToList();
+
+            Assert.Contains(new Position(6, 3), queenDestinations);
+            Assert.Contains(new Position(5, 3), queenDestinations);
+            Assert.DoesNotContain(new Position(4, 3), queenDestinations);
+        }
+
+        [Fact]
+        public void RookCanMoveAlongFileAfterItsPawnMoves()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 0), new Position(4, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 7), new Position(2, 7))));
+
+            var rookDestinations = game.GetLegalMoves(new Position(7, 0)).Select(move => move.To).ToList();
+
+            Assert.Contains(new Position(6, 0), rookDestinations);
+            Assert.Contains(new Position(5, 0), rookDestinations);
+            Assert.DoesNotContain(new Position(4, 0), rookDestinations);
+        }
+
+        [Fact]
+        public void KingCanStepIntoSquareClearedByItsPawn()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+
+            var kingDestinations = game.GetLegalMoves(new Position(7, 4)).Select(move => move.To).ToList();
+
+            Assert.Contains(new Position(6, 4), kingDestinations);
+            Assert.DoesNotContain(new Position(6, 3), kingDestinations);
+            Assert.DoesNotContain(new Position(6, 5), kingDestinations);
+        }
+
+        [Fact]
+        public void PawnAndQueenCanCaptureOnAnOpenFile()
+        {
+            var game = new ChessGame();
+
+            Assert.True(game.TryMakeMove(new Move(new Position(6, 4), new Position(4, 4))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 3), new Position(3, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(4, 4), new Position(3, 3))));
+            Assert.True(game.TryMakeMove(new Move(new Position(0, 3), new Position(3, 3))));
+
+            Assert.Equal(PieceType.Queen, game.Board.GetPiece(new Position(3, 3)).Type);
+            Assert.Equal(PieceColor.Black, game.Board.GetPiece(new Position(3, 3)).Color);
+            Assert.True(game.Board.GetPiece(new Position(4, 4)).IsEmpty);
+            Assert.True(game.TryMakeMove(new Move(new Position(7, 1), new Position(5, 2))));
+            Assert.True(game.TryMakeMove(new Move(new Position(1, 0), new Position(2, 0))));
+            Assert.True(game.TryMakeMove(new Move(new Position(5, 2), new Position(3, 3))));
+            Assert.Equal(PieceType.Knight, game.Board.GetPiece(new Position(3, 3)).Type);
+            Assert.True(game.Board.GetPiece(new Position(0, 3)).IsEmpty);
+        }
+
+        [Fact]
         public void GetAllLegalMovesReturnsMovesForNonCurrentPlayer()
         {
             var game = new ChessGame();
