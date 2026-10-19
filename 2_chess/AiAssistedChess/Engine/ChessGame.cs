@@ -72,6 +72,12 @@ namespace AiAssistedChess.Engine
 
         public void Undo() { state.Undo(); UpdateStatus(); }
 
+        internal void SetPositionForTesting(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            state.SetPositionForTesting(pieces, currentPlayer);
+            UpdateStatus();
+        }
+
         private void UpdateStatus()
         {
             var color = state.CurrentPlayer;

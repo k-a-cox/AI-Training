@@ -466,6 +466,34 @@ namespace AiAssistedChess.Tests
         }
 
         [Fact]
+        public void StalemateDetectedWithBlackKingInCorner()
+        {
+            var game = MakeBoard(
+                PieceColor.Black,
+                (new Position(0, 0), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(2, 2), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(2, 1), new ChessPiece(PieceType.Queen, PieceColor.White)));
+
+            Assert.Equal(GameStatus.Stalemate, game.Status);
+            Assert.Empty(game.GetAllLegalMoves(PieceColor.Black));
+            Assert.False(game.TryMakeMove(new Move(new Position(0, 0), new Position(0, 1))));
+        }
+
+        [Fact]
+        public void StalemateDetectedInMirroredCorner()
+        {
+            var game = MakeBoard(
+                PieceColor.Black,
+                (new Position(0, 7), new ChessPiece(PieceType.King, PieceColor.Black)),
+                (new Position(2, 5), new ChessPiece(PieceType.King, PieceColor.White)),
+                (new Position(2, 6), new ChessPiece(PieceType.Queen, PieceColor.White)));
+
+            Assert.Equal(GameStatus.Stalemate, game.Status);
+            Assert.Empty(game.GetAllLegalMoves(PieceColor.Black));
+            Assert.False(game.TryMakeMove(new Move(new Position(0, 7), new Position(0, 6))));
+        }
+
+        [Fact]
         public void UndoRestoresState()
         {
             var g = new ChessGame();
@@ -492,6 +520,15 @@ namespace AiAssistedChess.Tests
             }
         }
 
+        private static ChessGame MakeBoard(PieceColor currentPlayer, params (Position Position, ChessPiece Piece)[] pieces)
+        {
+            var game = new ChessGame();
+
+            game.SetPositionForTesting(pieces, currentPlayer);
+
+            return game;
+        }
+
         private static Position ParseSquare(string algebraicSquare)
         {
             var file = char.ToLowerInvariant(algebraicSquare[0]) - 'a';
@@ -505,5 +542,6 @@ namespace AiAssistedChess.Tests
             Assert.Equal(GameStatus.Check, game.Status);
             Assert.NotEmpty(game.GetAllLegalMoves(game.CurrentPlayer));
         }
+
     }
 }

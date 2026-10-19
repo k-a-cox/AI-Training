@@ -67,6 +67,29 @@ namespace AiAssistedChess.Engine
             history.Clear();
         }
 
+        internal void SetPositionForTesting(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            Array.Clear(board);
+
+            foreach (var (position, piece) in pieces)
+            {
+                if (!position.IsValid || piece.IsEmpty || piece.Color == PieceColor.None)
+                {
+                    throw new ArgumentException("The test position contains an invalid square or piece.", nameof(pieces));
+                }
+
+                board[position.Row, position.Col] = piece;
+            }
+
+            CurrentPlayer = currentPlayer;
+            WhiteCanCastleKingSide = false;
+            WhiteCanCastleQueenSide = false;
+            BlackCanCastleKingSide = false;
+            BlackCanCastleQueenSide = false;
+            EnPassantTarget = null;
+            history.Clear();
+        }
+
         public IEnumerable<(Position pos, ChessPiece piece)> AllPieces()
         {
             for (int row = 0; row < 8; row++)

@@ -16,4 +16,8 @@
   <ItemGroup>
     <Folder Include="scripts\" />
   </ItemGroup>
+
+  <ItemGroup>
+	<InternalsVisibleTo Include="AiAssistedChess.Tests" />
+  </ItemGroup>
 </Project>
