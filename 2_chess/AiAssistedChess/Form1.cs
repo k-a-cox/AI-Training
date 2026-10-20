@@ -61,7 +61,7 @@ namespace AiAssistedChess
             if (moveSequencePlayer.IsLoaded) return;
 
             game.Undo();
-            chessBoardPanel.Invalidate();
+            chessBoardPanel.ClearSelection();
             UpdateStatusLabels();
         }
 
@@ -69,7 +69,7 @@ namespace AiAssistedChess
         {
             moveSequencePlayer.Clear();
             chessBoardPanel.SetInputEnabled(true);
-            chessBoardPanel.Invalidate();
+            chessBoardPanel.ClearSelection();
 
             labelSequenceStatus.Text = "Game restarted. Paste a coordinate move sequence to replay it.";
 
@@ -86,7 +86,7 @@ namespace AiAssistedChess
             }
 
             chessBoardPanel.SetInputEnabled(false);
-            chessBoardPanel.Invalidate();
+            chessBoardPanel.ClearSelection();
 
             labelSequenceStatus.Text = $"Loaded {moveSequencePlayer.MoveCount} moves. Select Next to begin.";
 
