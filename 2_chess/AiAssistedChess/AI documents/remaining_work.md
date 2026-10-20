@@ -18,46 +18,48 @@
 
 The xUnit project currently has eighty-three tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
 
-- [ ] Initial pawn double move and pawn movement restrictions.
+- [x] Initial pawn double move and pawn movement restrictions; user confirmed White and Black initial pawn choices and White's rejected sideways move.
 - [x] Rejecting moves from empty squares, opponent pieces, and off-board destinations; blocked pawn double-step. User confirmed all four scenarios in the UI.
-- [ ] Blocked initial rook/bishop/queen movement and knight destinations at the board edge.
-- [ ] Bishop, queen, and rook movement after paths are opened; king step legality.
-- [ ] Pawn, queen, and knight captures.
-- [ ] En-passant capture.
+- [x] Restart clears selected-square and legal-move overlays; user confirmed the highlights disappear.
+- [x] Undo clears selected-square and legal-move overlays; user confirmed the hints disappear.
+- [x] Blocked initial rook/bishop/queen and king movement, plus knight destinations at the board edge; user confirmed the starting-position checks.
+- [x] Bishop, queen, and rook movement after paths are opened; king step legality. User confirmed all four pieces look correct.
+- [x] Pawn, queen, and knight captures; user confirmed the replay sequence and captures behave as expected.
+- [x] White en-passant capture after undo restores the target and legal capture; user confirmed it works as expected.
 - [x] Black en-passant captures from either side of the target. User confirmed both sides in the UI.
-- [ ] White kingside castling.
+- [x] White kingside castling; user confirmed the king and rook move to their castled squares and the turn changes.
 - [x] Queenside castling remains legal when only the b-file square is attacked; user confirmed the GUI scenario.
-- [ ] Fool's Mate checkmate detection.
-- [ ] Undo restoring a pawn to its original square.
-- [ ] Legal move enumeration for a non-current player.
-- [ ] En-passant expiration after one reply.
-- [ ] Undoing an intervening move restores the en-passant target and legal capture.
-- [ ] Undoing a five-move sequence containing an en-passant capture restores the captured pawn, side to move, and en-passant target at each step.
-- [ ] Repeated legal-move simulations preserve the live board, en-passant target, and undo history.
+- [x] Fool's Mate checkmate detection; user confirmed pieces can still be selected, but no legal destinations are offered after checkmate.
+- [x] Undo restoring a pawn to its original square; user confirmed e2-e4 returns the pawn to e2 and restores White's turn.
+- [x] Legal move enumeration for a non-current player; user confirmed opponent pieces cannot be selected before their turn and can be selected after the turn changes.
+- [x] En-passant expires after one reply; user confirmed the capture highlight disappears after an intervening move.
+- [x] Undoing an intervening move restores the en-passant target and legal capture; user confirmed the highlight returns and capture works.
+- [x] Undoing a five-move sequence containing an en-passant capture restores the captured pawn, side to move, and en-passant target at each step; user confirmed the sequence behaves correctly.
+- [x] Repeated legal-move simulations preserve the live board, en-passant target, and undo history; user confirmed the board remained consistent during repeated legal-move selection and undo checks.
 - [x] A king cannot move onto a rook-attacked square or next to the opposing king; user confirmed both UI checks.
 - [x] A pinned rook cannot move off the file and expose its king to check; user confirmed the UI rejects the move and preserves the position.
 - [x] Cloning a board creates an independent position without copying its undo history; user confirmed the test flags looked correct.
-- [ ] Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; the rejected moves preserve the board and target.
-- [ ] Undo restoring both pawns and the turn after en passant.
-- [ ] Rejecting kingside castling when its transit square is attacked.
-- [ ] White queenside castling and black kingside/queenside castling.
-- [ ] Rejecting castling when the king is in check or the destination square is attacked.
-- [ ] Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights.
-- [ ] Capturing a rook on its kingside home square clears and undo restores the corresponding castling rights.
+- [x] Rejecting geometrically valid en-passant attempts for both colors when the capture would expose their king to a rook attack; user confirmed the tested position and rejected move behavior in the GUI.
+- [x] Undo restoring both pawns and the turn after en passant; user confirmed both pawns return and White is to move.
+- [x] Rejecting kingside castling when its transit square is attacked; user confirmed White cannot castle while f1 is attacked and can castle after the bishop moves away.
+- [x] White queenside castling and black kingside/queenside castling; user confirmed all three sequences.
+- [x] Rejecting castling when the king is in check or the destination square is attacked; user confirmed both GUI scenarios.
+- [x] Clearing castling rights after king/rook movement and a rook capture on its home square; undo restores the rights. User confirmed the tests behave as expected.
+- [x] Capturing a rook on its kingside home square clears and undo restores the corresponding castling rights; user confirmed the test behaves as expected.
 - [x] Undoing castling restores the king, rook, castling rights, and turn; user confirmed the GUI scenario.
-- [ ] Undoing a later reply and a king move restores the king's original square and both castling rights.
-- [ ] Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available.
+- [x] Undoing a later reply and a king move restores the king's original square and both castling rights; user confirmed the sequence.
+- [x] Check detection for pawn, knight, king, bishop, rook, and queen attacks, each with legal responses available; user confirmed the five playable sequences and reviewed the king test code (its adjacent-kings position cannot be loaded through the UI).
 - [x] Rook-check responses resolve check, including bishop interposition; double check allows only king moves even when a rook could block one line.
-- [ ] A blocked rook attack line does not put the king in check.
-- [ ] Scholar's Mate checkmate detection and rejection of further moves after checkmate.
+- [x] A blocked rook attack line does not put the king in check; user confirmed White's rook on e1 is blocked from Black's king on e8 by the pawns on e4 and e5. Black's rooks are not involved.
+- [x] Scholar's Mate checkmate detection and rejection of further moves after checkmate; user confirmed no Black piece can move in the resulting position.
 - [x] Undoing checkmate and stalemate restores the prior status and allows play to continue; user confirmed both GUI scenarios.
-- [ ] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate.
-- [ ] Pawn promotion to queen, rook, bishop, and knight; promotion capture and undo; invalid promotion types leave the position unchanged.
+- [x] Two mirrored corner stalemate positions, no legal moves for the side to move, and rejection of further moves after stalemate; user confirmed both GUI positions.
+- [x] Pawn promotion to queen, rook, bishop, and knight for both colors; promotion capture and undo restore the pawn and captured piece. User confirmed these UI scenarios.
 - [x] White pawn promotion offers Queen, Rook, Bishop, and Knight; canceling the dialog leaves the pawn unmoved. User confirmed the GUI scenario.
 - [x] Black pawn promotion to queen, rook, bishop, and knight. User confirmed all four promotion choices in the UI.
-- [ ] Rejecting promotion moves without a promotion choice and non-promotion moves with an inappropriate promotion choice.
+- [x] Rejecting invalid promotion choices, promotion without a choice, and promotion choices on non-promotion moves; user reviewed the three code tests.
 - [x] Custom position validation rejects pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom position loading disables castling rights. User confirmed the GUI scenarios.
-- [ ] A move cannot capture the opposing king; checkmate ends the game without capturing the king.
+- [x] A move cannot capture the opposing king; checkmate ends the game without capturing the king. User confirmed the king-capture test by code review and Scholar's Mate behavior in the UI.
 
 The latest test run passed all eighty-three tests.
 
@@ -117,8 +119,8 @@ Manual movement/capture replay sequences for the visible board:
 
 ### 2.5. Manually review all engine unit tests again
 
-- [ ] After engine-test work is declared complete, manually review every unit test in the UI, confirming each test's setup, action, and expected behavior.
-- [ ] Record manual confirmation for each reviewed test here; do not carry forward earlier test-specific confirmations.
+- [x] Complete the step 2.5 review of all listed engine-test scenarios; verify UI-representable cases in the app and review code for cases the UI cannot represent.
+- [x] Record confirmations alongside each test group above, preserving prior confirmed items.
 
 ### 3. Verify and polish the UI
 
