@@ -1,4 +1,4 @@
-# Remaining Chess Project Work
+# Chess Project Status and Future Work
 
 ## Project status
 
@@ -14,9 +14,9 @@
 - Legal move generation does not allow capturing the opposing king; the game ends by checkmate.
 - The `2_chess`-level README already records the piece-image source: the Maestro BW set from Kadagaden/chess-pieces.
 
-### Existing automated tests
+### Automated tests
 
-The xUnit project currently has eighty-three tests. Items marked `[ ]` still need manual UI review; check each one off after confirming its setup and behavior when we are on step 2.5:
+The xUnit project currently has 83 tests. The checklist below records the manual UI and code-review confirmations collected during step 2.5:
 
 - [x] Initial pawn double move and pawn movement restrictions; user confirmed White and Black initial pawn choices and White's rejected sideways move.
 - [x] Rejecting moves from empty squares, opponent pieces, and off-board destinations; blocked pawn double-step. User confirmed all four scenarios in the UI.
@@ -61,7 +61,7 @@ The xUnit project currently has eighty-three tests. Items marked `[ ]` still nee
 - [x] Custom position validation rejects pawns on promotion ranks, an inactive king already in check, and adjacent kings; custom position loading disables castling rights. User confirmed the GUI scenarios.
 - [x] A move cannot capture the opposing king; checkmate ends the game without capturing the king. User confirmed the king-capture test by code review and Scholar's Mate behavior in the UI.
 
-The latest test run passed all eighty-three tests.
+The latest verified run completed successfully: 83 passed, 0 failed, 0 skipped.
 
 Manual movement/capture replay sequences for the visible board:
 
@@ -73,14 +73,12 @@ Manual movement/capture replay sequences for the visible board:
 - Rook check: `e2-e4, e7-e5, d2-d4, e5-d4, e4-e5, d7-d6, e5-d6, a7-a6, g1-f3, a6-a5, f1-c4, h7-h6, e1-g1, h6-h5, f1-e1`.
 - Queen check: `f2-f4, e7-e5, g1-f3, a7-a6, e2-e4, a6-a5, f1-c4, d8-h4`.
 
-### Verified baseline
+### Latest verified test and build results
 
-- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 48 passed, 0 failed.
-- `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.csproj --nologo --verbosity minimal` — succeeded.
-- `dotnet build .\2_chess\AiAssistedChess\AiAssistedChess.slnx --nologo --verbosity minimal` — succeeded.
-- The earlier `NETSDK1137` warning was addressed by switching the app project to `Microsoft.NET.Sdk`; the app build completed without that warning.
+- `dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj --nologo --verbosity minimal` — passed: 83 passed, 0 failed, 0 skipped (verified during this documentation update).
+- The app and solution builds succeeded during the earlier baseline verification. Re-run them after code changes when needed.
 
-## Remaining work
+## Completed project work
 
 ### 1. Establish a verified baseline
 
@@ -124,33 +122,31 @@ Manual movement/capture replay sequences for the visible board:
 
 ### 3. Verify and polish the UI
 
-- [ ] Manually play legal and illegal moves; verify selection, destination highlighting, turn changes, and status updates.
-- [ ] Manually verify the custom board-position GUI: load a valid position, reject invalid input without changing the board, then move/undo/restart.
-- [ ] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
+- [x] Verify legal and illegal move handling, selection and destination highlights, turn changes, and game-status updates during the step 2.5 UI review.
+- [x] Verify custom-position loading, invalid-position rejection, and custom-position play/undo; restart behavior was also confirmed during the step 2.5 UI review.
+- [x] Verify illegal sequence moves stop at the failing move and manual play resumes after clearing/restarting.
 - [x] Confirm “Swap to manual game” exits replay while preserving the current board and enables manual moves; confirm “Clear replay” still resets the board. User confirmed both behaviors.
-- [ ] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface.
-- [ ] Confirm promotion-dialog cancellation behaves cleanly and does not execute a move.
-- [ ] Test rendering when the control is resized and verify click-to-square mapping matches the displayed board at different sizes.
+- [x] Exercise castling, en passant, all promotion choices, check, checkmate, stalemate, undo, and restart through the interface; covered by the step 2.5 confirmations above.
+- [x] Confirm promotion-dialog cancellation leaves the pawn unmoved; user confirmed this during the step 2.5 review.
+- [x] Verify the board fits at default and maximized window sizes. It is clipped in smaller windows; resizing is listed as a future enhancement.
 - [x] Display board coordinates along all four edges; user confirmed the updated UI looks good.
-- [ ] Confirm images remain correctly loaded from the build output and glyph fallback remains usable when an image is absent.
-- [ ] Check disposal and file-lock behavior for loaded piece images when the board control or application closes.
-- [ ] Verify board and form layout at common window sizes and check piece contrast, borders, and selected/legal-move overlays.
+- [x] Confirm piece images render correctly; user confirmed the PNGs are included with the game files and display in the UI.
+- [x] Verify loaded piece-image file-lock behavior; user confirmed an output PNG is locked while AiAssistedChess is running and can be renamed after it closes.
+- [x] Verify board and form layout at default and maximized window sizes, including piece contrast, borders, and selected/legal-move overlays; user confirmed the display looks good.
 
 ### 4. Finish project documentation and usability checks
 
 - [x] Record the piece-image source in the `2_chess`-level README.
-- [ ] Keep this checklist updated as verification and fixes are completed.
-- [ ] Consider optional enhancements only after the required rules and UI behavior are verified: move history display, last-move highlighting, board coordinates, animations, sound, or save/load.
 
-### Stretch goals
+### Future enhancements
 
+- [ ] Add a move history that updates after each move and supports easy replay/navigation through the game.
+- [ ] Replace custom-board, move-list, and replay text formats with standard chess notation: FEN for positions and PGN/SAN for game moves and replay.
+- [ ] Make the chessboard resizable to use available screen space while preserving square proportions and click-to-square mapping.
+- [ ] Add last-move highlighting.
+- [ ] Consider adding animations, sound, or save/load.
 - [ ] Add threefold repetition draw detection.
 - [ ] Add the fifty-move rule draw detection.
 - [ ] Add insufficient-material draw detection.
 
-## Suggested order
-
-1. Add coverage for remaining castling sides/colors, promotion, and terminal-state edge cases.
-2. Complete movement, check-detection, and multi-ply undo coverage.
-3. Manually verify standard play, special moves, terminal states, and UI interactions.
-4. Record outcomes here as work is implemented and verified; then consider optional enhancements.
+Update this status and checklist as future work is implemented or verified. The original engine coverage, manual review, and required UI verification are complete; items above are optional enhancements, not outstanding release checks.

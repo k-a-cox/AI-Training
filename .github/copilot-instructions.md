@@ -8,3 +8,6 @@
 - Use the board-state loading syntax already established in this project consistently; do not switch or invent alternate notation in explanations/tests. Preserve the user's chosen syntax unless they explicitly request a change.
 - When adding engine tests, automatically guide the user through the corresponding manual GUI visual-confirmation scenarios, without requiring them to ask; preserve established custom-position loading syntax exactly.
 - When explaining chess undo sequences, track the side to move accurately: undoing a move restores the turn to the player who made that move.
+
+## AI-Assisted Workflow Documentation
+- Keep the README section documenting how GPT models were used to complete the chess project; this AI-assisted workflow history is important repository documentation and should not be removed during documentation cleanup. Specifically, note that GPT-6 Luna in Agent mode was used primarily, with some Plan mode usage.

@@ -1,4 +1,4 @@
-# 2 Chess
+# Chess
 
 ## Overview
 
@@ -6,7 +6,7 @@ A local two-player chess game for Windows, built with C#, Windows Forms, and .NE
 
 ## Features
 
-- Clickable chessboard with legal destination highlighting.
+- Clickable chessboard with coordinates along all four edges and legal-destination highlighting.
 - Standard piece movement and move validation, including check detection.
 - Castling, en passant, and player-selected pawn promotion.
 - Checkmate and stalemate detection; kings are not captured. The UI displays the current player and game status, with undo and restart controls.
@@ -31,6 +31,8 @@ Run the chess-engine test project from the repository root:
 dotnet test .\2_chess\AiAssistedChess.Tests\AiAssistedChess.Tests.csproj
 ```
 
+The suite currently contains 83 tests.
+
 ## Replay a move sequence
 
 Paste coordinate moves into the move-sequence box, separated by spaces, commas, or new lines, then select **Load moves**. Use **Next** and **Back** to step through the game. **Swap to manual game** discards the remaining replay moves while preserving the current board position. **Clear replay** discards the sequence and resets the board.
@@ -47,15 +49,17 @@ In the application, paste a temporary position description into the custom-posit
 white:king=c6,queen=b6; black:king=a8; turn=black
 ```
 
-Use `white` or `black` before the colon, and `king`, `queen`, `rook`, `bishop`, `knight`, or `pawn` before `=`. Separate pieces with commas and sections with semicolons. Loading a custom position clears move-sequence replay history and enables manual moves and Undo. Custom positions must not contain pawns on a promotion rank, adjacent kings, or a checked king that is not the side to move. Loading a custom position disables castling rights because the format does not encode them. **Restart** returns to the normal starting position. This syntax is temporary and may change as the UI is polished.
+Use `white` or `black` before the colon, and `king`, `queen`, `rook`, `bishop`, `knight`, or `pawn` before `=`. Separate pieces with commas and sections with semicolons. Loading a custom position clears move-sequence replay and enables manual moves and Undo. Positions are rejected if they contain duplicate squares, anything other than one king per color, pawns on a promotion rank, adjacent kings, or a checked king that is not the side to move. Loading a custom position disables castling rights because the format does not encode them. **Restart** returns to the normal starting position.
 
 ## Project status
 
 See [AI documents/remaining_work.md](AiAssistedChess/AI%20documents/remaining_work.md) for the implementation status, verification needs, and prioritized remaining work.
 
-## AI Hand holdiness
+## AI-assisted development
 
-I will prompt GPT 6 Luna for the next steps, but let the model generate the development plan and implement changes. I'll sanity check the generated changes before asking GPT to make the commits for me.
+GPT models were used throughout this project to help plan and implement the application, primarily GPT-6 Luna in Agent mode, with some use of Plan mode to start things off.
+The workflow was to have the model propose steps and code, then review and sanity-check the changes before accepting them.
+The project checklist records implementation and verification progress.
 
 ## Assets
 
