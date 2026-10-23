@@ -67,6 +67,24 @@ namespace AiAssistedChess.Engine
             history.Clear();
         }
 
+        internal void SetPosition(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            Array.Clear(board);
+
+            foreach (var (position, piece) in pieces)
+            {
+                board[position.Row, position.Col] = piece;
+            }
+
+            CurrentPlayer = currentPlayer;
+            WhiteCanCastleKingSide = false;
+            WhiteCanCastleQueenSide = false;
+            BlackCanCastleKingSide = false;
+            BlackCanCastleQueenSide = false;
+            EnPassantTarget = null;
+            history.Clear();
+        }
+
         public IEnumerable<(Position pos, ChessPiece piece)> AllPieces()
         {
             for (int row = 0; row < 8; row++)

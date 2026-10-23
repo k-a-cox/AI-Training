@@ -10,9 +10,25 @@ namespace AiAssistedChess.UI
 {
     public class ChessboardPanel : Control
     {
+        private const int CoordinateGutterSize = 30;
+
         [System.ComponentModel.Browsable(false)]
         [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public ChessGame? Game { get; set; }
+
+        private bool isInputEnabled = true;
+
+        public void SetInputEnabled(bool isEnabled)
+        {
+            isInputEnabled = isEnabled;
+        }
+
+        public void ClearSelection()
+        {
+            selected = null;
+            legal.Clear();
+            Invalidate();
+        }
 
         private Position? selected;
         private List<Position> legal = new();
@@ -56,11 +72,17 @@ namespace AiAssistedChess.UI
             base.OnPaint(e);
             var graphics = e.Graphics;
             graphics.Clear(BackColor);
-            int squareSize = Math.Min(Width, Height) / 8;
+            int squareSize = Math.Min(Width - 2 * CoordinateGutterSize, Height - 2 * CoordinateGutterSize) / 8;
+            var boardOriginX = CoordinateGutterSize;
+            var boardOriginY = CoordinateGutterSize;
+            using var annotationFont = new Font(Font.FontFamily, 9, FontStyle.Regular);
+            using var annotationBrush = new SolidBrush(Color.DimGray);
+            using var annotationFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+
             for (int rowIndex = 0; rowIndex < 8; rowIndex++)
             for (int colIndex = 0; colIndex < 8; colIndex++)
             {
-                var rect = new Rectangle(colIndex * squareSize, rowIndex * squareSize, squareSize, squareSize);
+                var rect = new Rectangle(boardOriginX + colIndex * squareSize, boardOriginY + rowIndex * squareSize, squareSize, squareSize);
                 bool isLightSquare = (rowIndex + colIndex) % 2 == 0;
                 using var tileBrush = new SolidBrush(isLightSquare ? Color.Beige : Color.Sienna);
                 graphics.FillRectangle(tileBrush, rect);
@@ -136,15 +158,28 @@ namespace AiAssistedChess.UI
 
                 graphics.DrawRectangle(Pens.Black, rect);
             }
+
+            for (int index = 0; index < 8; index++)
+            {
+                var topFileLabelRect = new RectangleF(boardOriginX + index * squareSize, 0, squareSize, CoordinateGutterSize);
+                var bottomFileLabelRect = new RectangleF(boardOriginX + index * squareSize, boardOriginY + 8 * squareSize, squareSize, CoordinateGutterSize);
+                var leftRankLabelRect = new RectangleF(0, boardOriginY + index * squareSize, CoordinateGutterSize, squareSize);
+                var rightRankLabelRect = new RectangleF(boardOriginX + 8 * squareSize, boardOriginY + index * squareSize, CoordinateGutterSize, squareSize);
+
+                graphics.DrawString(((char)('a' + index)).ToString(), annotationFont, annotationBrush, topFileLabelRect, annotationFormat);
+                graphics.DrawString(((char)('a' + index)).ToString(), annotationFont, annotationBrush, bottomFileLabelRect, annotationFormat);
+                graphics.DrawString((8 - index).ToString(), annotationFont, annotationBrush, leftRankLabelRect, annotationFormat);
+                graphics.DrawString((8 - index).ToString(), annotationFont, annotationBrush, rightRankLabelRect, annotationFormat);
+            }
         }
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
-            if (Game == null) return;
-            int squareSize = Math.Min(Width, Height) / 8;
-            int clickedCol = e.X / squareSize;
-            int clickedRow = e.Y / squareSize;
+            if (Game == null || !isInputEnabled) return;
+            int squareSize = Math.Min(Width - 2 * CoordinateGutterSize, Height - 2 * CoordinateGutterSize) / 8;
+            int clickedCol = (e.X - CoordinateGutterSize) / squareSize;
+            int clickedRow = (e.Y - CoordinateGutterSize) / squareSize;
             if (clickedCol < 0 || clickedCol > 7 || clickedRow < 0 || clickedRow > 7) return;
             var pos = new Position(clickedRow, clickedCol);
 

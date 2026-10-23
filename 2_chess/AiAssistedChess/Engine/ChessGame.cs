@@ -23,16 +23,51 @@ namespace AiAssistedChess.Engine
 
         public void Reset() { state.Reset(); UpdateStatus(); }
 
+        public bool LoadPosition(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            var positionPieces = pieces.ToList();
+            var whiteKingCount = positionPieces.Count(entry => entry.Piece.Type == PieceType.King && entry.Piece.Color == PieceColor.White);
+            var blackKingCount = positionPieces.Count(entry => entry.Piece.Type == PieceType.King && entry.Piece.Color == PieceColor.Black);
+
+            if (whiteKingCount != 1 || blackKingCount != 1 || (currentPlayer != PieceColor.White && currentPlayer != PieceColor.Black)) return false;
+
+            if (positionPieces.Any(entry => !entry.Position.IsValid || entry.Piece.IsEmpty || (entry.Piece.Color != PieceColor.White && entry.Piece.Color != PieceColor.Black))) return false;
+
+            if (positionPieces.Select(entry => entry.Position).Distinct().Count() != positionPieces.Count) return false;
+
+            if (positionPieces.Any(entry => entry.Piece.Type == PieceType.Pawn && (entry.Position.Row == 0 || entry.Position.Row == 7))) return false;
+
+            var candidateState = new BoardState();
+
+            candidateState.SetPosition(positionPieces, currentPlayer);
+
+            if (IsKingInCheck(candidateState, Opposite(currentPlayer))) return false;
+
+            state.SetPosition(positionPieces, currentPlayer);
+            UpdateStatus();
+            return true;
+        }
+
         public IEnumerable<Move> GetLegalMoves(Position from)
         {
             var piece = state.GetPiece(from);
             if (piece.IsEmpty || piece.Color != state.CurrentPlayer) return Enumerable.Empty<Move>();
-            var moves = GeneratePseudoLegalMoves(from, piece);
+            return GetLegalMoves(from, piece.Color, state);
+        }
+
+        private IEnumerable<Move> GetLegalMoves(Position from, PieceColor color, BoardState board)
+        {
+            var piece = board.GetPiece(from);
+            if (piece.IsEmpty || piece.Color != color) return Enumerable.Empty<Move>();
+
+            var moves = GeneratePseudoLegalMoves(from, piece, board);
             // Filter out moves that leave king in check
             var legal = new List<Move>();
             foreach (var m in moves)
             {
-                var copy = state.Clone();
+                if (board.GetPiece(m.To).Type == PieceType.King) continue;
+
+                var copy = board.Clone();
                 copy.MakeMove(m);
                 // we need to check if own king is in check in copy
                 if (!IsKingInCheck(copy, piece.Color)) legal.Add(m);
@@ -46,13 +81,15 @@ namespace AiAssistedChess.Engine
             foreach (var (pos, piece) in state.AllPieces())
             {
                 if (piece.Color != color) continue;
-                moves.AddRange(GetLegalMoves(pos));
+                moves.AddRange(GetLegalMoves(pos, color, state));
             }
             return moves;
         }
 
         public bool TryMakeMove(Move move)
         {
+            if (Status == GameStatus.Checkmate || Status == GameStatus.Stalemate) return false;
+
             var legal = GetLegalMoves(move.From).Any(m => m.To == move.To && m.Promotion == move.Promotion);
             if (!legal) return false;
             state.MakeMove(move);
@@ -61,6 +98,12 @@ namespace AiAssistedChess.Engine
         }
 
         public void Undo() { state.Undo(); UpdateStatus(); }
+
+        internal void SetPositionForTesting(IEnumerable<(Position Position, ChessPiece Piece)> pieces, PieceColor currentPlayer)
+        {
+            state.SetPosition(pieces, currentPlayer);
+            UpdateStatus();
+        }
 
         private void UpdateStatus()
         {
@@ -142,7 +185,7 @@ namespace AiAssistedChess.Engine
             return false;
         }
 
-        private IEnumerable<Move> GeneratePseudoLegalMoves(Position from, ChessPiece piece)
+        private IEnumerable<Move> GeneratePseudoLegalMoves(Position from, ChessPiece piece, BoardState board)
         {
             var moves = new List<Move>();
             int row = from.Row, col = from.Col;
@@ -150,28 +193,28 @@ namespace AiAssistedChess.Engine
             {
                 int forwardDir = piece.Color == PieceColor.White ? -1 : 1;
                 var oneStep = new Position(row + forwardDir, col);
-                if (oneStep.IsValid && state.GetPiece(oneStep).IsEmpty) moves.Add(new Move(from, oneStep));
+                if (oneStep.IsValid && board.GetPiece(oneStep).IsEmpty) moves.Add(new Move(from, oneStep));
                 // two squares
                 var twoStep = new Position(row + 2 * forwardDir, col);
                 int startingRow = piece.Color == PieceColor.White ? 6 : 1;
-                if (row == startingRow && twoStep.IsValid && state.GetPiece(oneStep).IsEmpty && state.GetPiece(twoStep).IsEmpty) moves.Add(new Move(from, twoStep));
+                if (row == startingRow && twoStep.IsValid && board.GetPiece(oneStep).IsEmpty && board.GetPiece(twoStep).IsEmpty) moves.Add(new Move(from, twoStep));
                 // captures
                 var captureLeft = new Position(row + forwardDir, col - 1);
                 var captureRight = new Position(row + forwardDir, col + 1);
                 if (captureLeft.IsValid)
                 {
-                    var targetPiece = state.GetPiece(captureLeft);
+                    var targetPiece = board.GetPiece(captureLeft);
                     if (!targetPiece.IsEmpty && targetPiece.Color != piece.Color) moves.Add(new Move(from, captureLeft));
                 }
                 if (captureRight.IsValid)
                 {
-                    var targetPiece = state.GetPiece(captureRight);
+                    var targetPiece = board.GetPiece(captureRight);
                     if (!targetPiece.IsEmpty && targetPiece.Color != piece.Color) moves.Add(new Move(from, captureRight));
                 }
                 // en passant
-                if (state.EnPassantTarget.HasValue)
+                if (board.EnPassantTarget.HasValue)
                 {
-                    var ep = state.EnPassantTarget.Value;
+                    var ep = board.EnPassantTarget.Value;
                     if (ep.Row == row + forwardDir && Math.Abs(ep.Col - col) == 1) moves.Add(new Move(from, ep));
                 }
             }
@@ -184,7 +227,7 @@ namespace AiAssistedChess.Engine
                         if (Math.Abs(deltaRow) == Math.Abs(deltaCol)) continue;
                         var knightTarget = new Position(row + deltaRow, col + deltaCol);
                         if (!knightTarget.IsValid) continue;
-                        var targetPiece = state.GetPiece(knightTarget);
+                        var targetPiece = board.GetPiece(knightTarget);
                         if (targetPiece.IsEmpty || targetPiece.Color != piece.Color) moves.Add(new Move(from, knightTarget));
                     }
             }
@@ -199,7 +242,7 @@ namespace AiAssistedChess.Engine
                     int nextRow = row + dRow, nextCol = col + dCol;
                     while (nextRow >= 0 && nextRow < 8 && nextCol >= 0 && nextCol < 8)
                     {
-                        var encountered = state.GetPiece(new Position(nextRow,nextCol));
+                        var encountered = board.GetPiece(new Position(nextRow,nextCol));
                         if (encountered.IsEmpty) moves.Add(new Move(from, new Position(nextRow,nextCol)));
                         else { if (encountered.Color != piece.Color) moves.Add(new Move(from, new Position(nextRow,nextCol))); break; }
                         nextRow += dRow; nextCol += dCol;
@@ -213,19 +256,19 @@ namespace AiAssistedChess.Engine
                     if (dRow == 0 && dCol == 0) continue;
                     var kingTarget = new Position(row + dRow, col + dCol);
                     if (!kingTarget.IsValid) continue;
-                    var targetPiece = state.GetPiece(kingTarget);
+                    var targetPiece = board.GetPiece(kingTarget);
                     if (targetPiece.IsEmpty || targetPiece.Color != piece.Color) moves.Add(new Move(from, kingTarget));
                 }
                 // castling
                 if (piece.Color == PieceColor.White)
                 {
-                    if (state.WhiteCanCastleKingSide && IsPathClearForCastling(7,4,7,7)) moves.Add(new Move(from, new Position(7,6)));
-                    if (state.WhiteCanCastleQueenSide && IsPathClearForCastling(7,4,7,0)) moves.Add(new Move(from, new Position(7,2)));
+                    if (board.WhiteCanCastleKingSide && IsPathClearForCastling(board, 7,4,7,7)) moves.Add(new Move(from, new Position(7,6)));
+                    if (board.WhiteCanCastleQueenSide && IsPathClearForCastling(board, 7,4,7,0)) moves.Add(new Move(from, new Position(7,2)));
                 }
                 else
                 {
-                    if (state.BlackCanCastleKingSide && IsPathClearForCastling(0,4,0,7)) moves.Add(new Move(from, new Position(0,6)));
-                    if (state.BlackCanCastleQueenSide && IsPathClearForCastling(0,4,0,0)) moves.Add(new Move(from, new Position(0,2)));
+                    if (board.BlackCanCastleKingSide && IsPathClearForCastling(board, 0,4,0,7)) moves.Add(new Move(from, new Position(0,6)));
+                    if (board.BlackCanCastleQueenSide && IsPathClearForCastling(board, 0,4,0,0)) moves.Add(new Move(from, new Position(0,2)));
                 }
             }
 
@@ -233,7 +276,7 @@ namespace AiAssistedChess.Engine
             var results = new List<Move>();
             foreach (var m in moves)
             {
-                var currentPiece = state.GetPiece(from);
+                var currentPiece = board.GetPiece(from);
                 if (currentPiece.Type == PieceType.Pawn && (m.To.Row == 0 || m.To.Row == 7))
                 {
                     results.Add(new Move(m.From, m.To, PieceType.Queen));
@@ -247,21 +290,21 @@ namespace AiAssistedChess.Engine
             return results;
         }
 
-        private bool IsPathClearForCastling(int kingRow, int kingCol, int rookRow, int rookCol)
+        private bool IsPathClearForCastling(BoardState board, int kingRow, int kingCol, int rookRow, int rookCol)
         {
             // Simplified: ensure squares between king and rook are empty and not under attack
             int dir = rookCol > kingCol ? 1 : -1;
             for (int c = kingCol + dir; c != rookCol; c += dir)
-                if (!state.GetPiece(new Position(kingRow, c)).IsEmpty) return false;
+                if (!board.GetPiece(new Position(kingRow, c)).IsEmpty) return false;
 
             // King must not be in check, and squares it passes through must not be attacked
-            var kingColor = state.GetPiece(new Position(kingRow, kingCol)).Color;
-            if (IsKingInCheck(state, kingColor)) return false;
+            var kingColor = board.GetPiece(new Position(kingRow, kingCol)).Color;
+            if (IsKingInCheck(board, kingColor)) return false;
             // squares king passes
             var pass1 = new Position(kingRow, kingCol + dir);
             var pass2 = new Position(kingRow, kingCol + 2*dir);
-            if (IsSquareAttacked(state, pass1, Opposite(kingColor))) return false;
-            if (IsSquareAttacked(state, pass2, Opposite(kingColor))) return false;
+            if (IsSquareAttacked(board, pass1, Opposite(kingColor))) return false;
+            if (IsSquareAttacked(board, pass2, Opposite(kingColor))) return false;
             return true;
         }
 
