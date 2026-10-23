@@ -24,6 +24,10 @@ From PowerShell in this directory, run the local unit tests or build the debug a
 
 Write focused unit tests as each feature is implemented, especially completeness and conflict tests alongside the Verify behavior and unique/unsolvable/ambiguous puzzle tests alongside givens validation. Cell and note input should not depend on the software keyboard.
 
+## AI-assisted development
+
+GPT models are being used primarily as an interactive development assistant, not to automate the project end to end. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage. The models help refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Implementation remains locally driven: changes are developed and reviewed in the project, then checked with the local build, unit tests, and Android emulator as appropriate.
+
 ## Project documents
 
 - [App design](design/SODUKO_DESIGN.md) — feature scope, interaction flow, and architecture notes.
