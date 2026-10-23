@@ -11,3 +11,6 @@
 
 ## AI-Assisted Workflow Documentation
 - Keep the README section documenting how GPT models were used to complete the chess project; this AI-assisted workflow history is important repository documentation and should not be removed during documentation cleanup. Specifically, note that GPT-6 Luna in Agent mode was used primarily, with some Plan mode usage.
+
+## Project Documentation
+- When updating or refining documentation for a project folder, review the top-level `README.md` and update its matching project description, documentation links, and AI-assisted development summary so they remain accurate.
