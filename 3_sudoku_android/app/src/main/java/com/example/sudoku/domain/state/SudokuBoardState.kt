@@ -1,4 +1,7 @@
-package com.example.sudoku.domain
+package com.example.sudoku.domain.state
+
+import com.example.sudoku.domain.GamePhase
+import com.example.sudoku.domain.InputMode
 
 data class SudokuBoardState(
     val cells: List<SudokuCellState> = List(81) { index -> SudokuCellState(index = index) },

@@ -1,5 +1,6 @@
-package com.example.sudoku.domain
+package com.example.sudoku.domain.state
 
+import com.example.sudoku.domain.InputMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

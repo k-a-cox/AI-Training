@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.sudoku.domain.SudokuBoardState
+import com.example.sudoku.domain.state.SudokuBoardState
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlBoard
 import com.example.sudoku.ui.theme.SudokuTheme

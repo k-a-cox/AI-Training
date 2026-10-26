@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.sudoku.domain.SudokuBoardState
-import com.example.sudoku.domain.SudokuCellState
+import com.example.sudoku.domain.state.SudokuBoardState
+import com.example.sudoku.domain.state.SudokuCellState
 
 private const val BOX_SIZE = 3
 private const val BOXES_PER_GRID = 3
@@ -21,8 +21,9 @@ fun SudokuGrid(
     onCellSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier
-        .border(4.dp, Color.Black)
+    Column(
+        modifier = modifier
+            .border(4.dp, Color.Black)
     ) {
         repeat(BOXES_PER_GRID) { boxRow ->
             Row {

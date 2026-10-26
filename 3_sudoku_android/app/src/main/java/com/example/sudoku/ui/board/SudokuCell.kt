@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.sudoku.domain.SudokuCellState
+import com.example.sudoku.domain.state.SudokuCellState
 
 @Composable
 fun SudokuCell(
