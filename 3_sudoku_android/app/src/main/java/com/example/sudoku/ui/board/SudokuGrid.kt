@@ -1,28 +1,37 @@
 package com.example.sudoku.ui.board
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.sudoku.domain.SudokuBoardState
 import com.example.sudoku.domain.SudokuCellState
+
+private const val BOX_SIZE = 3
+private const val BOXES_PER_GRID = 3
+private const val GRID_SIZE = BOXES_PER_GRID * BOX_SIZE
 
 @Composable
 fun SudokuGrid(
     board: SudokuBoardState,
-    onCellSelected: (Int) -> Unit
+    onCellSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
-        repeat(9) { row ->
-            Row(modifier = Modifier.fillMaxWidth()) {
-                repeat(9) { column ->
-                    val index = row * 9 + column
-                    SudokuCell(
-                        board.cells[index],
-                        isSelected = board.selectedCell==index,
-                        onClick = {onCellSelected(index)},
+    Column(modifier = modifier
+        .border(4.dp, Color.Black)
+    ) {
+        repeat(BOXES_PER_GRID) { boxRow ->
+            Row {
+                repeat(BOXES_PER_GRID) { boxColumn ->
+                    SudokuBox(
+                        board = board,
+                        onCellSelected = onCellSelected,
+                        boxRow = boxRow,
+                        boxColumn = boxColumn,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -31,6 +40,35 @@ fun SudokuGrid(
     }
 }
 
+@Composable
+private fun SudokuBox(
+    board: SudokuBoardState,
+    boxRow: Int,
+    boxColumn: Int,
+    onCellSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .border(2.dp, Color.Black)
+    ) {
+        repeat(BOX_SIZE) { rowInBox ->
+            Row {
+                repeat(BOX_SIZE) { columnInBox ->
+                    val row = boxRow * BOX_SIZE + rowInBox
+                    val column = boxColumn * BOX_SIZE + columnInBox
+                    val cellIndex = row * GRID_SIZE + column
+                    SudokuCell(
+                        board.cells[cellIndex],
+                        isSelected = board.selectedCell == cellIndex,
+                        onClick = { onCellSelected(cellIndex) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
 
 private val sampleValues = mapOf(
     0 to 5, 1 to 3, 4 to 7, 8 to 2,
@@ -78,5 +116,8 @@ fun getSampleBoard(): SudokuBoardState {
 @Preview
 @Composable
 fun SampleGame() {
-    SudokuGrid(getSampleBoard()) {}
+    SudokuGrid(
+        getSampleBoard(),
+        onCellSelected = { }
+    )
 }

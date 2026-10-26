@@ -13,11 +13,12 @@ Work through the steps in order. Add and run focused unit tests as each model or
 ## 2. Display and select cells
 
 - [x] Display the 9×9 board.
+- [x] Visually distinguish the 3×3 boxes from individual cells, for example with stronger separators after every third row and column.
 - [x] Make cells selectable and visibly indicate the selection.
 - [x] Convert the selected cell to a row and column consistently.
 - [ ] Add UI tests for selecting cells, if supported by the current test setup.
 
-**Done when:** Tapping cells selects the intended cell.
+**Done when:** Tapping cells selects the intended cell, and the nine 3×3 boxes are easy to distinguish.
 
 ## 3. Add on-screen number and erase controls
 
@@ -86,6 +87,7 @@ Work through the steps in order. Add and run focused unit tests as each model or
 - [ ] Verify that an incomplete board asks for completion before conflict feedback.
 - [ ] Verify that a complete invalid board shows conflicts and a correct solution is accepted.
 - [ ] Check that cell and note input never opens or requires the software keyboard.
+- [ ] Check that the 3×3 box boundaries are clear on the emulator.
 - [ ] Run the Android build and all unit tests created in earlier steps.
 
 **Done when:** The manual game works end-to-end on the emulator and its model/rule tests pass.

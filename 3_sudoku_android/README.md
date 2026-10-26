@@ -17,7 +17,7 @@ From PowerShell in this directory, run the local unit tests or build the debug a
 
 ## Development goals
 
-1. **Manual Sudoku game:** Enter givens and player values with on-screen controls, confirm and lock the bold givens, add optional candidate notes, and verify a completed solution. Verification checks completeness first, then reports duplicate values in rows, columns, and 3×3 boxes. As part of confirming givens, reject conflicts and puzzles without exactly one solution.
+1. **Manual Sudoku game:** Make the nine 3×3 boxes visually distinct, enter givens and player values with on-screen controls, confirm and lock the bold givens, add optional candidate notes, and verify a completed solution. Verification checks completeness first, then reports duplicate values in rows, columns, and 3×3 boxes. As part of confirming givens, reject conflicts and puzzles without exactly one solution.
 2. **Automatic solver:** Add independently testable techniques that run sequentially on one shared board and show their progress.
 
 **Stretch goal — camera clue entry:** Allow camera-based entry with user review and correction before the normal givens validation, including the uniqueness check.
@@ -26,7 +26,7 @@ Write focused unit tests as each feature is implemented, especially completeness
 
 ## AI-assisted development
 
-GPT models are being used primarily as an interactive development assistant, not to automate the project end to end. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage. The models help refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Implementation remains locally driven: changes are developed and reviewed in the project, then checked with the local build, unit tests, and Android emulator as appropriate.
+GPT models are being used primarily as an interactive development assistant, not to automate the project end to end. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage. Claude Sonnet 5.5 also helped update the UI. The models help refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Implementation remains locally driven: changes are developed and reviewed in the project, then checked with the local build, unit tests, and Android emulator as appropriate.
 
 ## Project documents
 

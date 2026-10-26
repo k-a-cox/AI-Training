@@ -33,7 +33,7 @@ See the [project README](2_chess/README.md) for features, run instructions, and 
 
 ### [3_sudoku_android](3_sudoku_android/)
 
-A native Android Sudoku app built with Kotlin and Jetpack Compose. Planned features include a manual Sudoku game with on-screen entry, givens validation, candidate notes, and solution verification; a sequential solver that shows its progress; and camera-based clue entry as a stretch goal.
+A native Android Sudoku app built with Kotlin and Jetpack Compose. Planned features include a manual Sudoku game with visually distinct 3×3 boxes, on-screen entry, givens validation, candidate notes, and solution verification; a sequential solver that shows its progress; and camera-based clue entry as a stretch goal.
 
 See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [Phase 1 checklist](3_sudoku_android/design/todo_phase_1.md) for implementation progress.
 

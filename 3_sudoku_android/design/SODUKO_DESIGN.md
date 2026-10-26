@@ -6,6 +6,10 @@ Build a native Android Sudoku game first, then add an automatic solver. The app 
 
 ## Goal 1: Playable manual Sudoku game
 
+### Make the 3×3 boxes visually distinct
+
+Give the nine 3×3 boxes clear visual emphasis so their boundaries are easy to distinguish from the ordinary cell grid, for example by using stronger separators after every third row and column. This is a medium-priority presentation improvement: implement it with the board UI, after basic board display and selection work and before final end-to-end acceptance.
+
 ### Enter and confirm givens
 
 The user enters givens into an empty 9×9 board. All cell values are entered using on-screen number buttons; do not require or invoke the software keyboard. Tapping a cell selects it, and tapping a number button enters that value in the selected cell. An erase control clears the selected editable cell.
@@ -67,6 +71,7 @@ These are logical boundaries, not a requirement to create one Gradle module per 
 
 - Write and run focused unit tests while implementing each corresponding feature; do not defer board-rule tests to the end.
 - When adding the board model and cell entry, test empty-cell state, selecting/updating cells, erasing values, and protection of givens.
+- Visually distinguish each 3×3 box from individual cells, and check that all nine boxes are easy to identify in the emulator.
 - When adding confirmation, test valid givens, duplicates in rows/columns/boxes, and rejection of invalid givens.
 - When adding notes, test toggling candidate digits and clearing notes when a value is entered.
 - When adding **Verify**, first test that any incomplete board returns an incomplete result without conflict reports. Then test full boards with row, column, and box conflicts, and a valid completed solution.
