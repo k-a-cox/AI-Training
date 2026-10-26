@@ -92,7 +92,7 @@ class SudokuCellStateTest {
 
     @Test
     fun setValue_clearsValueWhenNull() {
-        val updatedCell = cellWithValue3.setValue(null)
+        val updatedCell = cellWithValue3.setValue(null, InputMode.Value)
 
         assertNull(updatedCell.value)
         assertCellWithValue3State()
@@ -130,12 +130,12 @@ class SudokuCellStateTest {
     fun setValue_rejectsValueWhenCellIsGiven() {
         val updatedCell = givenCellWithValue3.setValue(5)
 
-        assertEquals(givenCellWithValue3,updatedCell)
+        assertEquals(givenCellWithValue3, updatedCell)
     }
 
     @Test
     fun toggleNote_removesNoteWhenPresent() {
-        val updatedCell = cellWithNotes258.toggleNote(5)
+        val updatedCell = cellWithNotes258.setValue(5, InputMode.Notes)
 
         assertEquals(setOf(2, 8), updatedCell.notes)
         assertCellWithNotes258State()
@@ -143,7 +143,7 @@ class SudokuCellStateTest {
 
     @Test
     fun toggleNote_addsNoteWhenNotPresent() {
-        val updatedCell = cellWithNotes258.toggleNote(3)
+        val updatedCell = cellWithNotes258.setValue(3, InputMode.Notes)
 
         assertEquals(setOf(2, 3, 5, 8), updatedCell.notes)
         assertCellWithNotes258State()
@@ -151,17 +151,7 @@ class SudokuCellStateTest {
 
     @Test
     fun toggleNote_rejectsNoteWithValue() {
-        val updatedCell = cellWithValue3.toggleNote(5)
+        val updatedCell = cellWithValue3.setValue(5, InputMode.Notes)
         assertEquals(cellWithValue3, updatedCell)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun toggleNote_rejectsNote0() {
-        defaultCell.toggleNote(0)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun toggleNote_rejectsNote10() {
-        defaultCell.toggleNote(10)
     }
 }

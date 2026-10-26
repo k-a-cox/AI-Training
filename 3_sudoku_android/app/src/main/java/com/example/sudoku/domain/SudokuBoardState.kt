@@ -1,9 +1,9 @@
 package com.example.sudoku.domain
 
 data class SudokuBoardState(
-    val cells: List<SudokuCellState> =
-        List(81) { index -> SudokuCellState(index = index) },
-    val selectedCell: Int? = null
+    val cells: List<SudokuCellState> = List(81) { index -> SudokuCellState(index = index) },
+    val selectedCell: Int? = null,
+    val phase: GamePhase = GamePhase.EnteringGivens,
 ) {
     init {
         require(cells.size == 81) {
@@ -13,6 +13,7 @@ data class SudokuBoardState(
             "Selected cell must be within the range of cells."
         }
     }
+
     fun selectCell(index: Int): SudokuBoardState {
         require(index in cells.indices)
 
@@ -21,26 +22,44 @@ data class SudokuBoardState(
         )
     }
 
-    fun setValue(value: Int?): SudokuBoardState {
+    fun setValue(value: Int?, inputMode: InputMode = InputMode.Value): SudokuBoardState {
         val index = selectedCell ?: return this
 
         val cell = cells[index]
-        val updatedCell = cell.setValue(value)
+        val updatedCell = cell.setValue(value, inputMode)
 
         return copy(
-            cells = cells.toMutableList().also { it[index] = updatedCell }
+            cells = cells.toMutableList().also { it[index] = updatedCell })
+    }
+
+    fun togglePhase(): SudokuBoardState {
+        return copy(
+            phase = when (phase) {
+                GamePhase.EnteringGivens -> GamePhase.Playing
+                GamePhase.Playing -> GamePhase.Solved
+                GamePhase.Solved -> GamePhase.EnteringGivens
+            }
         )
     }
 
-    fun toggleNote(note: Int): SudokuBoardState {
-        val index = selectedCell ?: return this
+//    fun toggleInputMode(): SudokuBoardState {
+//        return copy(
+//            inputMode = when (inputMode) {
+//                InputMode.Value -> InputMode.Notes
+//                InputMode.Notes -> InputMode.Value
+//            }
+//        )
+//    }
 
-        val cell = cells[index]
-        val updatedCell = cell.toggleNote(note)
-        if (updatedCell == cell) return this
-
-        return copy(
-            cells = cells.toMutableList().also { it[index] = updatedCell }
-        )
-    }
+//    fun toggleNote(note: Int): SudokuBoardState {
+//        val index = selectedCell ?: return this
+//
+//        val cell = cells[index]
+//        val updatedCell = cell.toggleNote(note)
+//        if (updatedCell == cell) return this
+//
+//        return copy(
+//            cells = cells.toMutableList().also { it[index] = updatedCell }
+//        )
+//    }
 }

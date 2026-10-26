@@ -23,17 +23,28 @@ data class SudokuCellState(
             "A cell cannot have both a value and notes."
         }
     }
-    fun setValue(value: Int?): SudokuCellState {
+
+    fun setValue(value: Int?, inputMode: InputMode = InputMode.Value): SudokuCellState {
         require(value == null || value in 1..9)
 
-        if(isGiven) return this
+        if (isGiven) return this
 
-        return copy(value = value, notes = emptySet())
+        return when (inputMode) {
+            InputMode.Value -> {
+                copy(value = value, notes = emptySet())
+            }
+
+            InputMode.Notes -> {
+                toggleNote(value)
+            }
+        }
     }
-    fun toggleNote(note: Int): SudokuCellState {
-        require(note in 1..9)
 
-        if(value != null) return this
+    private fun toggleNote(note: Int?): SudokuCellState {
+
+        if (value != null) return this
+
+        if (note == null) return copy(notes = emptySet())
 
         val updatedNotes = if (note in notes) {
             notes - note

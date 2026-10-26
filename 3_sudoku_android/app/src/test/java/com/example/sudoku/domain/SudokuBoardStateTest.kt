@@ -44,8 +44,8 @@ class SudokuBoardStateTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun constructor_rejectsBoardWithMoreThan81Cells() {
-        val cells = List(81) { index -> SudokuCellState(index = index) } +
-            SudokuCellState(index = 0)
+        val cells =
+            List(81) { index -> SudokuCellState(index = index) } + SudokuCellState(index = 0)
 
         SudokuBoardState(cells = cells)
     }
@@ -113,7 +113,7 @@ class SudokuBoardStateTest {
         val originalBoard = boardWithSelectedCell
         val updatedBoard = originalBoard.setValue(3)
 
-        assertEquals(3,updatedBoard.cells[defaultSelectedCell].value)
+        assertEquals(3, updatedBoard.cells[defaultSelectedCell].value)
         assertBoardWithSelectedCellState()
 
         for (index in originalBoard.cells.indices.filter { it != defaultSelectedCell }) {
@@ -126,7 +126,7 @@ class SudokuBoardStateTest {
         val originalBoard = boardWithSelectedCell.setValue(3)
         val updatedBoard = originalBoard.setValue(null)
 
-        assertEquals(3,originalBoard.cells[defaultSelectedCell].value)
+        assertEquals(3, originalBoard.cells[defaultSelectedCell].value)
         assertNull(updatedBoard.cells[defaultSelectedCell].value)
 
         for (index in originalBoard.cells.indices.filter { it != defaultSelectedCell }) {
@@ -144,7 +144,7 @@ class SudokuBoardStateTest {
     @Test
     fun toggleNote_unselectedStaysUnchanged() {
         val originalBoard = defaultBoard
-        val updatedBoard = originalBoard.toggleNote(3)
+        val updatedBoard = originalBoard.setValue(3, InputMode.Notes)
 
         assertEquals(originalBoard, updatedBoard)
     }
@@ -152,9 +152,9 @@ class SudokuBoardStateTest {
     @Test
     fun toggleNote_SelectedChanges() {
         val originalBoard = boardWithSelectedCell
-        val updatedBoard = originalBoard.toggleNote(3)
+        val updatedBoard = originalBoard.setValue(3, InputMode.Notes)
 
-        assertEquals(setOf(3),updatedBoard.cells[defaultSelectedCell].notes)
+        assertEquals(setOf(3), updatedBoard.cells[defaultSelectedCell].notes)
         assertBoardWithSelectedCellState()
 
         for (index in originalBoard.cells.indices.filter { it != defaultSelectedCell }) {
@@ -164,8 +164,8 @@ class SudokuBoardStateTest {
 
     @Test
     fun toggleNote_SelectedTwiceChangesNull() {
-        val originalBoard = boardWithSelectedCell.toggleNote(3)
-        val updatedBoard = originalBoard.toggleNote(3)
+        val originalBoard = boardWithSelectedCell.setValue(3, InputMode.Notes)
+        val updatedBoard = originalBoard.setValue(3, InputMode.Notes)
 
         assertTrue(originalBoard.cells[defaultSelectedCell].notes.isNotEmpty())
         assertTrue(updatedBoard.cells[defaultSelectedCell].notes.isEmpty())
@@ -178,7 +178,7 @@ class SudokuBoardStateTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun toggleNote_InvalidValue() {
-        boardWithSelectedCell.toggleNote(300)
+        boardWithSelectedCell.setValue(300, InputMode.Notes)
     }
 
 }
