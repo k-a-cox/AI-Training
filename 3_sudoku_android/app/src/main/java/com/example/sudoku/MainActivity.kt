@@ -29,25 +29,38 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            //var board by remember { mutableStateOf(getSampleBoard()) }
+//            var board by remember { mutableStateOf(getSampleBoard()) }
             var board by remember { mutableStateOf(SudokuBoardState()) }
+
+            var notesOn by remember { mutableStateOf(false) }
 
             SudokuTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(64.dp)
+                        .padding(32.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         SudokuGrid(board, onCellSelected = { index ->
                             board = board.selectCell(index)
                         })
                         Box(modifier = Modifier.height(32.dp))
-                        ControlBoard(onDigitClick = { digit ->
-                            board = board.setValue(digit)
-                        }, onEraserClick = {
-                            board = board.setValue(null)
-                        })
+                        ControlBoard(
+                            onDigitClick = { digit ->
+                                board = board.setValue(digit)
+                            },
+                            onEraserClick = {
+                                board = board.setValue(null)
+                            },
+                            onNotesClick = {
+                                notesOn = !notesOn
+                            },
+                            onPhaseGameClick = {
+                                board = board.togglePhase()
+                            },
+                            gamePhase = board.phase,
+                            showNotes = notesOn
+                        )
                     }
                 }
             }

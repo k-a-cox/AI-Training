@@ -4,6 +4,7 @@ data class SudokuBoardState(
     val cells: List<SudokuCellState> = List(81) { index -> SudokuCellState(index = index) },
     val selectedCell: Int? = null,
     val phase: GamePhase = GamePhase.EnteringGivens,
+    val inputModeState: InputMode = InputMode.Value
 ) {
     init {
         require(cells.size == 81) {
@@ -22,7 +23,7 @@ data class SudokuBoardState(
         )
     }
 
-    fun setValue(value: Int?, inputMode: InputMode = InputMode.Value): SudokuBoardState {
+    fun setValue(value: Int?, inputMode: InputMode = inputModeState): SudokuBoardState {
         val index = selectedCell ?: return this
 
         val cell = cells[index]
@@ -42,14 +43,14 @@ data class SudokuBoardState(
         )
     }
 
-//    fun toggleInputMode(): SudokuBoardState {
-//        return copy(
-//            inputMode = when (inputMode) {
-//                InputMode.Value -> InputMode.Notes
-//                InputMode.Notes -> InputMode.Value
-//            }
-//        )
-//    }
+    fun toggleInputMode(): SudokuBoardState {
+        return copy(
+            inputModeState = when (inputModeState) {
+                InputMode.Value -> InputMode.Notes
+                InputMode.Notes -> InputMode.Value
+            }
+        )
+    }
 
 //    fun toggleNote(note: Int): SudokuBoardState {
 //        val index = selectedCell ?: return this

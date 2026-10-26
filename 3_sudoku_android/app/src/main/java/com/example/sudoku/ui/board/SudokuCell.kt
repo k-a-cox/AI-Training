@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,19 +21,10 @@ import com.example.sudoku.domain.SudokuCellState
 
 @Composable
 fun SudokuCell(
-    state: SudokuCellState,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    state: SudokuCellState, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
-    val backgroundColor =
-        if (isSelected) {
-            Color.Blue.copy(alpha = 0.5f)
-        } else if (state.isGiven) {
-            Color.Gray.copy(alpha = 0.5f)
-        } else {
-            Color.White
-        }
+    val backgroundColor = getBackgroundColor(state, isSelected)
+    val fontColor = getFontColor(state, isSelected)
 
     Box(
         modifier = modifier
@@ -47,13 +39,14 @@ fun SudokuCell(
             Text(
                 text = state.value.toString(),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = if (state.isGiven) FontWeight.Bold else FontWeight.Normal
+                fontWeight = if (state.isGiven) FontWeight.Bold else FontWeight.Normal,
+                color = fontColor
             )
         } else if (state.notes.isNotEmpty()) {
             Text(
-                text = "*"+state.notes.joinToString(", "),
+                text = "*" + state.notes.joinToString(", "),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
+                color = fontColor,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -61,12 +54,36 @@ fun SudokuCell(
     }
 }
 
-@Preview(showBackground = true)
+internal enum class CellVisualState { Empty, Given, Selected, Notes }
+
+fun getBackgroundColor(state: SudokuCellState, isSelected: Boolean): Color {
+    return when {
+        isSelected && state.isGiven -> lerp(Color.Red, Color.DarkGray, 0.5f)
+        isSelected -> Color.Red.copy(alpha = 0.5f)
+        state.isGiven -> Color.DarkGray.copy(alpha = 0.5f)
+        else -> Color.White
+    }
+}
+
+fun getFontColor(state: SudokuCellState, isSelected: Boolean): Color {
+    return when {
+        state.isGiven -> Color.Black
+        isSelected -> Color.Black
+        state.notes.isNotEmpty() -> Color.Gray
+        else -> Color.Black
+    }
+}
+
 @Composable
-fun Empty() {
+private fun ShowCell(
+    value: Int? = null,
+    isSelected: Boolean = false,
+    isGiven: Boolean = false,
+    notes: Set<Int> = emptySet()
+) {
     SudokuCell(
-        state = SudokuCellState(index = 0),
-        isSelected = false,
+        state = SudokuCellState(index = 0, value = value, isGiven = isGiven, notes = notes),
+        isSelected = isSelected,
         onClick = {},
         modifier = Modifier.width(48.dp)
     )
@@ -74,33 +91,49 @@ fun Empty() {
 
 @Preview(showBackground = true)
 @Composable
-fun Given() {
-    SudokuCell(
-        state = SudokuCellState(index = 0,value = 2, isGiven = true),
-        isSelected = false,
-        onClick = {},
-        modifier = Modifier.width(48.dp)
-    )
+fun Empty() {
+    ShowCell()
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Selected() {
-    SudokuCell(
-        state = SudokuCellState(index = 0,value = 4),
-        isSelected = true,
-        onClick = {},
-        modifier = Modifier.width(48.dp)
-    )
+    ShowCell(isSelected = true)
 }
 
 @Preview(showBackground = true)
 @Composable
+fun Value() {
+    ShowCell(value = 2)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ValueSelected() {
+    ShowCell(value = 2, isSelected = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Given() {
+    ShowCell(value = 2, isGiven = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GivenSelected() {
+    ShowCell(value = 2, isGiven = true, isSelected = true)
+}
+
+
+@Preview(showBackground = true)
+@Composable
 fun Notes() {
-    SudokuCell(
-        state = SudokuCellState(index = 0,notes = setOf(1,2,3,4,5,6,7,8,9)),
-        isSelected = false,
-        onClick = {},
-        modifier = Modifier.width(48.dp)
-    )
+    ShowCell(notes = setOf(1, 2, 3, 4, 5, 6, 7, 8, 9))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NotesSelected() {
+    ShowCell(notes = setOf(1, 2, 3, 4, 5, 6, 7, 8, 9), isSelected = true)
 }
