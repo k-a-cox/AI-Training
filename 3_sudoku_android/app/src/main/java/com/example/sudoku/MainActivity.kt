@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.samples.PuzzleSampleBoards
+import com.example.sudoku.domain.samples.SampleBoards
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlBoard
+import com.example.sudoku.ui.controls.SampleBoardPicker
 import com.example.sudoku.ui.feedback.LockGivens
 import com.example.sudoku.ui.theme.SudokuTheme
 
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            var board by remember { mutableStateOf(PuzzleSampleBoards.uniqueEasyBoard) }
+            var board by remember { mutableStateOf(SampleBoards.emptyBoard) }
             var notesOn by remember { mutableStateOf(false) }
             var showLockGivensDialog by remember { mutableStateOf(false) }
 
@@ -43,6 +45,10 @@ class MainActivity : ComponentActivity() {
                         .padding(32.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        SampleBoardPicker(
+                            boards = PuzzleSampleBoards.all,
+                            onBoardSelected = { board = it },
+                        )
                         SudokuGrid(board, onCellSelected = { index ->
                             board = board.selectCell(index)
                         })
@@ -50,14 +56,11 @@ class MainActivity : ComponentActivity() {
                         ControlBoard(
                             onDigitClick = { digit ->
                                 board = board.setValue(digit)
-                            },
-                            onEraserClick = {
+                            }, onEraserClick = {
                                 board = board.setValue(null)
-                            },
-                            onNotesClick = {
+                            }, onNotesClick = {
                                 notesOn = !notesOn
-                            },
-                            onPhaseGameClick = {
+                            }, onPhaseGameClick = {
                                 when (board.phase) {
                                     GamePhase.EnteringGivens -> {
                                         showLockGivensDialog = true
@@ -71,23 +74,17 @@ class MainActivity : ComponentActivity() {
                                         // Handle solved phase logic
                                     }
                                 }
-                            },
-                            gamePhase = board.phase,
-                            showNotes = notesOn
+                            }, gamePhase = board.phase, showNotes = notesOn
                         )
                     }
 
                     if (showLockGivensDialog) {
-                        LockGivens(
-                            isValid = GivensValidator.validateGivens(board),
-                            onConfirm = {
-                                board = GivensValidator.lockInGivens(board)
-                                showLockGivensDialog = false
-                            },
-                            onDismiss = {
-                                showLockGivensDialog = false
-                            }
-                        )
+                        LockGivens(isValid = GivensValidator.validateGivens(board), onConfirm = {
+                            board = GivensValidator.lockInGivens(board)
+                            showLockGivensDialog = false
+                        }, onDismiss = {
+                            showLockGivensDialog = false
+                        })
                     }
                 }
             }

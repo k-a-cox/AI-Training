@@ -94,4 +94,12 @@ object PuzzleSampleBoards {
         9.23...7.
         """
     )
+
+    val all: List<Pair<String, SudokuBoardState>> = listOf(
+        "Unique easy" to uniqueEasyBoard,
+        "Unique medium" to uniqueMediumBoard,
+        "Unique sparse" to uniqueSparseBoard,
+        "Multiple solutions" to multipleSolutionsBoard,
+        "No solution" to noSolutionBoard,
+    )
 }
