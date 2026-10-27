@@ -31,10 +31,10 @@ Work through the steps in order. Add and run focused unit tests as each model or
 
 ## 4. Add givens-entry and confirmation flow
 
-- [ ] Let the player enter initial clues into the empty board.
-- [ ] Add an explicit **Confirm givens** action.
+- [x] Let the player enter initial clues into the empty board.
+- [x] Add an explicit **Confirm givens** action.
 - [ ] Validate givens against row, column, and 3×3-box rules before confirming.
-- [ ] Add unit tests for valid givens and duplicate clues in rows, columns, and boxes. Invalid givens must not be confirmed.
+- [x] Add unit tests for valid givens and duplicate clues in rows, columns, and boxes. Invalid givens must not be confirmed.
 - [ ] After clue conflicts are ruled out, count valid complete solutions, stopping once two are found.
 - [ ] Accept and lock givens only when exactly one solution exists; explain and reject puzzles with no solution or multiple solutions.
 - [ ] Add unit tests for unique, unsolvable, and multiple-solution givens, and verify that only a unique puzzle can be confirmed.
