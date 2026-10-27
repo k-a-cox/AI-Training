@@ -21,6 +21,7 @@ import com.example.sudoku.domain.samples.PuzzleSampleBoards
 import com.example.sudoku.domain.samples.SampleBoards
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
+import com.example.sudoku.ui.controls.ControlAction
 import com.example.sudoku.ui.controls.ControlBoard
 import com.example.sudoku.ui.controls.SampleBoardPicker
 import com.example.sudoku.ui.feedback.LockGivens
@@ -54,27 +55,25 @@ class MainActivity : ComponentActivity() {
                         })
                         Box(modifier = Modifier.height(32.dp))
                         ControlBoard(
-                            onDigitClick = { digit ->
-                                board = board.setValue(digit)
-                            }, onEraserClick = {
-                                board = board.setValue(null)
-                            }, onNotesClick = {
-                                notesOn = !notesOn
-                            }, onPhaseGameClick = {
-                                when (board.phase) {
-                                    GamePhase.EnteringGivens -> {
-                                        showLockGivensDialog = true
-                                    }
+                            gamePhase = board.phase,
+                            showNotes = notesOn,
+                            onAction = { action ->
+                                when (action) {
+                                    is ControlAction.Digit -> board = board.setValue(action.value)
+                                    ControlAction.Erase -> board = board.setValue(null)
+                                    ControlAction.ToggleNotes -> notesOn = !notesOn
+                                    ControlAction.AdvancePhase -> when (board.phase) {
+                                        GamePhase.EnteringGivens -> showLockGivensDialog = true
+                                        GamePhase.Playing -> {
+                                            // Handle playing phase logic
+                                        }
 
-                                    GamePhase.Playing -> {
-                                        // Handle playing phase logic
-                                    }
-
-                                    GamePhase.Solved -> {
-                                        // Handle solved phase logic
+                                        GamePhase.Solved -> {
+                                            // Handle solved phase logic
+                                        }
                                     }
                                 }
-                            }, gamePhase = board.phase, showNotes = notesOn
+                            }
                         )
                     }
 

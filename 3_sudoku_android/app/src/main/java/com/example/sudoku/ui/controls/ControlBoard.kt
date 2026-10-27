@@ -16,56 +16,40 @@ import com.example.sudoku.domain.GamePhase
 
 @Composable
 fun ControlBoard(
-    onDigitClick: (Int) -> Unit,
-    onEraserClick: () -> Unit,
-    onNotesClick: () -> Unit,
-    onPhaseGameClick: () -> Unit,
     gamePhase: GamePhase,
-    showNotes: Boolean = false,
+    showNotes: Boolean,
+    onAction: (ControlAction) -> Unit,
 ) {
-
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        NumberPad(showNotes = showNotes, onDigitClick = { digit ->
-            onDigitClick(digit)
-        })
-        when (gamePhase) {
-            GamePhase.EnteringGivens -> {
-                Row(
-                    modifier = Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(onClick = { onEraserClick() }) {
-                        Text("Clear")
-                    }
-                    Button(onClick = { onPhaseGameClick() }) {
+        NumberPad(
+            showNotes = showNotes,
+            onDigitClick = { digit -> onAction(ControlAction.Digit(digit)) },
+        )
+        Row(
+            modifier = Modifier.padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            when (gamePhase) {
+                GamePhase.EnteringGivens -> {
+                    ClearButton { onAction(ControlAction.Erase) }
+                    Button(onClick = { onAction(ControlAction.AdvancePhase) }) {
                         Text("Lock in Givens")
                     }
                 }
-            }
 
-            GamePhase.Playing -> {
-                Row(
-                    modifier = Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    ClearButton(onClick = { onEraserClick() })
-                    NotesButton(onClick = { onNotesClick() })
-                    SubmitButton(onClick = { onPhaseGameClick() })
+                GamePhase.Playing -> {
+                    ClearButton { onAction(ControlAction.Erase) }
+                    NotesButton { onAction(ControlAction.ToggleNotes) }
+                    SubmitButton { onAction(ControlAction.AdvancePhase) }
                 }
-            }
 
-            GamePhase.Solved -> {
-                Row(
-                    modifier = Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    RestartButton(onClick = { onPhaseGameClick() })
+                GamePhase.Solved -> {
+                    RestartButton { onAction(ControlAction.AdvancePhase) }
                 }
             }
         }
     }
 }
-
 @Composable
 fun RestartButton(onClick: () -> Unit) {
     Button(onClick = onClick) {
@@ -97,12 +81,9 @@ fun SubmitButton(onClick: () -> Unit) {
 @Composable
 private fun ShowUI(gamePhase: GamePhase) {
     ControlBoard(
-        onDigitClick = {},
-        onEraserClick = {},
-        onNotesClick = {},
-        onPhaseGameClick = {},
         gamePhase = gamePhase,
-        showNotes = false
+        showNotes = false,
+        onAction = {}
     )
 }
 
