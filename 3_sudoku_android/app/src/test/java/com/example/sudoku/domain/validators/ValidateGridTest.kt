@@ -1,60 +1,19 @@
 package com.example.sudoku.domain.validators
 
-import com.example.sudoku.domain.state.SudokuBoardState
-import com.example.sudoku.domain.state.SudokuCellState
+import com.example.sudoku.domain.samples.SampleBoards.boxGoodBoard
+import com.example.sudoku.domain.samples.SampleBoards.columnGoodBoard
+import com.example.sudoku.domain.samples.SampleBoards.emptyBoard
+import com.example.sudoku.domain.samples.SampleBoards.invalidBoxBoard
+import com.example.sudoku.domain.samples.SampleBoards.invalidColumnBoard
+import com.example.sudoku.domain.samples.SampleBoards.invalidRowBoard
+import com.example.sudoku.domain.samples.SampleBoards.rowGoodBoard
+import com.example.sudoku.domain.samples.SampleBoards.validFullBoard
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ValidateGridTest {
-    private val emptyBoard = SudokuBoardState()
-
-    private val rowGoodBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(index = index, value = index % 9 + 1)
-        })
-
-    private val columnGoodBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(index = index, value = index / 9 + 1)
-        })
-
-    private val boxGoodBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(
-                index = index, value = (((index / 9) % 3) * 3 + ((index % 9) % 3) + 1)
-            )
-        })
-
-    private val invalidColumnBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(
-                index = index, value = ((index % 9) + (index / 9) * 3) % 9 + 1
-            )
-        })
-
-    private val invalidRowBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(
-                index = index, value = ((index * 3 % 9) + (index / 9)) % 9 + 1
-            )
-        })
-
-    private val invalidBoxBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(
-                index = index, value = ((index % 9) + (index / 9) + (index % 9)) % 9 + 1
-            )
-        })
-
-    private val validFullBoard = SudokuBoardState(
-        cells = List(81) { index ->
-            SudokuCellState(
-                index = index, value = ((index % 9) + ((index / 9) * 3) + ((index / 9) / 3)) % 9 + 1
-            )
-        })
-
     @Test
     fun validateGrid_emptyBoard_isValidWhenFullIsNotRequired() {
         assertEquals(

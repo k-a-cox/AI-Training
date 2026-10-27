@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sudoku.domain.GamePhase
-import com.example.sudoku.domain.state.SudokuBoardState
+import com.example.sudoku.domain.samples.PuzzleSampleBoards
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlBoard
@@ -32,8 +32,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-//            var board by remember { mutableStateOf(getSampleBoard()) }
-            var board by remember { mutableStateOf(SudokuBoardState()) }
+            var board by remember { mutableStateOf(PuzzleSampleBoards.uniqueEasyBoard) }
             var notesOn by remember { mutableStateOf(false) }
             var showLockGivensDialog by remember { mutableStateOf(false) }
 

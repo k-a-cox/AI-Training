@@ -26,7 +26,7 @@ Write focused unit tests as each feature is implemented, especially completeness
 
 ## AI-assisted development
 
-GPT models are being used primarily as an interactive development assistant, not to automate the project end to end. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage. Claude Sonnet 5.5 also helped update the UI. The models help refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Implementation remains locally driven: changes are developed and reviewed in the project, then checked with the local build, unit tests, and Android emulator as appropriate.
+GPT models are being used primarily as an interactive development assistant, not to automate the project end to end. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage. Claude Sonnet 5.5 also helped update the UI and generate sample boards for testing. The models help refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Implementation remains locally driven: changes are developed and reviewed in the project, then checked with the local build, unit tests, and Android emulator as appropriate.
 
 ## Project documents
 
