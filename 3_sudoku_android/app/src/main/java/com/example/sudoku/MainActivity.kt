@@ -16,9 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.state.SudokuBoardState
+import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlBoard
+import com.example.sudoku.ui.feedback.LockGivens
 import com.example.sudoku.ui.theme.SudokuTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,8 +34,8 @@ class MainActivity : ComponentActivity() {
 
 //            var board by remember { mutableStateOf(getSampleBoard()) }
             var board by remember { mutableStateOf(SudokuBoardState()) }
-
             var notesOn by remember { mutableStateOf(false) }
+            var showLockGivensDialog by remember { mutableStateOf(false) }
 
             SudokuTheme {
                 Box(
@@ -56,10 +59,35 @@ class MainActivity : ComponentActivity() {
                                 notesOn = !notesOn
                             },
                             onPhaseGameClick = {
-                                board = board.togglePhase()
+                                when (board.phase) {
+                                    GamePhase.EnteringGivens -> {
+                                        showLockGivensDialog = true
+                                    }
+
+                                    GamePhase.Playing -> {
+                                        // Handle playing phase logic
+                                    }
+
+                                    GamePhase.Solved -> {
+                                        // Handle solved phase logic
+                                    }
+                                }
                             },
                             gamePhase = board.phase,
                             showNotes = notesOn
+                        )
+                    }
+
+                    if (showLockGivensDialog) {
+                        LockGivens(
+                            isValid = GivensValidator.validateGivens(board),
+                            onConfirm = {
+                                board = GivensValidator.lockInGivens(board)
+                                showLockGivensDialog = false
+                            },
+                            onDismiss = {
+                                showLockGivensDialog = false
+                            }
                         )
                     }
                 }
