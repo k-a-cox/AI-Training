@@ -16,14 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.sudoku.domain.GamePhase
-import com.example.sudoku.domain.samples.PuzzleSampleBoards
 import com.example.sudoku.domain.samples.SampleBoards
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlAction
 import com.example.sudoku.ui.controls.ControlBoard
-import com.example.sudoku.ui.controls.SampleBoardPicker
 import com.example.sudoku.ui.feedback.LockGivens
 import com.example.sudoku.ui.theme.SudokuTheme
 
@@ -46,32 +43,25 @@ class MainActivity : ComponentActivity() {
                         .padding(32.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        SampleBoardPicker(
-                            boards = PuzzleSampleBoards.all,
-                            onBoardSelected = { board = it },
-                        )
                         SudokuGrid(board, onCellSelected = { index ->
                             board = board.selectCell(index)
                         })
-                        Box(modifier = Modifier.height(32.dp))
+                        Box(modifier = Modifier.height(16.dp))
                         ControlBoard(
                             gamePhase = board.phase,
                             showNotes = notesOn,
                             onAction = { action ->
                                 when (action) {
                                     is ControlAction.Digit -> board = board.setValue(action.value)
+                                    is ControlAction.PickBoard -> board = action.value
                                     ControlAction.Erase -> board = board.setValue(null)
                                     ControlAction.ToggleNotes -> notesOn = !notesOn
-                                    ControlAction.AdvancePhase -> when (board.phase) {
-                                        GamePhase.EnteringGivens -> showLockGivensDialog = true
-                                        GamePhase.Playing -> {
-                                            // Handle playing phase logic
-                                        }
+                                    ControlAction.LockGivens -> showLockGivensDialog = true
+                                    ControlAction.SubmitBoard -> showLockGivensDialog = true //todo
+                                    ControlAction.Restart ->
+                                        board = SampleBoards.emptyBoard
 
-                                        GamePhase.Solved -> {
-                                            // Handle solved phase logic
-                                        }
-                                    }
+
                                 }
                             }
                         )
