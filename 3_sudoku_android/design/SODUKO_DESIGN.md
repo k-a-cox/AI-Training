@@ -14,11 +14,13 @@ Give the nine 3×3 boxes clear visual emphasis so their boundaries are easy to d
 
 The user enters givens into an empty 9×9 board. All cell values are entered using on-screen number buttons; do not require or invoke the software keyboard. Tapping a cell selects it, and tapping a number button enters that value in the selected cell. An erase control clears the selected editable cell.
 
-An explicit **Confirm givens** action validates the givens before starting play: first check for row, column, and 3×3-box conflicts, then perform the uniqueness check described below. Only accepted givens start play. Once play starts, given values appear bold and cannot be changed for that puzzle. A **Start over** action returns to puzzle entry to create a different puzzle.
+An explicit **Confirm givens** action validates the givens before starting play: check for row, column, and 3×3-box conflicts. Once the solver exists, also perform the uniqueness check described below. Only accepted givens start play. Once play starts, given values appear bold and cannot be changed for that puzzle. A **Start over** action returns to puzzle entry to create a different puzzle.
 
-#### Validate uniqueness before locking givens
+#### Validate uniqueness before locking givens (deferred until the solver exists)
 
-As part of Goal 1's givens-confirmation flow, first reject any row, column, or 3×3-box conflicts. If there are no conflicts, determine how many valid complete solutions are consistent with the givens. Lock the givens and start play only when exactly one solution exists.
+Until the backtracking solver from Goal 2 is available, Confirm givens only rejects row, column, and 3×3-box conflicts, so puzzles with no solution or several solutions can be locked. The uniqueness check is a thin wrapper around that solver and is added once it exists, which also avoids writing a solver twice. Established puzzles are normally unique, so this mainly protects hand-typed and scanned givens.
+
+Once added, the givens-confirmation flow first rejects any row, column, or 3×3-box conflicts. If there are no conflicts, it determines how many valid complete solutions are consistent with the givens. Lock the givens and start play only when exactly one solution exists.
 
 - If there are no solutions, explain that the entered puzzle cannot be solved.
 - If there is more than one solution, explain that the givens do not determine a unique puzzle.
@@ -27,11 +29,13 @@ As part of Goal 1's givens-confirmation flow, first reject any row, column, or 3
 
 Keep this validation distinct from the player's **Verify** action (which checks a filled solution) and from Goal 2's solver progress.
 
+Rejected givens will show the cells involved in each conflict as highlighted cells; this reuses the conflict highlighting built with Verify (see below) and is deferred to that work.
+
 ### Play, notes, and verification
 
 The player fills empty cells using the same on-screen number buttons, without using the software keyboard. A **Notes** control switches the number buttons to toggle candidate digits 1–9 in the selected empty cell. Notes are user annotations, not solver assertions, and are cleared from a cell when a value is entered.
 
-When the user clicks **Verify**, the app first checks completeness. If any cell is empty, it asks the player to fill all cells and does not report number conflicts yet. Once all 81 cells are filled, check rows, columns, and 3×3 boxes for duplicate numbers. Identify conflicting numbers and their locations, or accept the board as solved if no conflicts exist.
+When the user clicks **Verify**, the app first checks completeness. If any cell is empty, it asks the player to fill all cells and does not report number conflicts yet. Once all 81 cells are filled, check rows, columns, and 3×3 boxes for duplicate numbers. Identify conflicting numbers and their locations and highlight those cells on the board, or accept the board as solved if no conflicts exist.
 
 ## Goal 2: Automatic solver
 
@@ -62,7 +66,7 @@ These are logical boundaries, not a requirement to create one Gradle module per 
 
 ## Suggested user flow
 
-1. Enter puzzle clues and confirm them. Reject conflicting, unsolvable, or ambiguous puzzles; accept only givens with one solution.
+1. Enter puzzle clues and confirm them. Reject conflicting givens. After the uniqueness check is added, also reject unsolvable or ambiguous puzzles and accept only givens with one solution.
 2. Play manually, using notes as desired; verify the filled solution.
 3. Optionally run a solving technique or the ordered automatic solver and inspect its progress.
 4. In a later stretch-goal milestone, scan clues and review them before confirmation.
@@ -75,7 +79,7 @@ These are logical boundaries, not a requirement to create one Gradle module per 
 - When adding confirmation, test valid givens, duplicates in rows/columns/boxes, and rejection of invalid givens.
 - When adding notes, test toggling candidate digits and clearing notes when a value is entered.
 - When adding **Verify**, first test that any incomplete board returns an incomplete result without conflict reports. Then test full boards with row, column, and box conflicts, and a valid completed solution.
-- As part of Goal 1's givens confirmation, test puzzles with exactly one solution, no solutions, and multiple solutions. Check uniqueness only after clue conflicts are ruled out, and confirm that only a unique puzzle can be locked.
+- When the uniqueness check is added after the solver, test puzzles with exactly one solution, no solutions, and multiple solutions. Check uniqueness only after clue conflicts are ruled out, and confirm that only a unique puzzle can be locked. `PuzzleSampleBoards` already provides unique, no-solution, and multiple-solution boards for these tests.
 - Exercise the full Goal 1 flow in the emulator, including that on-screen controls do not open the software keyboard.
 - When adding the solver, unit-test each technique and verify sequential shared-state deductions, visible explanations, and solved/stuck/invalid outcomes.
 - For the camera stretch goal, verify scanned givens can be edited and reviewed before the normal validation and confirmation flow.

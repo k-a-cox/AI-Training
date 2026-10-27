@@ -17,12 +17,12 @@ From PowerShell in this directory, run the local unit tests or build the debug a
 
 ## Development goals
 
-1. **Manual Sudoku game:** Make the nine 3×3 boxes visually distinct, enter givens and player values with on-screen controls, confirm and lock the bold givens, add optional candidate notes, and verify a completed solution. Verification checks completeness first, then reports duplicate values in rows, columns, and 3×3 boxes. As part of confirming givens, reject conflicts and puzzles without exactly one solution.
+1. **Manual Sudoku game:** Make the nine 3×3 boxes visually distinct, enter givens and player values with on-screen controls, confirm and lock the bold givens, add optional candidate notes, and verify a completed solution. Verification checks completeness first, then reports and highlights duplicate values in rows, columns, and 3×3 boxes. When confirming givens, reject conflicts; rejecting puzzles without exactly one solution is deferred until the solver exists.
 2. **Automatic solver:** Add independently testable techniques that run sequentially on one shared board and show their progress.
 
 **Stretch goal — camera clue entry:** Allow camera-based entry with user review and correction before the normal givens validation, including the uniqueness check.
 
-Write focused unit tests as each feature is implemented, especially completeness and conflict tests alongside the Verify behavior and unique/unsolvable/ambiguous puzzle tests alongside givens validation. Cell and note input should not depend on the software keyboard.
+Write focused unit tests as each feature is implemented, especially completeness and conflict tests alongside the Verify behavior and unique/unsolvable/ambiguous puzzle tests alongside the uniqueness check once it is added. Cell and note input should not depend on the software keyboard.
 
 ## AI-assisted development
 

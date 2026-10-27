@@ -35,11 +35,9 @@ Work through the steps in order. Add and run focused unit tests as each model or
 - [x] Add an explicit **Confirm givens** action.
 - [x] Validate givens against row, column, and 3×3-box rules before confirming.
 - [x] Add unit tests for valid givens and duplicate clues in rows, columns, and boxes. Invalid givens must not be confirmed.
-- [ ] After clue conflicts are ruled out, count valid complete solutions, stopping once two are found.
-- [ ] Accept and lock givens only when exactly one solution exists; explain and reject puzzles with no solution or multiple solutions.
-- [ ] Add unit tests for unique, unsolvable, and multiple-solution givens, and verify that only a unique puzzle can be confirmed.
+The uniqueness check (counting solutions, stopping at two) is deferred until the backtracking solver exists; see [Deferred: uniqueness check](#deferred-uniqueness-check) below. Showing why givens were rejected is deferred to the conflict highlighting in [Step 8](#8-check-conflicts-on-full-boards), which also applies to rejected givens.
 
-**Done when:** Only conflict-free givens with exactly one solution can be confirmed; rejected givens remain editable.
+**Done when:** Only conflict-free givens can be confirmed; rejected givens remain editable.
 
 ## 5. Lock and distinguish confirmed givens
 
@@ -74,11 +72,12 @@ Work through the steps in order. Add and run focused unit tests as each model or
 ## 8. Check conflicts on full boards
 
 - [ ] For a full board, report duplicates in each affected row, column, and 3×3 box.
-- [ ] Identify the conflicting numbers and cell locations.
+- [ ] Identify the conflicting numbers and cell locations, returned as cell indexes.
+- [ ] Highlight the conflicting cells on the board, both when Verify finds conflicts and when Confirm givens rejects conflicting givens.
 - [ ] Accept a full board as solved only when it has no row, column, or box conflicts.
-- [ ] Add unit tests for row conflicts, column conflicts, box conflicts, and a valid completed board.
+- [ ] Add unit tests for row conflicts, column conflicts, box conflicts, the reported conflicting cell indexes, and a valid completed board.
 
-**Done when:** Full invalid boards identify their conflicts and a valid full board is accepted.
+**Done when:** Full invalid boards identify and highlight their conflicts and a valid full board is accepted.
 
 ## 9. Exercise the complete game flow
 
@@ -91,3 +90,13 @@ Work through the steps in order. Add and run focused unit tests as each model or
 - [ ] Run the Android build and all unit tests created in earlier steps.
 
 **Done when:** The manual game works end-to-end on the emulator and its model/rule tests pass.
+
+## Deferred: uniqueness check
+
+Do this after the backtracking solver from Goal 2 exists, since it reuses that solver.
+
+- [ ] After clue conflicts are ruled out, count valid complete solutions, stopping once two are found.
+- [ ] Accept and lock givens only when exactly one solution exists; explain and reject puzzles with no solution or multiple solutions.
+- [ ] Add unit tests for unique, unsolvable, and multiple-solution givens (see `PuzzleSampleBoards`), and verify that only a unique puzzle can be confirmed.
+
+**Done when:** Only conflict-free givens with exactly one solution can be confirmed; rejected givens remain editable.
