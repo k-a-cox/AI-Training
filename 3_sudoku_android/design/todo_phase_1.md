@@ -41,9 +41,9 @@ The uniqueness check (counting solutions, stopping at two) is deferred until the
 
 ## 5. Lock and distinguish confirmed givens
 
-- [ ] Display confirmed given values in bold.
-- [ ] Make confirmed givens read-only during play.
-- [ ] Keep non-given cells editable.
+- [x] Display confirmed given values in bold.
+- [x] Make confirmed givens read-only during play.
+- [x] Keep non-given cells editable.
 - [ ] Add a **Start over** action to clear the puzzle and enter new givens.
 - [ ] Add unit tests for clue locking and start-over state.
 
