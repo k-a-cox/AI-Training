@@ -44,8 +44,9 @@ The uniqueness check (counting solutions, stopping at two) is deferred until the
 - [x] Display confirmed given values in bold.
 - [x] Make confirmed givens read-only during play.
 - [x] Keep non-given cells editable.
-- [ ] Add a **Start over** action to clear the puzzle and enter new givens.
-- [ ] Add unit tests for clue locking and start-over state.
+- [x] Add a **Start over** action to clear the puzzle and enter new givens.
+- [x] Add unit tests for clue locking and start-over state.
+- [ ] Complete and run the deferred `GivensValidatorTest` cases for givens validation and locking.
 
 **Done when:** On-screen number and erase controls cannot change a confirmed given.
 

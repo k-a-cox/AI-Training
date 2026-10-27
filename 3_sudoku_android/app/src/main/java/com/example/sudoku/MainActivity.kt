@@ -16,10 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.sudoku.domain.samples.SampleBoards
+import com.example.sudoku.app.GameState
+import com.example.sudoku.app.reduce
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.ui.board.SudokuGrid
-import com.example.sudoku.ui.controls.ControlAction
 import com.example.sudoku.ui.controls.ControlBoard
 import com.example.sudoku.ui.feedback.LockGivens
 import com.example.sudoku.ui.theme.SudokuTheme
@@ -32,9 +32,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
 
-            var board by remember { mutableStateOf(SampleBoards.emptyBoard) }
-            var notesOn by remember { mutableStateOf(false) }
-            var showLockGivensDialog by remember { mutableStateOf(false) }
+            var state by remember { mutableStateOf(GameState()) }
 
             SudokuTheme {
                 Box(
@@ -43,37 +41,30 @@ class MainActivity : ComponentActivity() {
                         .padding(32.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        SudokuGrid(board, onCellSelected = { index ->
-                            board = board.selectCell(index)
+                        SudokuGrid(state.board, onCellSelected = { index ->
+                            state = state.copy(board = state.board.selectCell(index))
                         })
                         Box(modifier = Modifier.height(16.dp))
                         ControlBoard(
-                            gamePhase = board.phase,
-                            showNotes = notesOn,
-                            onAction = { action ->
-                                when (action) {
-                                    is ControlAction.Digit -> board = board.setValue(action.value)
-                                    is ControlAction.PickBoard -> board = action.value
-                                    ControlAction.Erase -> board = board.setValue(null)
-                                    ControlAction.ToggleNotes -> notesOn = !notesOn
-                                    ControlAction.LockGivens -> showLockGivensDialog = true
-                                    ControlAction.SubmitBoard -> showLockGivensDialog = true //todo
-                                    ControlAction.Restart ->
-                                        board = SampleBoards.emptyBoard
-
-
-                                }
-                            }
+                            gamePhase = state.board.phase,
+                            showNotes = state.notesOn,
+                            onAction = { action -> state = state.reduce(action) }
                         )
                     }
 
-                    if (showLockGivensDialog) {
-                        LockGivens(isValid = GivensValidator.validateGivens(board), onConfirm = {
-                            board = GivensValidator.lockInGivens(board)
-                            showLockGivensDialog = false
-                        }, onDismiss = {
-                            showLockGivensDialog = false
-                        })
+                    if (state.showLockGivensDialog) {
+                        LockGivens(
+                            isValid = GivensValidator.validateGivens(state.board),
+                            onConfirm = {
+                                state = state.copy(
+                                    board = GivensValidator.lockInGivens(state.board),
+                                    showLockGivensDialog = false
+                                )
+                            },
+                            onDismiss = {
+                                state = state.copy(showLockGivensDialog = false)
+                            }
+                        )
                     }
                 }
             }
