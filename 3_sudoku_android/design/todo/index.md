@@ -15,15 +15,15 @@ Open only the first step file whose status is not `done` (the first `todo` row i
 
 ## Phase 1: Playable Manual Sudoku Game
 
-Folder: [phase_1/](phase_1)
+Steps 1-5 are done (no need to open them). Folder: [phase_1/](phase_1)
 
 | Step | Status | File |
 |---|---|---|
 | 1. Define the board state | done | [01](phase_1/01_board_state.md) |
-| 2. Display and select cells | todo | [02](phase_1/02_display_select_cells.md) |
-| 3. On-screen number and erase controls | todo | [03](phase_1/03_number_erase_controls.md) |
-| 4. Givens-entry and confirmation flow | todo | [04](phase_1/04_givens_confirmation.md) |
-| 5. Lock and distinguish confirmed givens | todo | [05](phase_1/05_lock_givens.md) |
+| 2. Display and select cells | done | [02](phase_1/02_display_select_cells.md) |
+| 3. On-screen number and erase controls | done | [03](phase_1/03_number_erase_controls.md) |
+| 4. Givens-entry and confirmation flow | done | [04](phase_1/04_givens_confirmation.md) |
+| 5. Lock and distinguish confirmed givens | done | [05](phase_1/05_lock_givens.md) |
 | 6. Candidate notes | todo | [06](phase_1/06_candidate_notes.md) |
 | 7. Completeness-first verification | todo | [07](phase_1/07_completeness_verification.md) |
 | 8. Check conflicts on full boards | todo | [08](phase_1/08_conflict_checks.md) |

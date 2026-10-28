@@ -32,4 +32,3 @@ GPT models are being used primarily as an interactive development assistant, not
 
 - [App design](design/SODUKO_DESIGN.md) — feature scope, interaction flow, and architecture notes.
 - [TODO index](design/todo/index.md) — incremental steps for the playable manual game, including tests and completion criteria.
-- [Phase 1 checklist](design/todo_phase_1.md) — incremental steps for the playable manual game, including tests and completion criteria.

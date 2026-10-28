@@ -35,6 +35,6 @@ See the [project README](2_chess/README.md) for features, run instructions, and 
 
 A native Android Sudoku app built with Kotlin and Jetpack Compose. Planned features include a manual Sudoku game with visually distinct 3×3 boxes, on-screen entry, givens validation, candidate notes, and solution verification; a sequential solver that shows its progress; and camera-based clue entry as a stretch goal.
 
-See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [Phase 1 checklist](3_sudoku_android/design/todo_phase_1.md) for implementation progress.
+See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [TODO index](3_sudoku_android/design/todo/index.md) for implementation progress.
 
 **AI-assisted development:** GPT models are used primarily as interactive assistants for local development, helping refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Claude Sonnet 5.5 also helped update the UI and generate sample boards for testing. Development is not fully automated: changes are implemented and reviewed locally, then validated with the build, unit tests, and Android emulator as appropriate. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage.
