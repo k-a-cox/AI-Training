@@ -5,12 +5,18 @@ agent: "agent"
 ---
 Follow these Git preferences for this project:
 
-- Do not commit changes automatically; only commit when explicitly requested.
-- When asked to commit, stage all new and modified files in the requested change set; identify unrelated changes separately rather than including them unless explicitly requested. Do not read file contents to write a commit message; use the user's direction and reword it into a clearer sentence.
-- Commit locally only; do not push to remote repositories unless explicitly requested.
-- When resolving stashes, pop when possible instead of leaving them in the Git history.
+- Commit only when explicitly requested.
+- When the user requests a commit and changes are staged, commit exactly what is staged without inspecting file contents or staging additional files. If nothing is staged, stage only the files in the requested change set.
+- Base the commit message on the user’s direction; don’t inspect file contents solely to write it.
+- Commit locally; do not push unless explicitly requested.
+- When restoring a stash, prefer git stash pop. If conflicts occur, resolve and verify the restored changes before dropping the stash.
+- Use the fewest commands that safely complete straightforward Git requests; avoid unnecessary history searches and repeated status checks.
+- Combine independent checks into a single command, or run them in parallel; inspect full diffs only when needed.
+- Do not query or synchronize with remotes unless the request requires it.
 
-- For straightforward Git requests, use the fewest commands that safely complete the task; avoid exploratory history searches and repeated status checks.
-- Combine independent checks into one command where practical, and inspect full diffs only when the request or unexpected status requires it.
-- Don’t explain routine Git commands unless asked; report the result and any important caveats.
-- Don’t fetch, pull, or query remotes unless the request requires remote information or synchronization.
+- Use git commit -m "<message>" directly. Do not run git status, git diff or git log beforehand unless the request is ambiguous.
+- Match the repository's commit style only if the user mentions it. Do not read git log to infer it.
+- When inspection is needed, use compact output: git status -sb, git diff --stat, git --no-pager log --oneline -n 5.
+- Always pass --no-pager and avoid commands that produce large output, such as full log, show, or diff without a path.
+- After committing, reply with only the short hash and subject. Do not re-run git status or git log to verify.
+

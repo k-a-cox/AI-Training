@@ -4,6 +4,15 @@ A collection of programming assignments and projects developed with AI assistanc
 
 ## Projects
 
+### Model framework
+
+- Used Claude Sonnet 5.5 and GPT-6 Luna to rewrite directives to minimize credit usage.
+ 
+General model knowledge gained -
+- Keep todo lists split into small files that close.
+- Swap to a new thread when you finish a todo section. Otherwise the thread context will quickly snowball away,
+- Different IDEs have different model preferences. Android Studio seems to latch onto a more expensive Claude Sonnet 5.5 model.   Visual Studio Community latched onto GPT-6 Luna. (Doing phase 1 steps 4 & 5 in Sudoku ate 900 credits with the Claude Sonnet 5.5 model before I realized the snowballing effect)
+
 ### [1_python_homework](1_python_homework/)
 
 Personal expense tracker assignment, with Python, C#, and Java examples.
