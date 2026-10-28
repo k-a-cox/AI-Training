@@ -4,14 +4,18 @@ A collection of programming assignments and projects developed with AI assistanc
 
 ## Projects
 
-### Model framework
+### 0_General knowledge building
 
-- Used Claude Sonnet 5.5 and GPT-6 Luna to rewrite directives to minimize credit usage.
- 
-General model knowledge gained -
+#### For daily use - 
+- GPT is useful for setting up a new IDE or fetching a program. It will do the "basic but tedious thoughts" in the background so you can remain productive elsewhere in parallel.
+- Sometimes its easier to type the changes directly instead of hoping the GPT model will get what you want to update a file somewhere... Plus manual work is free while GPT work needs credits...
+
+#### For development - 
 - Keep todo lists split into small files that close.
 - Swap to a new thread when you finish a todo section. Otherwise the thread context will quickly snowball away,
 - Different IDEs have different model preferences. Android Studio seems to latch onto a more expensive Claude Sonnet 5.5 model.   Visual Studio Community latched onto GPT-6 Luna. (Doing phase 1 steps 4 & 5 in Sudoku ate 900 credits with the Claude Sonnet 5.5 model before I realized the snowballing effect)
+
+**AI-assisted documentation:** Used Claude Sonnet 5.5 (for logic) and GPT-6 Luna (for minor tasks) to rewrite directives in an attempt to minimize credit usage going forward. I attempted to take advantage of tokens by forking the progress constantly after the previous content got stale.
 
 ### [1_python_homework](1_python_homework/)
 

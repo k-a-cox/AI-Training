@@ -1,7 +1,7 @@
 ---
+name: code-style
 description: "Apply this project's code style when editing or generating code"
-name: "Code Style"
-agent: "agent"
+disable-model-invocation: true
 ---
 Follow this project's code style when editing code:
 

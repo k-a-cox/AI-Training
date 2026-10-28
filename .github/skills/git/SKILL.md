@@ -1,7 +1,7 @@
 ---
+name: git
 description: "Perform Git tasks using this project's commit, staging, and stash preferences"
-name: "Git"
-agent: "agent"
+disable-model-invocation: true
 ---
 Follow these Git preferences for this project:
 
