@@ -29,3 +29,4 @@ appsettings.Development.json
 # Database and logs
 *.db
 *.log
+-wait
