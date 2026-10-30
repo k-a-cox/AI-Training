@@ -1,0 +1,15 @@
+I want to improve at multiple different layers of the tech stack by adding a sample coding project in my git repository. It seems I have a 3 phase goal for this fullstack project. Help me design it.
+
+I am a bit rusty at c#/dotnet compared to what I'm advertising. Help me create a design idea that turns into a development project that would grow my knowledge in the area. I would like to implement most of the key features of the framework, like RESTful APIs, dependency inversion, middleware, linq filters, and possibly multithreading among other ideas you might find. If there is a good open source practice repo out there I should expand in my own repo as practice, let me know. Otherwise, help me set up the framework of a new project. I plan to use Visual Studio Community as an IDE unless you have a better suggestion.
+
+At the same time I want to grow my SQL experience. Help me add a design goal that would involve setting up, managing, loading, and reporting on a realistic data set. By that, I mean the generated data I'd report on doesn't have to be realistic, but I want the development pipeline to be realistic. I'll need help installing and setting up the IDEs for this project. Verify I'm on the right machine before starting the installs. I think I want to use MSSQL instead of Oracle for this project, but explain the choice to me.
+
+Lastly, I want to chain a simple front end using something like React into the mix. Steer the design goal to have something to  visually represent at the end. It could be a very simple data entry workflow (Add/edit objects to database) and data fetch UI (Load/filter objects based on X). The only UI constraints I'd want are to style via SCSS (if easily set up... CSS if not) and make it look good on mobile web apps. I'll probably use VSCode for this layer, but help me get the recommended plugins to make things work.
+
+I want to use mocks to isolate dev in each layer before a final full stack integration. I'll need help setting up the structures for mocks as well as guidance on the full integration test at the end. Make sure these appear in the todo list breakdown.
+
+Help me decide if these pieces deserve different directories (IE 4_SQL, 5_dotnet, 6_react) or if they should belong nested under one master directory (IE 4_fullstack > SQL/dotnet/react).
+
+Does cloud-based development make any sense for this project? That's another area I'd like to eventually learn.
+
+When done planning, capture this design and a detailed todo list, broken into indexed tasks, for implenting this design, as well as the directory structure with .gitignores added for the commonly excluded files in each phase. Add repo directives that I will be leading the development effort, so don't make code changes unless explicitly asked. Documentation updates will be batched towards the end, so don't go updating designs or readmes for small scope changes. 
