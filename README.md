@@ -40,3 +40,11 @@ A native Android Sudoku app built with Kotlin and Jetpack Compose. Planned featu
 See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [TODO index](3_sudoku_android/design/todo/index.md) for implementation progress.
 
 **AI-assisted development:** GPT models are used primarily as interactive assistants for local development, helping refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Development is not fully automated: changes are implemented and reviewed locally, then validated with the build, unit tests, and Android emulator as appropriate. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage.
+
+### [4_fullstack](4_fullstack/)
+
+OrderOps is a learner-led orders-and-inventory project planned around a mocked ASP.NET Core .NET 10 API, SQL Server persistence, and a responsive React/TypeScript frontend styled with SCSS. Two separate warehouses on one SQL Server instance compare classic SSIS/SSAS/SSRS with T-SQL loads, Power Query, and Power BI using identical data and metric definitions.
+
+See the [project README](4_fullstack/README.md), [design](4_fullstack/design/DESIGN.md), and [TODO index](4_fullstack/design/todo/index.md). The initial documentation and directory foundation are captured; application scaffolding and installations are pending verification of the intended development machine.
+
+**AI-assisted development:** GitHub Copilot helped refine the scope, mock/integration strategy, and parallel BI comparison, then capture the design, indexed tasks, and source-control rules. The learner leads implementation and acceptance; code, installs, tests, and commits require explicit requests, and documentation updates are batched at milestones.
