@@ -1,0 +1,5 @@
+*.csproj.user
+*.pubxml.user
+*.publishsettings
+/artifacts/
+/coverage/
