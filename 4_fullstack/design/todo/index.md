@@ -1,6 +1,6 @@
 # OrderOps TODO Index
 
-Task status is user-managed. Task 0.1 artifacts are prepared but not marked done. All implementation and installation work remains pending.
+Task status is user-managed. 
 
 ## Workflow
 
@@ -14,8 +14,8 @@ Task status is user-managed. Task 0.1 artifacts are prepared but not marked done
 
 | ID | Status | Task | Prerequisites |
 | --- | --- | --- | --- |
-| 0.1 | awaiting user acceptance | [Capture foundation](phase_0/01_capture_foundation.md) | Approved design |
-| 0.2 | todo | [Verify intended machine](phase_0/02_verify_machine.md) | 0.1 acceptance |
+| 0.1 | done | [Capture foundation](phase_0/01_capture_foundation.md) | Approved design |
+| 0.2 | done | [Verify intended machine](phase_0/02_verify_machine.md) | 0.1 acceptance |
 | 0.3 | todo | [Set up .NET workspace](phase_0/03_dotnet_setup.md) | 0.2 and installation approval |
 | 0.4 | todo | [Define domain and API contract](phase_0/04_domain_contract.md) | 0.1; no installation required |
 

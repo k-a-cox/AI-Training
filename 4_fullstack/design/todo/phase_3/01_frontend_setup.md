@@ -12,6 +12,13 @@ Establish a frontend development loop independent of the running backend.
 
 `react/` project/configuration, dependencies, mock handlers, safe environment examples, and requested VS Code extensions. No feature screens yet.
 
+## IDE Notes
+
+- Use VS Code for React/TypeScript work; Visual Studio Community is the primary IDE for the C# API.
+- Verify a supported Node.js LTS release before scaffolding the frontend.
+- Recommended VS Code extensions: ESLint and Prettier. Stylelint with SCSS support and Microsoft MSSQL are optional.
+- C# Dev Kit is optional if choosing to edit the API in VS Code; it isn't needed for React.
+
 ## Actions
 
 - [ ] Verify the approved frontend host and supported Node LTS; scaffold React/TypeScript/Vite.

@@ -16,10 +16,10 @@ Project README/design/TODO files and layer ignore rules; repository README and `
 
 ## Actions
 
-- [ ] Review the architecture, classic/modern comparison, and planned directory structure.
-- [ ] Review numbered tasks, dependencies, mock isolation, and final integration gates.
-- [ ] Review learner-led directives and documentation batching rules.
-- [ ] Confirm source-control exclusions preserve lockfiles and BI source definitions.
+- [x] Review the architecture, classic/modern comparison, and planned directory structure.
+- [x] Review numbered tasks, dependencies, mock isolation, and final integration gates.
+- [x] Review learner-led directives and documentation batching rules.
+- [x] Confirm source-control exclusions preserve lockfiles and BI source definitions.
 
 ## Verification and Acceptance
 

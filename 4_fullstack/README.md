@@ -4,7 +4,7 @@ A learner-led orders-and-inventory project for rebuilding C#/.NET skills, practi
 
 ## Status
 
-The documentation and directory foundation are captured. Application code, databases, dependencies, and IDE installations have not been created. Development starts with a mocked .NET API; SQL tooling belongs on a different Windows machine that must be verified before installation.
+The documentation and directory foundation are captured. Application scaffolding and installations have not started. The intended Windows host and existing Visual Studio/.NET setup have been inventoried. The development topology is same-host, with BI services staged and SQL memory-limited as needed.
 
 ## Documentation
 
@@ -27,10 +27,10 @@ The documentation and directory foundation are captured. Application code, datab
 
 ## Working Agreement
 
-The learner leads development and checks off tasks. An indexed task is not permission to execute it. Request one scoped change at a time; installs, code changes, tests, and commits require explicit authorization. Documentation is updated in batches at milestones or when requested, not alongside every small implementation change.
+The learner writes and owns the project. Copilot defaults to chat guidance: explanations, recommendations, and steps for the learner to perform in the IDE or terminal. Requests to "help set up" or "walk through" something are not permission to scaffold, edit files, install tools, or run commands. Such actions require explicit, task-specific authorization; ask if it is unclear whether guidance or execution is wanted. An indexed task is not permission to execute it, and the learner owns task status and acceptance. Documentation is updated in batches at milestones or when requested, not alongside every small implementation change.
 
 ## Running the Project
 
-There is no runnable application yet. Commands will be recorded at the relevant implementation milestones after verification on the intended host. Follow [task 0.2](design/todo/phase_0/02_verify_machine.md) before installing tools.
+There is no runnable application yet. Follow [task 0.2](design/todo/phase_0/02_verify_machine.md) before any SQL/BI installation.
 
-**AI-assisted development:** GitHub Copilot helped design the project, compare classic Microsoft BI with Power BI, and capture the initial documentation, task breakdown, and ignore rules. Implementation and task acceptance remain learner-led.
+**AI-assisted development:** GitHub Copilot is intended primarily as a chat-based tutor and guide for design choices, IDE workflows, and focused reviews. The learner authors and validates the implementation; Copilot edits, scaffolds, installs, and runs commands only when explicitly asked for the specific action.
