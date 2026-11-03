@@ -62,6 +62,21 @@ Gate: both real pipelines produce expected rows and measures at identical cutoff
 
 Gate: mobile and desktop order workflows work against the real API/database, and both BI tracks reconcile after explicit refresh.
 
+## Phase 4: Product Catalog Microservice
+
+Phase 4 is an extension after Phase 3 acceptance, not a prerequisite for the core project. Keep the existing order/inventory API and introduce one independently deployable Catalog API with its own database. Do not split order confirmation from stock consumption or expand into additional infrastructure such as a message broker.
+
+| ID | Status | Task | Prerequisites |
+| --- | --- | --- | --- |
+| 4.1 | todo | [Define Catalog service boundary](phase_4/01_catalog_boundary.md) | 3.6 acceptance |
+| 4.2 | todo | [Build Catalog API and persistence](phase_4/02_catalog_api.md) | 4.1 |
+| 4.3 | todo | [Integrate orders with Catalog](phase_4/03_order_catalog_integration.md) | 4.1, 4.2 |
+| 4.4 | todo | [Add Catalog workflows to React](phase_4/04_react_catalog.md) | 4.1, 4.2, 3.3 |
+| 4.5 | todo | [Extend source batches and BI](phase_4/05_catalog_bi.md) | 2.9, 4.1, 4.2 |
+| 4.6 | todo | [Verify the integrated services](phase_4/06_integration_acceptance.md) | 4.3, 4.4, 4.5 |
+
+Gate: Catalog has independent API and database ownership; React uses both APIs; order confirmation uses a Catalog snapshot without a distributed transaction; and both BI tracks reconcile from the same immutable batch manifest covering both source databases.
+
 ## Stretch: Separate Approval Required
 
 | ID | Status | Task | Prerequisites |
