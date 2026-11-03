@@ -2,20 +2,26 @@
 
 ## Goals and Scope
 
-Build a small modular monolith, beginning with a SQL-independent .NET API. Add real SQL Server persistence, independently implement equivalent classic and modern BI pipelines, then complete a responsive React workflow.
+Build a small modular monolith, beginning with a SQL-independent .NET API. Add real SQL Server persistence, independently implement equivalent classic and modern BI pipelines, then complete a responsive React workflow. After that core is accepted, Phase 4 adds one independently deployable Product Catalog microservice and carries its data through SQL/BI and React.
 
-The first version supports products, customers, stock adjustments, draft orders, confirmation, cancellation, and filtered lists. Exclude real payments, shipping providers, multi-tenancy, microservices, and custom identity infrastructure. Authentication, background processing, historical dimensions, and cloud hosting are separate stretch tasks.
+The Phase 1-3 version supports products, customers, stock adjustments, draft orders, confirmation, cancellation, and filtered lists in a modular monolith. Phase 4 moves product-definition ownership into a separate Catalog service; the original API continues to own orders and inventory. Exclude real payments, shipping providers, multi-tenancy, a broader service decomposition, and custom identity infrastructure. Authentication, background processing, historical dimensions, and cloud hosting are separate stretch tasks.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    UI[React / TypeScript / SCSS] --> API[ASP.NET Core API]
-    API --> APP[Application services and domain rules]
+    UI[React / TypeScript / SCSS] --> API[OrderOps ASP.NET Core API]
+    UI -. Phase 4 catalog workflows .-> CATAPI[Catalog ASP.NET Core API]
+    API --> APP[Order and inventory application/domain]
     APP --> MOCK[Development/test mock adapters]
     APP --> EF[EF Core SQL Server adapter]
     EF --> OLTP[OrderOpsOperational]
-    OLTP --> BATCH[Shared source batch and stable cutoff]
+    APP -. Phase 4 product lookup over HTTP .-> CATAPI
+    CATAPI --> CATAPP[Catalog application/domain]
+    CATAPP --> CATEF[Catalog EF Core SQL Server adapter]
+    CATEF --> CATDB[OrderOpsCatalog]
+    OLTP --> BATCH[Coordinated immutable source batch]
+    CATDB --> BATCH
     BATCH --> SSIS[SSIS ETL]
     BATCH --> SQL[T-SQL load procedures]
     SSIS --> CLASSIC[OrderOpsClassicDW]
@@ -27,7 +33,11 @@ flowchart TD
     PQ --> PBI[Power BI import model / DAX / reports]
 ```
 
-One SQL Server instance hosts the three domain databases. SSISDB and SSRS catalog databases are additional service databases. The API writes only to the operational database. Each warehouse owns its staging, audit, reject, and watermark state; neither warehouse depends on the other.
+Through Phase 3, the OrderOps API is a modular monolith and writes only to `OrderOpsOperational`. In Phase 4, the Catalog API becomes a separate deployable and owns `OrderOpsCatalog`; each service accesses only its own database. Both databases remain on the same SQL Server instance for this learning project. Along with the two warehouses, this makes four project databases; SSISDB and SSRS catalog databases are additional platform databases. Each warehouse owns its staging, audit, reject, and watermark state; neither warehouse depends on the other.
+
+The Catalog service owns product definitions, stable product IDs/SKUs, category, current price/cost, and active status. OrderOps owns stock quantities and order state, keyed by the stable Catalog product ID; do not create cross-database foreign keys or share tables. Phase 4 migrates existing product definitions to Catalog while preserving IDs so current stock and order references remain valid, then routes product-definition writes to Catalog. Catalog exposes its own REST API; the React app uses it for catalog workflows, and the OrderOps API calls it over HTTP when confirming an order. Keep order confirmation and stock consumption in one OrderOps database transaction. Before that transaction, retrieve the active product snapshot from Catalog; persist the stable product ID and the name/SKU/price/cost values used for the sale on the order line. If Catalog is unavailable or the product is inactive, confirmation fails without changing stock or order state. Do not use a distributed transaction or silently fall back to stale catalog data. This defines the snapshot as the catalog version returned for confirmation; later catalog edits never rewrite order history. A change immediately after that read does not invalidate the accepted snapshot.
+
+This is a deliberately bounded two-service design, not a rewrite into many microservices. The independent database and HTTP boundary are the learning goals; a message broker, service mesh, orchestration platform, and cross-service distributed transactions are out of scope.
 
 Power BI is an analytics/reporting platform, not a replacement SQL standard or transactional database. Both warehouses start with equivalent relational structures, making ETL, modeling, reporting, and deployment the comparison variables.
 
@@ -38,6 +48,7 @@ Power BI is an analytics/reporting platform, not a replacement SQL standard or t
 - Dependency injection lifetimes, middleware order, ProblemDetails, correlation IDs, structured logging, configuration, health checks, and restricted CORS.
 - EF Core SQL Server, versioned migrations, server-translated LINQ, indexes, transactions, and optimistic concurrency.
 - Asynchronous I/O and cancellation; later a bounded background job. Async is not synonymous with multithreading, and concurrent tasks must not share a DbContext.
+- In Phase 4, a separate Catalog API, service-owned persistence, and a typed HTTP client from OrderOps. Keep the service boundary explicit rather than sharing database tables or domain internals.
 
 Mock adapters are explicitly Development/Test-only and fail configuration outside those environments. Real integration runs must never silently fall back to mocks.
 
@@ -70,7 +81,7 @@ Start with a small fixture whose expected totals can be calculated independently
 
 ### Loads and Reconciliation
 
-Use the same immutable source batch ID and cutoff for both tracks, not unrelated reads of a changing live source. Choose a safe committed-change capture strategy in task 2.4; do not assume an increasing ID alone guarantees commit order or that a timestamp watermark cannot miss concurrent updates.
+Use the same immutable source batch ID and cutoff for both tracks, not unrelated reads of a changing live source. Choose a safe committed-change capture strategy in task 2.4; do not assume an increasing ID alone guarantees commit order or that a timestamp watermark cannot miss concurrent updates. In Phase 4, the batch manifest records a stable cutoff/watermark for each service-owned source database; both warehouses consume the same manifest and both source extracts. Do not imply that separate service databases share a global transaction.
 
 Advance each track's watermark only after its load commits successfully. Stable business keys prevent duplicate facts on reruns. Handle inserts, updates, cancellations, rejects, and restart after a failure. Compare warehouse rows and SQL/DAX aggregates to independent golden results, then compare both tracks at the same cutoff.
 
@@ -119,10 +130,13 @@ The layer roots exist through tracked ignore files. Nested source directories be
     .gitignore
     OrderOps.slnx (or generated supported solution format)
     src/OrderOps.Api/ ... Application/ ... Domain/ ... Infrastructure/
+    src/OrderOps.Catalog.Api/ ... Application/ ... Domain/ ... Infrastructure/ (Phase 4)
     tests/OrderOps.UnitTests/ ... OrderOps.ApiTests/
+    tests/OrderOps.Catalog.UnitTests/ ... OrderOps.Catalog.ApiTests/ (Phase 4)
   sql/
     .gitignore
     operational/
+    catalog/ (Phase 4; Catalog-owned schema and seed data)
     classic/database/ ... ssis/ ... ssas/ ... ssrs/
     modern/database/ ... loads/ ... powerbi/
     tests/
