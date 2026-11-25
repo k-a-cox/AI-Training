@@ -6,12 +6,9 @@ Open only the first step file whose status is not `done` (the first `todo` row i
 
 - Do not describe or preview the next step's contents unless the user asks (e.g. "What's next?").
 - Treat checkboxes as user-managed: assume the user checks tasks off, and do not re-verify checked items against the code or solution.
-- Keep replies short: lead with the answer or code, no restating the task or recapping. After an edit, don't print the file; say what changed in one line. Explain only when asked.
-- Read only the files and line ranges the current step names. Prefer grep and ranged views over whole files; do not scan the project. Do not open [SODUKO_DESIGN.md](../SODUKO_DESIGN.md) unless a step explicitly references it.
-- Do not propose or consider changes unless prompted; the user drives development. No features, refactors, or docs beyond what was asked.
-- Never write or run unit tests unless explicitly asked, even when a step's checklist lists them.
+- Read only the files and line ranges the current step names. Do not open [SODUKO_DESIGN.md](../SODUKO_DESIGN.md) unless a step explicitly references it.
 - Ask once, briefly. If something is ambiguous, ask one short question.
-- Keep files small. Don't let step files grow with notes or history. When a step is done, collapse it to a one-line summary, as steps 1–5 already are.
+- When a step is done, collapse it to a one-line summary, as steps 1–5 already are.
 
 ## Phase 1: Playable Manual Sudoku Game
 
