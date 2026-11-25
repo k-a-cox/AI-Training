@@ -26,8 +26,8 @@ data class SudokuCellState(
         }
     }
 
-    fun setValue(value: Int?, inputMode: InputMode = InputMode.Value): SudokuCellState {
-        require(value == null || value in 1..9)
+    fun setValue(value: Int, inputMode: InputMode = InputMode.Value): SudokuCellState {
+        require(value in 1..9)
 
         if (isGiven) return this
 

@@ -13,7 +13,7 @@ fun GameState.reduce(action: ControlAction): GameState = when (action) {
         )
     )
 
-    ControlAction.Erase -> copy(board = board.setValue(null))
+    ControlAction.Erase -> copy(board = board.clearValue())
     ControlAction.ToggleNotes -> copy(notesOn = !notesOn)
     is ControlAction.PickBoard -> copy(board = action.value, boardPhase = GamePhase.EnteringGivens)
     ControlAction.Restart -> copy(
@@ -21,6 +21,7 @@ fun GameState.reduce(action: ControlAction): GameState = when (action) {
         boardPhase = GamePhase.EnteringGivens,
         notesOn = false
     )
+
     ControlAction.LockGivens -> copy(showLockGivensDialog = true)
     ControlAction.SubmitBoard -> copy(showLockGivensDialog = true) // todo: replace with Verify
 }

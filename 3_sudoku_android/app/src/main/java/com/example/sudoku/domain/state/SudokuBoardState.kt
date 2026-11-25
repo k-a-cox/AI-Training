@@ -23,11 +23,21 @@ data class SudokuBoardState(
         )
     }
 
-    fun setValue(value: Int?, inputMode: InputMode = InputMode.Value): SudokuBoardState {
+    fun setValue(value: Int, inputMode: InputMode = InputMode.Value): SudokuBoardState {
         val index = selectedCell ?: return this
 
         val cell = cells[index]
         val updatedCell = cell.setValue(value, inputMode)
+
+        return copy(
+            cells = cells.toMutableList().also { it[index] = updatedCell })
+    }
+
+    fun clearValue(): SudokuBoardState {
+        val index = selectedCell ?: return this
+
+        val cell = cells[index]
+        val updatedCell = cell.clearValue()
 
         return copy(
             cells = cells.toMutableList().also { it[index] = updatedCell })
