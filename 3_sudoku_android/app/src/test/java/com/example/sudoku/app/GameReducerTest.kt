@@ -1,5 +1,6 @@
 package com.example.sudoku.app
 
+import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.samples.PuzzleSampleBoards
 import com.example.sudoku.domain.state.SudokuBoardState
 import com.example.sudoku.ui.controls.ControlAction
@@ -104,6 +105,15 @@ class GameReducerTest {
     }
 
     @Test
+    fun pickBoard_returnsToEnteringGivensPhase() {
+        val state = GameState(boardPhase = GamePhase.Playing)
+
+        val updated = state.reduce(ControlAction.PickBoard(PuzzleSampleBoards.uniqueEasyBoard))
+
+        assertEquals(GamePhase.EnteringGivens, updated.boardPhase)
+    }
+
+    @Test
     fun restart_returnsEmptyBoardInEnteringGivensPhase() {
         val state = GameState().reduce(ControlAction.PickBoard(PuzzleSampleBoards.uniqueEasyBoard))
         val updated = state.reduce(ControlAction.Restart)
@@ -118,6 +128,46 @@ class GameReducerTest {
 
         assertEquals(false, updated.notesOn)
     }
+
+    @Test
+    fun restart_returnsToEnteringGivensPhase() {
+        val state = GameState(boardPhase = GamePhase.Solved)
+
+        val updated = state.reduce(ControlAction.Restart)
+
+        assertEquals(GamePhase.EnteringGivens, updated.boardPhase)
+    }
+
+    @Test
+    fun lockInGivens_locksValuesAndMovesToPlayingPhase() {
+        val selectedIndex = 5
+        val state = GameState(
+            board = SudokuBoardState(selectedCell = selectedIndex).setValue(7),
+            showLockGivensDialog = true
+        )
+
+        val updated = state.lockInGivens()
+
+        assertEquals(GamePhase.Playing, updated.boardPhase)
+        assertEquals(true, updated.board.cells[selectedIndex].isGiven)
+        assertEquals(false, updated.board.cells[0].isGiven)
+        assertEquals(7, updated.board.cells[selectedIndex].value)
+        assertEquals(selectedIndex, updated.board.selectedCell)
+        assertEquals(false, updated.showLockGivensDialog)
+    }
+
+//    @Test
+//    fun togglePhase_cyclesThroughGamePhases() {
+//        val state = GameState()
+//        val playing = state.togglePhase()
+//        val solved = playing.togglePhase()
+//        val enteringGivens = solved.togglePhase()
+//
+//        assertEquals(GamePhase.EnteringGivens, state.boardPhase)
+//        assertEquals(GamePhase.Playing, playing.boardPhase)
+//        assertEquals(GamePhase.Solved, solved.boardPhase)
+//        assertEquals(GamePhase.EnteringGivens, enteringGivens.boardPhase)
+//    }
 
     @Test
     fun lockGivens_showsLockGivensDialog() {

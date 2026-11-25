@@ -22,11 +22,6 @@ class GivensValidatorTest {
 
     @Ignore("stub")
     @Test
-    fun lockInGivens_movesBoardToPlayingPhase() {
-    }
-
-    @Ignore("stub")
-    @Test
     fun lockInGivens_keepsSelectedCell() {
     }
 

@@ -1,6 +1,5 @@
 package com.example.sudoku.domain.validators
 
-import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.state.SudokuBoardState
 
 object GivensValidator {
@@ -29,7 +28,7 @@ object GivensValidator {
         val lockedCells = boardState.cells.map { cell ->
             if (cell.value != null) cell.copy(isGiven = true) else cell
         }
-        return boardState.copy(cells = lockedCells, phase = GamePhase.Playing)
+        return boardState.copy(cells = lockedCells)
     }
 
 }

@@ -65,6 +65,5 @@ object SampleBoards {
             )
         },
         selectedCell = 39,
-        phase = com.example.sudoku.domain.GamePhase.Playing
     )
 }

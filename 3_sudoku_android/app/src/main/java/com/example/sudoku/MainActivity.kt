@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         })
                         Box(modifier = Modifier.height(16.dp))
                         ControlBoard(
-                            gamePhase = state.board.phase,
+                            gamePhase = state.boardPhase,
                             showNotes = state.notesOn,
                             onAction = { action -> state = state.reduce(action) }
                         )
@@ -56,10 +56,7 @@ class MainActivity : ComponentActivity() {
                         LockGivens(
                             isValid = GivensValidator.validateGivens(state.board),
                             onConfirm = {
-                                state = state.copy(
-                                    board = GivensValidator.lockInGivens(state.board),
-                                    showLockGivensDialog = false
-                                )
+                                state = state.lockInGivens()
                             },
                             onDismiss = {
                                 state = state.copy(showLockGivensDialog = false)

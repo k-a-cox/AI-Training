@@ -1,12 +1,10 @@
 package com.example.sudoku.domain.state
 
-import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.InputMode
 
 data class SudokuBoardState(
     val cells: List<SudokuCellState> = List(81) { index -> SudokuCellState(index = index) },
     val selectedCell: Int? = null,
-    val phase: GamePhase = GamePhase.EnteringGivens
 ) {
     init {
         require(cells.size == 81) {
@@ -33,15 +31,5 @@ data class SudokuBoardState(
 
         return copy(
             cells = cells.toMutableList().also { it[index] = updatedCell })
-    }
-
-    fun togglePhase(): SudokuBoardState {
-        return copy(
-            phase = when (phase) {
-                GamePhase.EnteringGivens -> GamePhase.Playing
-                GamePhase.Playing -> GamePhase.Solved
-                GamePhase.Solved -> GamePhase.EnteringGivens
-            }
-        )
     }
 }
