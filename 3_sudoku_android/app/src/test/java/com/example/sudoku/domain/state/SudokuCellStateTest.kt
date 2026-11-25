@@ -92,8 +92,8 @@ class SudokuCellStateTest {
     }
 
     @Test
-    fun setValue_clearsValueWhenNull() {
-        val updatedCell = cellWithValue3.setValue(null, InputMode.Value)
+    fun setValue_clearsValueWhenRepeat() {
+        val updatedCell = cellWithValue3.setValue(3, InputMode.Value)
 
         assertNull(updatedCell.value)
         assertCellWithValue3State()
@@ -132,6 +132,30 @@ class SudokuCellStateTest {
         val updatedCell = givenCellWithValue3.setValue(5)
 
         assertEquals(givenCellWithValue3, updatedCell)
+    }
+
+    @Test
+    fun clearValue_clearsValue() {
+        val updatedCell = cellWithValue3.clearValue()
+
+        assertNull(updatedCell.value)
+        assertCellWithValue3State()
+    }
+
+    @Test
+    fun clearValue_clearsNotes() {
+        val updatedCell = cellWithNotes258.clearValue()
+
+        assertNull(updatedCell.value)
+        assertCellWithNotes258State()
+    }
+
+    @Test
+    fun clearValue_doesNotClearGiven() {
+        val updatedCell = givenCellWithValue3.clearValue()
+
+        assertEquals(givenCellWithValue3, updatedCell)
+        assertGivenCellWithValue3State()
     }
 
     @Test

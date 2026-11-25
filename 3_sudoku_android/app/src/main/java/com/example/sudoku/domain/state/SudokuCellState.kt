@@ -33,13 +33,23 @@ data class SudokuCellState(
 
         return when (inputMode) {
             InputMode.Value -> {
-                copy(value = value, notes = emptySet())
+                if (this.value == value) {
+                    clearValue()
+                } else {
+                    copy(value = value, notes = emptySet())
+                }
             }
 
             InputMode.Notes -> {
                 toggleNote(value)
             }
         }
+    }
+
+    fun clearValue(): SudokuCellState {
+        if (isGiven) return this
+
+        return copy(value = null, notes = emptySet())
     }
 
     private fun toggleNote(note: Int?): SudokuCellState {
