@@ -19,6 +19,34 @@ class GameReducerTest {
     }
 
     @Test
+    fun digit_withNotesOn_togglesNoteInsteadOfSettingValue() {
+        val selectedIndex = 5
+        val state = GameState(board = SudokuBoardState(selectedCell = selectedIndex))
+            .reduce(ControlAction.ToggleNotes)
+
+        val withNote = state.reduce(ControlAction.Digit(7))
+        val withoutNote = withNote.reduce(ControlAction.Digit(7))
+
+        assertEquals(null, withNote.board.cells[selectedIndex].value)
+        assertEquals(setOf(7), withNote.board.cells[selectedIndex].notes)
+        assertEquals(emptySet<Int>(), withoutNote.board.cells[selectedIndex].notes)
+    }
+
+    @Test
+    fun digit_afterTurningNotesOff_setsValueAndClearsNotes() {
+        val selectedIndex = 5
+        val state = GameState(board = SudokuBoardState(selectedCell = selectedIndex))
+            .reduce(ControlAction.ToggleNotes)
+            .reduce(ControlAction.Digit(7))
+            .reduce(ControlAction.ToggleNotes)
+
+        val updated = state.reduce(ControlAction.Digit(3))
+
+        assertEquals(3, updated.board.cells[selectedIndex].value)
+        assertEquals(emptySet<Int>(), updated.board.cells[selectedIndex].notes)
+    }
+
+    @Test
     fun digit_withNoSelectedCell_leavesBoardUnchanged() {
         val selectedIndex = null
         val state = GameState(board = SudokuBoardState(selectedCell = selectedIndex))
@@ -36,6 +64,18 @@ class GameReducerTest {
         val updated = state.reduce(ControlAction.Erase)
 
         assertEquals(null, updated.board.cells[selectedIndex].value)
+    }
+
+    @Test
+    fun erase_withNotesOn_clearsSelectedCellNotes() {
+        val selectedIndex = 5
+        val state = GameState(board = SudokuBoardState(selectedCell = selectedIndex))
+            .reduce(ControlAction.ToggleNotes)
+            .reduce(ControlAction.Digit(7))
+
+        val updated = state.reduce(ControlAction.Erase)
+
+        assertEquals(emptySet<Int>(), updated.board.cells[selectedIndex].notes)
     }
 
     @Test
