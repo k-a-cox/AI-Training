@@ -71,9 +71,12 @@ class MainActivity : ComponentActivity() {
                         BoardValidationPrompt(
                             validationAnswer,
                             onConfirm = {
+                                state = state.newGame()
+                            },
+                            onValidDismiss = {
                                 state = state.lockBoard()
                             },
-                            onDismiss = {
+                            onInvalidDismiss = {
                                 state = state.copy(showSubmitBoardDialog = false)
                             }
                         )

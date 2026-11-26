@@ -11,7 +11,8 @@ import com.example.sudoku.domain.validators.BoardValidationResult
 fun BoardValidationPrompt(
     validationAnswer: BoardValidationResult,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onValidDismiss: () -> Unit,
+    onInvalidDismiss: () -> Unit,
 ) {
     val isValid = validationAnswer == BoardValidationResult.Valid
     val ordinals = listOf(
@@ -38,18 +39,18 @@ fun BoardValidationPrompt(
     }
     if (isValid) {
         AlertDialog(
-            onDismissRequest = onDismiss,
+            onDismissRequest = onValidDismiss,
             title = { Text("Game Over") },
             text = { Text(message) },
-            confirmButton = { TextButton(onClick = onConfirm) { Text("Start over?") } },
-            dismissButton = { TextButton(onClick = onDismiss) { Text("Review board") } })
+            confirmButton = { TextButton(onClick = onConfirm) { Text("New game") } },
+            dismissButton = { TextButton(onClick = onValidDismiss) { Text("Review board") } })
     } else {
         AlertDialog(
-            onDismissRequest = onDismiss,
+            onDismissRequest = onInvalidDismiss,
             title = { Text("Game needs more work") },
             text = { Text(message) },
             confirmButton = { },
-            dismissButton = { TextButton(onClick = onDismiss) { Text("I'll fix that") } })
+            dismissButton = { TextButton(onClick = onInvalidDismiss) { Text("I'll fix that") } })
 
     }
 }
