@@ -21,7 +21,7 @@ Steps 1-5 are done (no need to open them). Folder: [phase_1/](phase_1)
 | 3. On-screen number and erase controls | done | [03](phase_1/03_number_erase_controls.md) |
 | 4. Givens-entry and confirmation flow | done | [04](phase_1/04_givens_confirmation.md) |
 | 5. Lock and distinguish confirmed givens | done | [05](phase_1/05_lock_givens.md) |
-| 6. Candidate notes | todo | [06](phase_1/06_candidate_notes.md) |
+| 6. Candidate notes | done | [06](phase_1/06_candidate_notes.md) |
 | 7. Completeness-first verification | todo | [07](phase_1/07_completeness_verification.md) |
 | 8. Check conflicts on full boards | todo | [08](phase_1/08_conflict_checks.md) |
 | 9. Exercise the complete game flow | todo | [09](phase_1/09_full_game_flow.md) |

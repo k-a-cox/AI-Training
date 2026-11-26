@@ -128,10 +128,13 @@ class SudokuCellStateTest {
     }
 
     @Test
-    fun setValue_rejectsValueWhenCellIsGiven() {
+    fun setValue_doesNotChangeGivenCell() {
         val updatedCell = givenCellWithValue3.setValue(5)
+        val updatedCellNote = givenCellWithValue3.setValue(5, InputMode.Notes)
 
         assertEquals(givenCellWithValue3, updatedCell)
+        assertEquals(givenCellWithValue3, updatedCellNote)
+        assertGivenCellWithValue3State()
     }
 
     @Test
