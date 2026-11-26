@@ -34,6 +34,7 @@ Folder: [phase_1_5/](phase_1_5)
 | 1. Check conflicts on full boards | todo | [01](phase_1_5/01_conflict_checks.md) |
 | 2. Deferred cleanup | todo | [02](phase_1_5/02_deferred_cleanup.md) |
 | 3. Deferred: uniqueness check | deferred (needs Goal 2 solver) | [03](phase_1_5/03_deferred_uniqueness_check.md) |
+| 4. Polish the UI | todo | [04](phase_1_5/04_ui_polish.md) |
 
 ## Phase 2: Automatic Solver
 
@@ -49,3 +50,17 @@ Start after Phase 1.5 steps 1 and 2. Phase 1.5 step 3 remains deferred until the
 | 4. Implement backtracking search | todo | [04](phase_2/04_backtracking_search.md) |
 | 5. Integrate solver progress and controls | todo | [05](phase_2/05_solver_ui.md) |
 | 6. Exercise the solver end to end | todo | [06](phase_2/06_solver_acceptance.md) |
+
+## Phase 3: Camera Clue Entry (Stretch)
+
+Folder: [phase_3/](phase_3)
+
+Start after Phase 2 and the deferred uniqueness check in Phase 1.5, Step 3 are complete.
+
+| Step | Status | File |
+|---|---|---|
+| 1. Define the scan pipeline | todo | [01](phase_3/01_scan_pipeline.md) |
+| 2. Capture puzzle images | todo | [02](phase_3/02_camera_capture.md) |
+| 3. Recognize the grid and clues | todo | [03](phase_3/03_grid_recognition.md) |
+| 4. Review and confirm scanned clues | todo | [04](phase_3/04_review_and_confirmation.md) |
+| 5. Exercise the camera flow | todo | [05](phase_3/05_camera_acceptance.md) |
