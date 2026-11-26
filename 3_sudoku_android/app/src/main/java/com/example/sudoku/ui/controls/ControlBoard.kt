@@ -43,7 +43,7 @@ fun ControlBoard(
                     ButtonWrapper("Toggle Notes", ControlAction.ToggleNotes, onAction)
                 }
                 ButtonRow {
-                    ButtonWrapper("Submit", ControlAction.SubmitBoard, onAction)
+                    ButtonWrapper("Validate solution", ControlAction.SubmitBoard, onAction)
                     ButtonWrapper("New Game", ControlAction.Restart, onAction)
                 }
             }

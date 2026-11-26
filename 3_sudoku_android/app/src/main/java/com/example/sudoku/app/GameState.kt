@@ -9,18 +9,25 @@ data class GameState(
     val boardPhase: GamePhase = GamePhase.EnteringGivens,
     val notesOn: Boolean = false,
     val showLockGivensDialog: Boolean = false,
+    val showSubmitBoardDialog: Boolean = false,
 ) {
-//    fun togglePhase(): GameState = copy(
-//        boardPhase = when (boardPhase) {
-//            GamePhase.EnteringGivens -> GamePhase.Playing
-//            GamePhase.Playing -> GamePhase.Solved
-//            GamePhase.Solved -> GamePhase.EnteringGivens
-//        }
-//    )
 
     fun lockInGivens(): GameState = copy(
         board = GivensValidator.lockInGivens(board),
         boardPhase = GamePhase.Playing,
         showLockGivensDialog = false
+    )
+
+    fun lockBoard(): GameState = copy(
+        boardPhase = GamePhase.Solved,
+        showSubmitBoardDialog = false
+    )
+
+    fun newGame(): GameState = copy(
+        board = SudokuBoardState(),
+        boardPhase = GamePhase.EnteringGivens,
+        notesOn = false,
+        showLockGivensDialog = false,
+        showSubmitBoardDialog = false
     )
 }

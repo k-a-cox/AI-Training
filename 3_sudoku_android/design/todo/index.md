@@ -8,11 +8,11 @@ Open only the first step file whose status is not `done` (the first `todo` row i
 - Treat checkboxes as user-managed: assume the user checks tasks off, and do not re-verify checked items against the code or solution.
 - Read only the files and line ranges the current step names. Do not open [SODUKO_DESIGN.md](../SODUKO_DESIGN.md) unless a step explicitly references it.
 - Ask once, briefly. If something is ambiguous, ask one short question.
-- When a step is done, collapse it to a one-line summary, as steps 1–5 already are.
+- When a phase is done, collapse the tasks to one-line summaries while updating documentation.
 
 ## Phase 1: Playable Manual Sudoku Game
 
-Steps 1-5 are done (no need to open them). Folder: [phase_1/](phase_1)
+Folder: [phase_1/](phase_1)
 
 | Step | Status | File |
 |---|---|---|
@@ -22,7 +22,7 @@ Steps 1-5 are done (no need to open them). Folder: [phase_1/](phase_1)
 | 4. Givens-entry and confirmation flow | done | [04](phase_1/04_givens_confirmation.md) |
 | 5. Lock and distinguish confirmed givens | done | [05](phase_1/05_lock_givens.md) |
 | 6. Candidate notes | done | [06](phase_1/06_candidate_notes.md) |
-| 7. Completeness-first verification | todo | [07](phase_1/07_completeness_verification.md) |
+| 7. Completeness-first verification | done | [07](phase_1/07_completeness_verification.md) |
 | 8. Check conflicts on full boards | todo | [08](phase_1/08_conflict_checks.md) |
 | 9. Exercise the complete game flow | todo | [09](phase_1/09_full_game_flow.md) |
 | 10. Deferred cleanup | todo | [10](phase_1/10_deferred_cleanup.md) |
