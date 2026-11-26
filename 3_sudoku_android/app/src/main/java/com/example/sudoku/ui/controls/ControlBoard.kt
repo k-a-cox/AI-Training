@@ -32,7 +32,7 @@ fun ControlBoard(
                     ButtonWrapper("Lock in Givens", ControlAction.LockGivens, onAction)
                 }
                 ButtonRow {
-                    ButtonWrapper("New Game", ControlAction.Restart, onAction)
+                    ButtonWrapper("Clear all", ControlAction.Restart, onAction)
                 }
             }
 

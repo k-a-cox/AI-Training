@@ -4,7 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -14,9 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.sudoku.domain.state.SudokuCellState
 
 @Composable
@@ -24,7 +29,7 @@ fun SudokuCell(
     state: SudokuCellState, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     val backgroundColor = getBackgroundColor(state, isSelected)
-    val fontColor = getFontColor(state, isSelected)
+    val fontColor = Color.Black
 
     Box(
         modifier = modifier
@@ -43,18 +48,42 @@ fun SudokuCell(
                 color = fontColor
             )
         } else if (state.notes.isNotEmpty()) {
-            Text(
-                text = "*" + state.notes.joinToString(", "),
-                style = MaterialTheme.typography.bodySmall,
-                color = fontColor,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            NotesGrid(notes = state.notes, color = fontColor)
         }
     }
 }
 
-internal enum class CellVisualState { Empty, Given, Selected, Notes }
+@Composable
+private fun NotesGrid(notes: Set<Int>, color: Color) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        repeat(3) { row ->
+            Row(modifier = Modifier.weight(1f)) {
+                repeat(3) { column ->
+                    val digit = row * 3 + column + 1
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (digit in notes) {
+                            Text(
+                                text = digit.toString(),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontSize = 9.sp,
+                                    lineHeight = 10.sp,
+                                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                                ),
+                                color = color,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 fun getBackgroundColor(state: SudokuCellState, isSelected: Boolean): Color {
     return when {
@@ -62,15 +91,6 @@ fun getBackgroundColor(state: SudokuCellState, isSelected: Boolean): Color {
         isSelected -> Color.Red.copy(alpha = 0.5f)
         state.isGiven -> Color.DarkGray.copy(alpha = 0.5f)
         else -> Color.White
-    }
-}
-
-fun getFontColor(state: SudokuCellState, isSelected: Boolean): Color {
-    return when {
-        state.isGiven -> Color.Black
-        isSelected -> Color.Black
-        state.notes.isNotEmpty() -> Color.Gray
-        else -> Color.Black
     }
 }
 
@@ -136,4 +156,10 @@ fun Notes() {
 @Composable
 fun NotesSelected() {
     ShowCell(notes = setOf(1, 2, 3, 4, 5, 6, 7, 8, 9), isSelected = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SparseNotes() {
+    ShowCell(notes = setOf(1, 5, 9))
 }
