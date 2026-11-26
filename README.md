@@ -40,3 +40,11 @@ A native Android Sudoku app built with Kotlin and Jetpack Compose. The manual ga
 See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [TODO index](3_sudoku_android/design/todo/index.md) for implementation progress.
 
 **AI-assisted development:** GPT models are used primarily as interactive assistants for local development, helping refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Claude Sonnet 5.5 also helped update the UI and generate sample boards for testing. Development is not fully automated: changes are implemented and reviewed locally, with the playable manual workflow exercised in the Android emulator and checked with a build and unit tests. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage.
+
+### [4_fullstack](4_fullstack/)
+
+OrderOps is a learner-led orders-and-inventory project that starts as a modular ASP.NET Core .NET 10 API with SQL Server persistence and a responsive React/TypeScript frontend styled with SCSS. After the core project, an optional Phase 4 adds one independent Product Catalog microservice and carries it through SQL/BI and React. Two separate warehouses on one SQL Server instance compare classic SSIS/SSAS/SSRS with T-SQL loads, Power Query, and Power BI using identical data and metric definitions.
+
+See the [project README](4_fullstack/README.md), [design](4_fullstack/design/DESIGN.md), and [TODO index](4_fullstack/design/todo/index.md), including the indexed Phase 4 microservice tasks. The documentation and directory foundation are captured; application scaffolding and installations have not started. The intended Windows host and existing Visual Studio/.NET setup are inventoried; the development topology is same-host with BI services staged.
+
+**AI-assisted development:** GitHub Copilot is intended primarily as a chat-based tutor and guide for design choices, IDE workflows, service boundaries, and focused reviews. The learner authors and validates the implementation; Copilot edits, scaffolds, installs, and runs commands only when explicitly asked for the specific action. Documentation updates are batched at milestones.
