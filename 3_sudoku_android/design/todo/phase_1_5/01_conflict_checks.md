@@ -1,4 +1,4 @@
-# Step 8: Check conflicts on full boards
+# Step 1: Check conflicts on full boards
 
 - [ ] For a full board, report duplicates in each affected row, column, and 3×3 box.
 - [ ] Identify the conflicting numbers and cell locations, returned as cell indexes.
