@@ -4,15 +4,16 @@ import com.example.sudoku.domain.state.SudokuBoardState
 
 object ValidateGrid {
 
-    fun validateGrid(boardState: SudokuBoardState, needsToBeFull: Boolean): BoardValidationResult {
-        if (needsToBeFull && !isBoardFull(boardState)) {
-            return BoardValidationResult.Incomplete
-        }
+    fun hasAnyConflicts(boardState: SudokuBoardState): BoardValidationResult {
         for (index in 0 until 9) {
             if (!validateRow(boardState, index)) return BoardValidationResult.InvalidRow(index)
         }
         for (index in 0 until 9) {
-            if (!validateColumn(boardState, index)) return BoardValidationResult.InvalidColumn(index)
+            if (!validateColumn(
+                    boardState,
+                    index
+                )
+            ) return BoardValidationResult.InvalidColumn(index)
         }
         for (index in 0 until 9) {
             if (!validateBox(boardState, index)) return BoardValidationResult.InvalidBox(index)
@@ -66,9 +67,5 @@ object ValidateGrid {
             }
         }
         return true
-    }
-
-    fun isBoardFull(boardState: SudokuBoardState): Boolean {
-        return boardState.cells.all { it.value != null }
     }
 }

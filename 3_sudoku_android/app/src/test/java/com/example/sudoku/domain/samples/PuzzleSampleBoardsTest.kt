@@ -33,7 +33,7 @@ class PuzzleSampleBoardsTest {
             assertEquals(
                 name,
                 BoardValidationResult.Valid,
-                ValidateGrid.validateGrid(board, needsToBeFull = false)
+                ValidateGrid.hasAnyConflicts(board)
             )
         }
     }

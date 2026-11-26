@@ -50,36 +50,32 @@ class MainActivity : ComponentActivity() {
                         ControlBoard(
                             gamePhase = state.boardPhase,
                             showNotes = state.notesOn,
-                            onAction = { action -> state = state.reduce(action) }
-                        )
+                            onAction = { action -> state = state.reduce(action) })
                     }
 
                     if (state.showLockGivensDialog) {
                         LockGivens(
                             isValid = GivensValidator.validateGivens(state.board),
+                            validationAnswer = GivensValidator.validateGrid(
+                                state.board
+                            ),
                             onConfirm = {
                                 state = state.lockInGivens()
                             },
                             onDismiss = {
                                 state = state.copy(showLockGivensDialog = false)
-                            }
-                        )
+                            })
                     }
 
                     if (state.showSubmitBoardDialog) {
                         val validationAnswer = SubmitBoardValidator().validateSolution(state.board)
-                        BoardValidationPrompt(
-                            validationAnswer,
-                            onConfirm = {
-                                state = state.newGame()
-                            },
-                            onValidDismiss = {
-                                state = state.lockBoard()
-                            },
-                            onInvalidDismiss = {
-                                state = state.copy(showSubmitBoardDialog = false)
-                            }
-                        )
+                        BoardValidationPrompt(validationAnswer, onConfirm = {
+                            state = state.newGame()
+                        }, onValidDismiss = {
+                            state = state.lockBoard()
+                        }, onInvalidDismiss = {
+                            state = state.copy(showSubmitBoardDialog = false)
+                        })
                     }
                 }
             }

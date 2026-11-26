@@ -18,18 +18,10 @@ import org.junit.Test
 
 class ValidateGridTest {
     @Test
-    fun validateGrid_emptyBoard_isValidWhenFullIsNotRequired() {
+    fun validateGrid_emptyBoard_isValid() {
         assertEquals(
             BoardValidationResult.Valid,
-            ValidateGrid.validateGrid(emptyBoard, needsToBeFull = false)
-        )
-    }
-
-    @Test
-    fun validateGrid_emptyBoard_isIncompleteWhenFullIsRequired() {
-        assertEquals(
-            BoardValidationResult.Incomplete,
-            ValidateGrid.validateGrid(emptyBoard, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(emptyBoard)
         )
     }
 
@@ -37,15 +29,15 @@ class ValidateGridTest {
     fun validateGrid_reportsRowColumnAndBoxRepeats() {
         assertEquals(
             BoardValidationResult.InvalidRow(0),
-            ValidateGrid.validateGrid(invalidRowBoard, needsToBeFull = false)
+            ValidateGrid.hasAnyConflicts(invalidRowBoard)
         )
         assertEquals(
             BoardValidationResult.InvalidColumn(0),
-            ValidateGrid.validateGrid(invalidColumnBoard, needsToBeFull = false)
+            ValidateGrid.hasAnyConflicts(invalidColumnBoard)
         )
         assertEquals(
             BoardValidationResult.InvalidBox(0),
-            ValidateGrid.validateGrid(invalidBoxBoard, needsToBeFull = false)
+            ValidateGrid.hasAnyConflicts(invalidBoxBoard)
         )
     }
 
@@ -53,12 +45,12 @@ class ValidateGridTest {
     fun validateGrid_validFullBoard_isValid() {
         assertEquals(
             BoardValidationResult.Valid,
-            ValidateGrid.validateGrid(validFullBoard, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(validFullBoard)
         )
     }
 
     @Test
-    fun validateGrid_incompleteConflictingBoard_reportsIncomplete() {
+    fun validateGrid_incompleteConflictingBoard_reportsConflict() {
         val board = SudokuBoardState(
             cells = List(81) { index ->
                 SudokuCellState(index = index, value = 5)
@@ -66,18 +58,18 @@ class ValidateGridTest {
         ).withValues(0 to null)
 
         assertEquals(
-            BoardValidationResult.Incomplete,
-            ValidateGrid.validateGrid(board, needsToBeFull = true)
+            BoardValidationResult.InvalidRow(0),
+            ValidateGrid.hasAnyConflicts(board)
         )
     }
 
     @Test
-    fun validateGrid_incompleteSolvedBoard_reportsIncomplete() {
+    fun validateGrid_incompleteSolvedBoard_isValid() {
         val board = PuzzleSampleBoards.solvedBoard.withValues(0 to null)
 
         assertEquals(
-            BoardValidationResult.Incomplete,
-            ValidateGrid.validateGrid(board, needsToBeFull = true)
+            BoardValidationResult.Valid,
+            ValidateGrid.hasAnyConflicts(board)
         )
     }
 
@@ -87,7 +79,7 @@ class ValidateGridTest {
 
         assertEquals(
             BoardValidationResult.InvalidRow(3),
-            ValidateGrid.validateGrid(board, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateColumn(board, index))
@@ -101,7 +93,7 @@ class ValidateGridTest {
 
         assertEquals(
             BoardValidationResult.InvalidColumn(3),
-            ValidateGrid.validateGrid(board, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateRow(board, index))
@@ -117,7 +109,7 @@ class ValidateGridTest {
 
         assertEquals(
             BoardValidationResult.InvalidBox(1),
-            ValidateGrid.validateGrid(board, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateRow(board, index))
@@ -129,7 +121,7 @@ class ValidateGridTest {
     fun validateGrid_solvedSampleBoard_isValid() {
         assertEquals(
             BoardValidationResult.Valid,
-            ValidateGrid.validateGrid(PuzzleSampleBoards.solvedBoard, needsToBeFull = true)
+            ValidateGrid.hasAnyConflicts(PuzzleSampleBoards.solvedBoard)
         )
     }
 
@@ -160,11 +152,5 @@ class ValidateGridTest {
         assertTrue(ValidateGrid.validateBox(invalidColumnBoard, 0))
         assertTrue(ValidateGrid.validateBox(invalidRowBoard, 0))
         assertFalse(ValidateGrid.validateBox(invalidBoxBoard, 0))
-    }
-
-    @Test
-    fun isBoardFull() {
-        assertFalse(ValidateGrid.isBoardFull(emptyBoard))
-        assertTrue(ValidateGrid.isBoardFull(validFullBoard))
     }
 }

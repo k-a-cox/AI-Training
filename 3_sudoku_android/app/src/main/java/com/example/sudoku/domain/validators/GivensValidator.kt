@@ -6,8 +6,7 @@ object GivensValidator {
 
     fun validateGivens(boardState: SudokuBoardState): Boolean {
         if (!isStartingEmpty(boardState)) return false
-        if (!validateGrid(boardState)) return false
-
+        if (validateGrid(boardState) != BoardValidationResult.Valid) return false
 
         return true
     }
@@ -20,9 +19,9 @@ object GivensValidator {
         return true
     }
 
-    fun validateGrid(boardState: SudokuBoardState): Boolean {
-        return ValidateGrid.validateGrid(boardState, needsToBeFull = false) ==
-            BoardValidationResult.Valid
+    fun validateGrid(boardState: SudokuBoardState): BoardValidationResult {
+        if (boardState.cells.all { it.value == null }) return BoardValidationResult.Incomplete
+        return ValidateGrid.hasAnyConflicts(boardState)
     }
 
     fun lockInGivens(boardState: SudokuBoardState): SudokuBoardState {
