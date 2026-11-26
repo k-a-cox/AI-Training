@@ -4,6 +4,12 @@
 
 Build a native Android Sudoku game first, then add an automatic solver. The app is built in this directory using Kotlin and Jetpack Compose.
 
+## Current milestone
+
+The manual game is playable end to end. Givens validation and solution verification identify an invalid row, column, or box, but do not yet highlight individual conflicting cells or report all conflicts together. The full manual flow has been exercised in the emulator, with the Android build and existing unit tests run.
+
+Phase 1.5 covers richer conflict feedback, deferred tests, and UI polish. The givens uniqueness check remains deferred until the backtracking solver exists; the automatic solver and camera entry are planned, not implemented. See the [TODO index](todo/index.md) for details.
+
 ## Goal 1: Playable manual Sudoku game
 
 ### Make the 3×3 boxes visually distinct
@@ -29,13 +35,13 @@ Once added, the givens-confirmation flow first rejects any row, column, or 3×3-
 
 Keep this validation distinct from the player's **Verify** action (which checks a filled solution) and from Goal 2's solver progress.
 
-Rejected givens will show the cells involved in each conflict as highlighted cells; this reuses the conflict highlighting built with Verify (see below) and is deferred to that work.
+Currently, rejected givens identify an invalid row, column, or box. Highlighting the cells involved in each conflict is deferred to Phase 1.5 and will reuse the conflict highlighting built with Verify (see below).
 
 ### Play, notes, and verification
 
 The player fills empty cells using the same on-screen number buttons, without using the software keyboard. A **Notes** control switches the number buttons to toggle candidate digits 1–9 in the selected empty cell. Notes are user annotations, not solver assertions, and are cleared from a cell when a value is entered.
 
-When the user clicks **Verify**, the app first checks completeness. If any cell is empty, it asks the player to fill all cells and does not report number conflicts yet. Once all 81 cells are filled, check rows, columns, and 3×3 boxes for duplicate numbers. Identify conflicting numbers and their locations and highlight those cells on the board, or accept the board as solved if no conflicts exist.
+When the user clicks **Verify**, the app first checks completeness. If any cell is empty, it asks the player to fill all cells and does not report number conflicts yet. Once all 81 cells are filled, it checks rows, columns, and 3×3 boxes for duplicates, identifies an invalid row, column, or box, or accepts the board as solved if no conflicts exist. Phase 1.5 will identify conflicting numbers and their locations and highlight those cells on the board.
 
 ## Goal 2: Automatic solver
 
