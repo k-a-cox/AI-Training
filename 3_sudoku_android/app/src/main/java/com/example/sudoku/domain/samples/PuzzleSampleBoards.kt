@@ -4,7 +4,7 @@ import com.example.sudoku.domain.state.SudokuBoardState
 import com.example.sudoku.domain.state.SudokuCellState
 
 /**
- * Boards with 30-50% of cells filled, none of which conflict in a row, column, or box.
+ * Sample boards whose filled cells do not conflict in a row, column, or box.
  * Values are not locked as givens, so they can be used to exercise the confirm-givens flow.
  */
 object PuzzleSampleBoards {
@@ -95,11 +95,26 @@ object PuzzleSampleBoards {
         """
     )
 
+    val solvedBoard = boardFromGrid(
+        """
+        534678912
+        672195348
+        198342567
+        859761423
+        426853791
+        713924856
+        961537284
+        287419635
+        345286179
+        """
+    )
+
     val all: List<Pair<String, SudokuBoardState>> = listOf(
         "Unique easy" to uniqueEasyBoard,
         "Unique medium" to uniqueMediumBoard,
         "Unique sparse" to uniqueSparseBoard,
         "Multiple solutions" to multipleSolutionsBoard,
         "No solution" to noSolutionBoard,
+        "Solved board" to solvedBoard,
     )
 }
