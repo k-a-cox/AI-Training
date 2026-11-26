@@ -2,22 +2,56 @@
 
 ## Purpose
 
-Build a native Android Sudoku app that lets a user enter and solve a puzzle, then watch solving techniques make progress on that same puzzle. The initial milestone focuses on validating the puzzle board and solver experience. Camera scanning is a future extension, not part of the initial implementation.
+Build a native Android Sudoku game first, then add an automatic solver. The app is built in this directory using Kotlin and Jetpack Compose.
 
-## Initial scope
+## Current milestone
 
-- Enter a puzzle into a 9×9 board by hand.
-- Edit given clues and empty cells while setting up a puzzle.
-- Solve the puzzle manually by entering values in empty cells.
-- Run an individual solving technique to see its deductions and board changes.
-- Run all configured techniques in a basic-to-advanced sequence over one shared puzzle state.
-- Show useful feedback for invalid entries, completed puzzles, and puzzles that the configured techniques cannot currently advance.
+The manual game is playable end to end. Givens validation and solution verification identify an invalid row, column, or box, but do not yet highlight individual conflicting cells or report all conflicts together. The full manual flow has been exercised in the emulator, with the Android build and existing unit tests run.
 
-Not in the initial milestone:
+Phase 1.5 covers richer conflict feedback, deferred tests, and UI polish. The givens uniqueness check remains deferred until the backtracking solver exists; the automatic solver and camera entry are planned, not implemented. See the [TODO index](todo/index.md) for details.
 
-- Camera capture, image recognition, or OCR.
-- Puzzle generation, accounts, cloud sync, or leaderboards.
-- Concurrent solvers operating on independent copies of a puzzle.
+## Goal 1: Playable manual Sudoku game
+
+### Make the 3×3 boxes visually distinct
+
+Give the nine 3×3 boxes clear visual emphasis so their boundaries are easy to distinguish from the ordinary cell grid, for example by using stronger separators after every third row and column. This is a medium-priority presentation improvement: implement it with the board UI, after basic board display and selection work and before final end-to-end acceptance.
+
+### Enter and confirm givens
+
+The user enters givens into an empty 9×9 board. All cell values are entered using on-screen number buttons; do not require or invoke the software keyboard. Tapping a cell selects it, and tapping a number button enters that value in the selected cell. An erase control clears the selected editable cell.
+
+An explicit **Confirm givens** action validates the givens before starting play: check for row, column, and 3×3-box conflicts. Once the solver exists, also perform the uniqueness check described below. Only accepted givens start play. Once play starts, given values appear bold and cannot be changed for that puzzle. A **Start over** action returns to puzzle entry to create a different puzzle.
+
+#### Validate uniqueness before locking givens (deferred until the solver exists)
+
+Until the backtracking solver from Goal 2 is available, Confirm givens only rejects row, column, and 3×3-box conflicts, so puzzles with no solution or several solutions can be locked. The uniqueness check is a thin wrapper around that solver and is added once it exists, which also avoids writing a solver twice. Established puzzles are normally unique, so this mainly protects hand-typed and scanned givens.
+
+Once added, the givens-confirmation flow first rejects any row, column, or 3×3-box conflicts. If there are no conflicts, it determines how many valid complete solutions are consistent with the givens. Lock the givens and start play only when exactly one solution exists.
+
+- If there are no solutions, explain that the entered puzzle cannot be solved.
+- If there is more than one solution, explain that the givens do not determine a unique puzzle.
+- Do not silently pick one solution to make ambiguous givens appear valid.
+- For efficiency, the uniqueness check may stop counting once it finds two solutions.
+
+Keep this validation distinct from the player's **Verify** action (which checks a filled solution) and from Goal 2's solver progress.
+
+Currently, rejected givens identify an invalid row, column, or box. Highlighting the cells involved in each conflict is deferred to Phase 1.5 and will reuse the conflict highlighting built with Verify (see below).
+
+### Play, notes, and verification
+
+The player fills empty cells using the same on-screen number buttons, without using the software keyboard. A **Notes** control switches the number buttons to toggle candidate digits 1–9 in the selected empty cell. Notes are user annotations, not solver assertions, and are cleared from a cell when a value is entered.
+
+When the user clicks **Verify**, the app first checks completeness. If any cell is empty, it asks the player to fill all cells and does not report number conflicts yet. Once all 81 cells are filled, it checks rows, columns, and 3×3 boxes for duplicates, identifies an invalid row, column, or box, or accepts the board as solved if no conflicts exist. Phase 1.5 will identify conflicting numbers and their locations and highlight those cells on the board.
+
+## Goal 2: Automatic solver
+
+Implement independently testable solving techniques, ordered from basic to advanced. The program iterates through the techniques sequentially on the same evolving board state and shows each deduction and its explanation. It must distinguish solved, invalid, and stuck outcomes; getting stuck with the configured techniques does not prove that a puzzle has no solution. Solver runs should be cancellable, and manual edits invalidate stale solver progress.
+
+Keep techniques replaceable and their initial set small. A starter progression may use naked singles, hidden singles, and backtracking search. The final initial set can be adjusted during implementation.
+
+## Stretch goal: Camera clue entry
+
+Allow a player to enter givens using the device camera. Scanned values must be editable and reviewed by the user before following the normal givens validation and confirmation flow, including the uniqueness check.
 
 ## Platform and app structure
 
@@ -25,7 +59,7 @@ Not in the initial milestone:
 - **Language:** Kotlin.
 - **UI:** Jetpack Compose.
 - **Project root:** `3_sudoku_android/`.
-- **Git branch:** `soduko`, created from `main`.
+- **Git branch:** `sudoku`, created from `main`.
 
 Keep the presentation, Sudoku rules, and solving techniques separate so the solver can be tested without the Android UI. A suitable initial organization is:
 
@@ -36,48 +70,23 @@ Keep the presentation, Sudoku rules, and solving techniques separate so the solv
 
 These are logical boundaries, not a requirement to create one Gradle module per boundary.
 
-## Puzzle entry and manual play
-
-Show a 9×9 grid with clear selection and visual distinction between original clues and user-entered values. In puzzle-entry mode, the user can fill, replace, and clear cells. In play mode, original clues are read-only while empty cells remain editable. Provide an explicit way to switch between entry and play so setup edits are not confused with solving.
-
-Validate entered values against Sudoku's row, column, and 3×3-box constraints. Report conflicts to the user and prevent invalid manual values from being treated as valid solver input. A board with empty cells is an incomplete puzzle, not an error. A completed board is solved only when it satisfies all Sudoku constraints.
-
-The app should preserve the current puzzle when switching between manual play and solver actions. Editing the puzzle after deductions have been made must invalidate or reset stale solver progress rather than presenting it as progress for the changed board.
-
-## Solver contract and execution
-
-Keep the initial set and exact ordering of techniques open until implementation. Select a small, testable starter set then; the architecture should allow techniques to be added, removed, and reordered without changing the board UI.
-
-Each technique should operate on the current puzzle state and report its result explicitly: deductions made, no further progress from that technique, a solved puzzle, or an invalid/contradictory state. A deduction should identify the cell and value and provide a concise explanation suitable for display. Techniques should only place values they can justify under their own rules.
-
-- **Run technique:** Apply the selected technique to the current puzzle and show its deductions.
-- **Run all:** Visit the configured techniques in basic-to-advanced order, applying each one's deductions to the same evolving puzzle state. The next technique sees the values placed by earlier techniques.
-- **Progress visibility:** Show the active technique, its current deduction or explanation, and the board changes as they occur. Keep the run observable rather than silently replacing the puzzle with a final answer.
-- **No progress:** If a technique cannot advance the board, continue to the next technique during a run-all operation. If the full configured pass cannot advance an unsolved puzzle, tell the user that these techniques are stuck; do not claim that the puzzle is impossible.
-- **Stop conditions:** Stop when the puzzle is solved, a contradiction or invalid state is detected, or the user cancels the run. Manual edits during a run should cancel or invalidate that run.
-
-The execution is sequential, not concurrent: “run all” means an ordered pass through techniques sharing one puzzle state, not a race between solvers or a merged result from separate boards. Keep solver execution off the UI thread and publish progress back to the UI so the board remains responsive.
-
 ## Suggested user flow
 
-1. Start a new puzzle and enter givens into the empty 9×9 board.
-2. Review and correct the clues; resolve any displayed row, column, or box conflicts.
-3. Switch to play mode and fill empty cells manually, or choose a solving technique.
-4. Run one technique to inspect its deductions, or run all techniques in order.
-5. Review each visible change and explanation; continue manually or rerun after the techniques get stuck.
-6. Receive a clear completion state when the board is valid and full.
-
-## Future camera-scanning extension
-
-Add camera scanning as a separate puzzle-entry path after the manual board and solver work. A future scan flow should capture or import an image, detect the grid and digits, populate an editable review board, and require the user to correct recognition errors before submitting it as a puzzle. Image recognition must not bypass the same board validation used by manual entry. Request camera permission only when that feature is implemented and invoked.
+1. Enter puzzle clues and confirm them. Reject conflicting givens. After the uniqueness check is added, also reject unsolvable or ambiguous puzzles and accept only givens with one solution.
+2. Play manually, using notes as desired; verify the filled solution.
+3. Optionally run a solving technique or the ordered automatic solver and inspect its progress.
+4. In a later stretch-goal milestone, scan clues and review them before confirmation.
 
 ## Testing and acceptance
 
-- Unit-test Sudoku row, column, and 3×3-box validation, including conflicts and incomplete boards.
-- Unit-test each solving technique with small known board states and verify both deductions and no-progress results.
-- Unit-test the run-all ordering and shared-state behavior: deductions by an earlier technique are visible to later techniques.
-- Verify solved, stuck, invalid/contradictory, and cancellation outcomes are distinguishable.
-- Verify manual edits after solver progress invalidate stale progress.
-- Exercise puzzle entry, manual play, individual technique execution, run-all progress, and completion through the Android UI.
-
-Build and run the Android checks once the required Gradle and Android SDK tooling is available in the development environment.
+- Write and run focused unit tests while implementing each corresponding feature; do not defer board-rule tests to the end.
+- When adding the board model and cell entry, test empty-cell state, selecting/updating cells, erasing values, and protection of givens.
+- Visually distinguish each 3×3 box from individual cells, and check that all nine boxes are easy to identify in the emulator.
+- When adding confirmation, test valid givens, duplicates in rows/columns/boxes, and rejection of invalid givens.
+- When adding notes, test toggling candidate digits and clearing notes when a value is entered.
+- When adding **Verify**, first test that any incomplete board returns an incomplete result without conflict reports. Then test full boards with row, column, and box conflicts, and a valid completed solution.
+- When the uniqueness check is added after the solver, test puzzles with exactly one solution, no solutions, and multiple solutions. Check uniqueness only after clue conflicts are ruled out, and confirm that only a unique puzzle can be locked. `PuzzleSampleBoards` already provides unique, no-solution, and multiple-solution boards for these tests.
+- Exercise the full Goal 1 flow in the emulator, including that on-screen controls do not open the software keyboard.
+- When adding the solver, unit-test each technique and verify sequential shared-state deductions, visible explanations, and solved/stuck/invalid outcomes.
+- For the camera stretch goal, verify scanned givens can be edited and reviewed before the normal validation and confirmation flow.
+- Run the Android build, unit tests, and relevant UI tests.

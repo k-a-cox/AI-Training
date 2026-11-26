@@ -1,4 +1,4 @@
-# Step 11: Deferred: uniqueness check
+# Step 3: Deferred: uniqueness check
 
 Do this after the backtracking solver from Goal 2 exists, since it reuses that solver.
 

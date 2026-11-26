@@ -6,12 +6,9 @@ Open only the first step file whose status is not `done` (the first `todo` row i
 
 - Do not describe or preview the next step's contents unless the user asks (e.g. "What's next?").
 - Treat checkboxes as user-managed: assume the user checks tasks off, and do not re-verify checked items against the code or solution.
-- Keep replies short: lead with the answer or code, no restating the task or recapping. After an edit, don't print the file; say what changed in one line. Explain only when asked.
-- Read only the files and line ranges the current step names. Prefer grep and ranged views over whole files; do not scan the project. Do not open [SODUKO_DESIGN.md](../SODUKO_DESIGN.md) unless a step explicitly references it.
-- Do not propose or consider changes unless prompted; the user drives development. No features, refactors, or docs beyond what was asked.
-- Never write or run unit tests unless explicitly asked, even when a step's checklist lists them.
+- Read only the files and line ranges the current step names. Do not open [SODUKO_DESIGN.md](../SODUKO_DESIGN.md) unless a step explicitly references it.
 - Ask once, briefly. If something is ambiguous, ask one short question.
-- Keep files small. Don't let step files grow with notes or history. When a step is done, collapse it to a one-line summary, as steps 1–5 already are.
+- When a phase is done, collapse the tasks to one-line summaries while updating documentation.
 
 ## Phase 1: Playable Manual Sudoku Game
 
@@ -19,14 +16,51 @@ Folder: [phase_1/](phase_1)
 
 | Step | Status | File |
 |---|---|---|
-| 1. Define the board state | todo | [01](phase_1/01_board_state.md) |
-| 2. Display and select cells | todo | [02](phase_1/02_display_select_cells.md) |
-| 3. On-screen number and erase controls | todo | [03](phase_1/03_number_erase_controls.md) |
-| 4. Givens-entry and confirmation flow | todo | [04](phase_1/04_givens_confirmation.md) |
-| 5. Lock and distinguish confirmed givens | todo | [05](phase_1/05_lock_givens.md) |
-| 6. Candidate notes | todo | [06](phase_1/06_candidate_notes.md) |
-| 7. Completeness-first verification | todo | [07](phase_1/07_completeness_verification.md) |
-| 8. Check conflicts on full boards | todo | [08](phase_1/08_conflict_checks.md) |
-| 9. Exercise the complete game flow | todo | [09](phase_1/09_full_game_flow.md) |
-| 10. Deferred cleanup | todo | [10](phase_1/10_deferred_cleanup.md) |
-| 11. Deferred: uniqueness check | deferred (needs Goal 2 solver) | [11](phase_1/11_deferred_uniqueness_check.md) |
+| 1. Define the board state | done | [01](phase_1/01_board_state.md) |
+| 2. Display and select cells | done | [02](phase_1/02_display_select_cells.md) |
+| 3. On-screen number and erase controls | done | [03](phase_1/03_number_erase_controls.md) |
+| 4. Givens-entry and confirmation flow | done | [04](phase_1/04_givens_confirmation.md) |
+| 5. Lock and distinguish confirmed givens | done | [05](phase_1/05_lock_givens.md) |
+| 6. Candidate notes | done | [06](phase_1/06_candidate_notes.md) |
+| 7. Completeness-first verification | done | [07](phase_1/07_completeness_verification.md) |
+| 8. Exercise the complete game flow | done | [08](phase_1/08_full_game_flow.md) |
+
+## Phase 1.5: Manual Game Improvements
+
+Folder: [phase_1_5/](phase_1_5)
+
+| Step | Status | File |
+|---|---|---|
+| 1. Check conflicts on full boards | todo | [01](phase_1_5/01_conflict_checks.md) |
+| 2. Deferred cleanup | todo | [02](phase_1_5/02_deferred_cleanup.md) |
+| 3. Deferred: uniqueness check | deferred (needs Goal 2 solver) | [03](phase_1_5/03_deferred_uniqueness_check.md) |
+| 4. Polish the UI | todo | [04](phase_1_5/04_ui_polish.md) |
+
+## Phase 2: Automatic Solver
+
+Folder: [phase_2/](phase_2)
+
+Start after Phase 1.5 steps 1 and 2. Phase 1.5 step 3 remains deferred until the backtracking search in Phase 2, Step 4 is complete.
+
+| Step | Status | File |
+|---|---|---|
+| 1. Define solver state and contracts | todo | [01](phase_2/01_solver_contracts.md) |
+| 2. Implement logical solving techniques | todo | [02](phase_2/02_logical_techniques.md) |
+| 3. Add the ordered solver runner | todo | [03](phase_2/03_solver_runner.md) |
+| 4. Implement backtracking search | todo | [04](phase_2/04_backtracking_search.md) |
+| 5. Integrate solver progress and controls | todo | [05](phase_2/05_solver_ui.md) |
+| 6. Exercise the solver end to end | todo | [06](phase_2/06_solver_acceptance.md) |
+
+## Phase 3: Camera Clue Entry (Stretch)
+
+Folder: [phase_3/](phase_3)
+
+Start after Phase 2 and the deferred uniqueness check in Phase 1.5, Step 3 are complete.
+
+| Step | Status | File |
+|---|---|---|
+| 1. Define the scan pipeline | todo | [01](phase_3/01_scan_pipeline.md) |
+| 2. Capture puzzle images | todo | [02](phase_3/02_camera_capture.md) |
+| 3. Recognize the grid and clues | todo | [03](phase_3/03_grid_recognition.md) |
+| 4. Review and confirm scanned clues | todo | [04](phase_3/04_review_and_confirmation.md) |
+| 5. Exercise the camera flow | todo | [05](phase_3/05_camera_acceptance.md) |

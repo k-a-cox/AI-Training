@@ -35,11 +35,11 @@ See the [project README](2_chess/README.md) for features, run instructions, and 
 
 ### [3_sudoku_android](3_sudoku_android/)
 
-A native Android Sudoku app built with Kotlin and Jetpack Compose. Planned features include a manual Sudoku game with on-screen entry, givens validation, candidate notes, and solution verification; a sequential solver that shows its progress; and camera-based clue entry as a stretch goal.
+A native Android Sudoku app built with Kotlin and Jetpack Compose. The manual game is playable end to end, with on-screen entry, givens validation and locking, candidate notes, and solution verification. Planned work includes improved conflict highlighting, an automatic solver, and camera-based clue entry as a stretch goal.
 
 See the [project README](3_sudoku_android/README.md) for setup and run instructions, the [Sudoku design document](3_sudoku_android/design/SODUKO_DESIGN.md) for scope and architecture, and the [TODO index](3_sudoku_android/design/todo/index.md) for implementation progress.
 
-**AI-assisted development:** GPT models are used primarily as interactive assistants for local development, helping refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Development is not fully automated: changes are implemented and reviewed locally, then validated with the build, unit tests, and Android emulator as appropriate. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage.
+**AI-assisted development:** GPT models are used primarily as interactive assistants for local development, helping refine the overall design and patterns, explain options, review focused changes, and suggest tests or next steps. Claude Sonnet 5.5 also helped update the UI and generate sample boards for testing. Development is not fully automated: changes are implemented and reviewed locally, with the playable manual workflow exercised in the Android emulator and checked with a build and unit tests. GPT-6 Luna in Agent mode has been used most often, with some Plan mode usage.
 
 ### [4_fullstack](4_fullstack/)
 
