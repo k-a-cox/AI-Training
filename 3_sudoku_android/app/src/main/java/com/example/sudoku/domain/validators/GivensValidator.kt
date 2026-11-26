@@ -21,7 +21,8 @@ object GivensValidator {
     }
 
     fun validateGrid(boardState: SudokuBoardState): Boolean {
-        return ValidateGrid.validateGrid(boardState, needsToBeFull = false) == IsValidBoard.Valid
+        return ValidateGrid.validateGrid(boardState, needsToBeFull = false) ==
+            BoardValidationResult.Valid
     }
 
     fun lockInGivens(boardState: SudokuBoardState): SudokuBoardState {

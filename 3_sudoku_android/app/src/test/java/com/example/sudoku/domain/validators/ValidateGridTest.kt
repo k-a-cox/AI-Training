@@ -17,29 +17,29 @@ class ValidateGridTest {
     @Test
     fun validateGrid_emptyBoard_isValidWhenFullIsNotRequired() {
         assertEquals(
-            IsValidBoard.Valid, ValidateGrid.validateGrid(emptyBoard, needsToBeFull = false)
+            BoardValidationResult.Valid, ValidateGrid.validateGrid(emptyBoard, needsToBeFull = false)
         )
     }
 
     @Test
     fun validateGrid_emptyBoard_isIncompleteWhenFullIsRequired() {
         assertEquals(
-            IsValidBoard.Incomplete, ValidateGrid.validateGrid(emptyBoard, needsToBeFull = true)
+            BoardValidationResult.Incomplete, ValidateGrid.validateGrid(emptyBoard, needsToBeFull = true)
         )
     }
 
     @Test
     fun validateGrid_reportsRowColumnAndBoxRepeats() {
         assertEquals(
-            IsValidBoard.InvalidRow,
+            BoardValidationResult.InvalidRow(0),
             ValidateGrid.validateGrid(invalidRowBoard, needsToBeFull = false)
         )
         assertEquals(
-            IsValidBoard.InvalidColumn,
+            BoardValidationResult.InvalidColumn(0),
             ValidateGrid.validateGrid(invalidColumnBoard, needsToBeFull = false)
         )
         assertEquals(
-            IsValidBoard.InvalidBox,
+            BoardValidationResult.InvalidBox(0),
             ValidateGrid.validateGrid(invalidBoxBoard, needsToBeFull = false)
         )
     }
@@ -47,7 +47,7 @@ class ValidateGridTest {
     @Test
     fun validateGrid_validFullBoard_isValid() {
         assertEquals(
-            IsValidBoard.Valid, ValidateGrid.validateGrid(validFullBoard, needsToBeFull = true)
+            BoardValidationResult.Valid, ValidateGrid.validateGrid(validFullBoard, needsToBeFull = true)
         )
     }
 

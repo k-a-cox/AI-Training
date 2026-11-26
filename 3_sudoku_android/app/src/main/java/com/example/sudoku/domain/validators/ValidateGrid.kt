@@ -2,25 +2,23 @@ package com.example.sudoku.domain.validators
 
 import com.example.sudoku.domain.state.SudokuBoardState
 
-enum class IsValidBoard { Valid, Incomplete, InvalidRow, InvalidColumn, InvalidBox }
-
 object ValidateGrid {
 
-    fun validateGrid(boardState: SudokuBoardState, needsToBeFull: Boolean): IsValidBoard {
+    fun validateGrid(boardState: SudokuBoardState, needsToBeFull: Boolean): BoardValidationResult {
         if (needsToBeFull && !isBoardFull(boardState)) {
-            return IsValidBoard.Incomplete
+            return BoardValidationResult.Incomplete
         }
         for (index in 0 until 9) {
-            if (!validateRow(boardState, index)) return IsValidBoard.InvalidRow
+            if (!validateRow(boardState, index)) return BoardValidationResult.InvalidRow(index)
         }
         for (index in 0 until 9) {
-            if (!validateColumn(boardState, index)) return IsValidBoard.InvalidColumn
+            if (!validateColumn(boardState, index)) return BoardValidationResult.InvalidColumn(index)
         }
         for (index in 0 until 9) {
-            if (!validateBox(boardState, index)) return IsValidBoard.InvalidBox
+            if (!validateBox(boardState, index)) return BoardValidationResult.InvalidBox(index)
         }
 
-        return IsValidBoard.Valid
+        return BoardValidationResult.Valid
     }
 
     fun validateRow(boardState: SudokuBoardState, rowIndex: Int): Boolean {
