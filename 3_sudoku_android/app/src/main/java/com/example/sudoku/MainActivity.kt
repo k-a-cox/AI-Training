@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.sudoku.app.GameState
 import com.example.sudoku.app.reduce
+import com.example.sudoku.domain.validators.BoardValidationResult
 import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.domain.validators.SubmitBoardValidator
 import com.example.sudoku.ui.board.SudokuGrid
@@ -43,9 +44,12 @@ class MainActivity : ComponentActivity() {
                         .padding(32.dp)
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        SudokuGrid(state.board, onCellSelected = { index ->
-                            state = state.copy(board = state.board.selectCell(index))
-                        })
+                        SudokuGrid(
+                            state.board,
+                            cellsToHighlight = state.cellsToHighlight,
+                            onCellSelected = { index ->
+                                state = state.copy(board = state.board.selectCell(index))
+                            })
                         Box(modifier = Modifier.height(16.dp))
                         ControlBoard(
                             gamePhase = state.boardPhase,
@@ -54,16 +58,22 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (state.showLockGivensDialog) {
+                        val validationAnswer = GivensValidator.validateGivens(
+                            state.board
+                        )
                         LockGivens(
-                            isValid = GivensValidator.validateGivens(state.board),
-                            validationAnswer = GivensValidator.validateGrid(
-                                state.board
-                            ),
+                            validationAnswer = validationAnswer,
                             onConfirm = {
                                 state = state.lockInGivens()
                             },
                             onDismiss = {
-                                state = state.copy(showLockGivensDialog = false)
+                                val conflicts =
+                                    (validationAnswer as? BoardValidationResult.ConflictingCells)?.cellIndexes
+                                        ?: emptySet<Int>()
+                                state = state.copy(
+                                    showLockGivensDialog = false,
+                                    cellsToHighlight = conflicts
+                                )
                             })
                     }
 
@@ -74,7 +84,13 @@ class MainActivity : ComponentActivity() {
                         }, onValidDismiss = {
                             state = state.lockBoard()
                         }, onInvalidDismiss = {
-                            state = state.copy(showSubmitBoardDialog = false)
+                            val conflicts =
+                                (validationAnswer as? BoardValidationResult.ConflictingCells)?.cellIndexes
+                                    ?: emptySet()
+                            state = state.copy(
+                                showSubmitBoardDialog = false,
+                                cellsToHighlight = conflicts
+                            )
                         })
                     }
                 }

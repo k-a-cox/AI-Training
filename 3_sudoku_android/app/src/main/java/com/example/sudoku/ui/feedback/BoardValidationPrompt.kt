@@ -14,29 +14,13 @@ fun BoardValidationPrompt(
     onValidDismiss: () -> Unit,
     onInvalidDismiss: () -> Unit,
 ) {
-    val isValid = validationAnswer == BoardValidationResult.Valid
-    val ordinals = listOf(
-        "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"
-    )
-    val boxes = listOf(
-        "top left",
-        "top middle",
-        "top right",
-        "middle left",
-        "center",
-        "middle right",
-        "bottom left",
-        "bottom middle",
-        "bottom right"
-    )
-
     val message = when (validationAnswer) {
         BoardValidationResult.Valid -> "You win!"
         BoardValidationResult.Incomplete -> "The board isn't fully filled in yet."
-        is BoardValidationResult.InvalidRow -> "The ${ordinals[validationAnswer.rowIndex]} row is invalid. Please fix this row."
-        is BoardValidationResult.InvalidColumn -> "The ${ordinals[validationAnswer.columnIndex]} column is invalid. Please fix this column."
-        is BoardValidationResult.InvalidBox -> "The ${boxes[validationAnswer.boxIndex]} box is invalid. Please fix this box."
+        is BoardValidationResult.ConflictingCells -> "The board has conflicting values (highlighted). Please fix them."
+        BoardValidationResult.ImpossibleSate -> "The game engine has messed up. Please click the \"Reset game\" button to fix."
     }
+    val isValid = validationAnswer == BoardValidationResult.Valid
     if (isValid) {
         AlertDialog(
             onDismissRequest = onValidDismiss,

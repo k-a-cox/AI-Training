@@ -9,43 +9,19 @@ import com.example.sudoku.domain.validators.BoardValidationResult
 
 @Composable
 fun LockGivens(
-    isValid: Boolean = true,
     validationAnswer: BoardValidationResult = BoardValidationResult.Valid,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val ordinals = listOf(
-        "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"
-    )
-    val boxes = listOf(
-        "top left",
-        "top middle",
-        "top right",
-        "middle left",
-        "center",
-        "middle right",
-        "bottom left",
-        "bottom middle",
-        "bottom right"
-    )
-
-    val message = if (isValid) {
-        "Are you sure you want to lock in the givens?"
-    } else {
-        when (validationAnswer) {
-            BoardValidationResult.Valid,
-            BoardValidationResult.Incomplete -> "The current board needs givens. Please add some."
-
-            is BoardValidationResult.InvalidRow ->
-                "The ${ordinals[validationAnswer.rowIndex]} row is invalid. Please fix this row."
-
-            is BoardValidationResult.InvalidColumn ->
-                "The ${ordinals[validationAnswer.columnIndex]} column is invalid. Please fix this column."
-
-            is BoardValidationResult.InvalidBox ->
-                "The ${boxes[validationAnswer.boxIndex]} box is invalid. Please fix this box."
-        }
+    val message = when (validationAnswer) {
+        BoardValidationResult.Valid -> "Are you sure you want to lock in the givens?"
+        BoardValidationResult.Incomplete -> "The current board needs givens. Please add some."
+        BoardValidationResult.ImpossibleSate -> "The game engine has messed up. Please click the \"Reset game\" button to fix."
+        is BoardValidationResult.ConflictingCells -> "The board has conflicting values (highlighted). Please fix them."
     }
+
+    val isValid = validationAnswer == BoardValidationResult.Valid
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Confirm givens") },

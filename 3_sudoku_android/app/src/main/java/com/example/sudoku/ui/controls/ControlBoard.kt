@@ -31,9 +31,6 @@ fun ControlBoard(
                     ButtonWrapper("Clear cell", ControlAction.Erase, onAction)
                     ButtonWrapper("Lock in Givens", ControlAction.LockGivens, onAction)
                 }
-                ButtonRow {
-                    ButtonWrapper("Clear all", ControlAction.Restart, onAction)
-                }
             }
 
             GamePhase.Playing -> {
@@ -44,17 +41,14 @@ fun ControlBoard(
                 }
                 ButtonRow {
                     ButtonWrapper("Validate solution", ControlAction.SubmitBoard, onAction)
-                    ButtonWrapper("New Game", ControlAction.Restart, onAction)
                 }
             }
 
             GamePhase.Solved -> {
-                ButtonRow {
-                    ButtonWrapper("New Game", ControlAction.Restart, onAction)
-                }
             }
         }
         ButtonRow {
+            ButtonWrapper("Reset game", ControlAction.Restart, onAction)
             SampleBoardPicker(
                 boards = PuzzleSampleBoards.all,
                 onBoardSelected = { board -> onAction(ControlAction.PickBoard(board)) },

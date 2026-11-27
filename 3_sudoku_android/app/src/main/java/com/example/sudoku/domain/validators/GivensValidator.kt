@@ -4,11 +4,9 @@ import com.example.sudoku.domain.state.SudokuBoardState
 
 object GivensValidator {
 
-    fun validateGivens(boardState: SudokuBoardState): Boolean {
-        if (!isStartingEmpty(boardState)) return false
-        if (validateGrid(boardState) != BoardValidationResult.Valid) return false
-
-        return true
+    fun validateGivens(boardState: SudokuBoardState): BoardValidationResult {
+        if (!isStartingEmpty(boardState)) return BoardValidationResult.ImpossibleSate
+        return validateGrid(boardState)
     }
 
     fun isStartingEmpty(boardState: SudokuBoardState): Boolean {
@@ -21,7 +19,10 @@ object GivensValidator {
 
     fun validateGrid(boardState: SudokuBoardState): BoardValidationResult {
         if (boardState.cells.all { it.value == null }) return BoardValidationResult.Incomplete
-        return ValidateGrid.hasAnyConflicts(boardState)
+        if (!ValidateGrid.hasNoConflicts(boardState)) return BoardValidationResult.ConflictingCells(
+            ValidateGrid.findConflicts(boardState)
+        )
+        return BoardValidationResult.Valid
     }
 
     fun lockInGivens(boardState: SudokuBoardState): SudokuBoardState {

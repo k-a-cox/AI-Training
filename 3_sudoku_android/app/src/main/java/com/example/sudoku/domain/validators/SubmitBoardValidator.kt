@@ -16,8 +16,11 @@ class SubmitBoardValidator {
     }
 
     fun validateGrid(boardState: SudokuBoardState): BoardValidationResult {
-        if (boardState.cells.all { it.value != null }) return BoardValidationResult.Incomplete
-        return ValidateGrid.hasAnyConflicts(boardState)
+        if (!boardState.cells.all { it.value != null }) return BoardValidationResult.Incomplete
+        if (!ValidateGrid.hasNoConflicts(boardState)) {
+            return BoardValidationResult.ConflictingCells(ValidateGrid.findConflicts(boardState))
+        }
+        return BoardValidationResult.Valid
     }
 
 }

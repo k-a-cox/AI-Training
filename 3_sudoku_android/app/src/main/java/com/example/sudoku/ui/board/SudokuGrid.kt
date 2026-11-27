@@ -19,6 +19,7 @@ private const val GRID_SIZE = BOXES_PER_GRID * BOX_SIZE
 @Composable
 fun SudokuGrid(
     board: SudokuBoardState,
+    cellsToHighlight: Set<Int>,
     onCellSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,10 +32,11 @@ fun SudokuGrid(
                 repeat(BOXES_PER_GRID) { boxColumn ->
                     SudokuBox(
                         board = board,
-                        onCellSelected = onCellSelected,
                         boxRow = boxRow,
                         boxColumn = boxColumn,
-                        modifier = Modifier.weight(1f)
+                        cellsToHighlight = cellsToHighlight,
+                        onCellSelected = onCellSelected,
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -47,8 +49,9 @@ private fun SudokuBox(
     board: SudokuBoardState,
     boxRow: Int,
     boxColumn: Int,
+    cellsToHighlight: Set<Int>,
     onCellSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -63,8 +66,9 @@ private fun SudokuBox(
                     SudokuCell(
                         board.cells[cellIndex],
                         isSelected = board.selectedCell == cellIndex,
+                        hasConflict = cellIndex in cellsToHighlight,
                         onClick = { onCellSelected(cellIndex) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -77,6 +81,7 @@ private fun SudokuBox(
 fun SampleGame() {
     SudokuGrid(
         SampleBoards.partialGameBoard,
+        cellsToHighlight = emptySet(),
         onCellSelected = { }
     )
 }
@@ -86,6 +91,17 @@ fun SampleGame() {
 fun SampleGame2() {
     SudokuGrid(
         PuzzleSampleBoards.uniqueEasyBoard,
+        cellsToHighlight = emptySet(),
+        onCellSelected = { }
+    )
+}
+
+@Preview
+@Composable
+fun SampleGame3() {
+    SudokuGrid(
+        PuzzleSampleBoards.uniqueEasyBoard,
+        cellsToHighlight = setOf(1, 2, 4, 80, 24, 59),
         onCellSelected = { }
     )
 }

@@ -26,9 +26,13 @@ import com.example.sudoku.domain.state.SudokuCellState
 
 @Composable
 fun SudokuCell(
-    state: SudokuCellState, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier
+    state: SudokuCellState,
+    isSelected: Boolean,
+    hasConflict: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val backgroundColor = getBackgroundColor(state, isSelected)
+    val backgroundColor = getBackgroundColor(state, isSelected, hasConflict)
     val fontColor = Color.Black
 
     Box(
@@ -85,27 +89,30 @@ private fun NotesGrid(notes: Set<Int>, color: Color) {
     }
 }
 
-fun getBackgroundColor(state: SudokuCellState, isSelected: Boolean): Color {
-    return when {
-        isSelected && state.isGiven -> lerp(Color.Red, Color.DarkGray, 0.5f)
-        isSelected -> Color.Red.copy(alpha = 0.5f)
-        state.isGiven -> Color.DarkGray.copy(alpha = 0.5f)
-        else -> Color.White
-    }
+fun getBackgroundColor(state: SudokuCellState, isSelected: Boolean, hasConflict: Boolean): Color {
+    var color = Color.White
+
+    if (hasConflict) color = lerp(color, Color.Red, 0.5f)
+    if (state.isGiven) color = lerp(color, Color.DarkGray, 0.5f)
+    if (isSelected) color = lerp(color, Color.Blue, 0.5f)
+
+    return color
 }
 
 @Composable
 private fun ShowCell(
     value: Int? = null,
     isSelected: Boolean = false,
+    hasConflict: Boolean = false,
     isGiven: Boolean = false,
     notes: Set<Int> = emptySet()
 ) {
     SudokuCell(
         state = SudokuCellState(index = 0, value = value, isGiven = isGiven, notes = notes),
         isSelected = isSelected,
+        hasConflict = hasConflict,
         onClick = {},
-        modifier = Modifier.width(48.dp)
+        modifier = Modifier.width(48.dp),
     )
 }
 
@@ -145,7 +152,6 @@ fun GivenSelected() {
     ShowCell(value = 2, isGiven = true, isSelected = true)
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun Notes() {
@@ -157,6 +163,31 @@ fun Notes() {
 fun NotesSelected() {
     ShowCell(notes = setOf(1, 2, 3, 4, 5, 6, 7, 8, 9), isSelected = true)
 }
+
+@Preview(showBackground = true)
+@Composable
+fun Highlight() {
+    ShowCell(value = 2, hasConflict = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HighlightSelected() {
+    ShowCell(value = 2, isSelected = true, hasConflict = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HighlightGiven() {
+    ShowCell(value = 2, isGiven = true, hasConflict = true)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HighlightGivenSelected() {
+    ShowCell(value = 2, isGiven = true, isSelected = true, hasConflict = true)
+}
+
 
 @Preview(showBackground = true)
 @Composable

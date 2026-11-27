@@ -20,32 +20,32 @@ class ValidateGridTest {
     @Test
     fun validateGrid_emptyBoard_isValid() {
         assertEquals(
-            BoardValidationResult.Valid,
-            ValidateGrid.hasAnyConflicts(emptyBoard)
+            true,
+            ValidateGrid.hasNoConflicts(emptyBoard)
         )
     }
 
     @Test
     fun validateGrid_reportsRowColumnAndBoxRepeats() {
         assertEquals(
-            BoardValidationResult.InvalidRow(0),
-            ValidateGrid.hasAnyConflicts(invalidRowBoard)
+            false,
+            ValidateGrid.hasNoConflicts(invalidRowBoard)
         )
         assertEquals(
-            BoardValidationResult.InvalidColumn(0),
-            ValidateGrid.hasAnyConflicts(invalidColumnBoard)
+            false,
+            ValidateGrid.hasNoConflicts(invalidColumnBoard)
         )
         assertEquals(
-            BoardValidationResult.InvalidBox(0),
-            ValidateGrid.hasAnyConflicts(invalidBoxBoard)
+            false,
+            ValidateGrid.hasNoConflicts(invalidBoxBoard)
         )
     }
 
     @Test
     fun validateGrid_validFullBoard_isValid() {
         assertEquals(
-            BoardValidationResult.Valid,
-            ValidateGrid.hasAnyConflicts(validFullBoard)
+            true,
+            ValidateGrid.hasNoConflicts(validFullBoard)
         )
     }
 
@@ -58,8 +58,8 @@ class ValidateGridTest {
         ).withValues(0 to null)
 
         assertEquals(
-            BoardValidationResult.InvalidRow(0),
-            ValidateGrid.hasAnyConflicts(board)
+            false,
+            ValidateGrid.hasNoConflicts(board)
         )
     }
 
@@ -68,8 +68,8 @@ class ValidateGridTest {
         val board = PuzzleSampleBoards.solvedBoard.withValues(0 to null)
 
         assertEquals(
-            BoardValidationResult.Valid,
-            ValidateGrid.hasAnyConflicts(board)
+            true,
+            ValidateGrid.hasNoConflicts(board)
         )
     }
 
@@ -78,8 +78,8 @@ class ValidateGridTest {
         val board = PuzzleSampleBoards.solvedBoard.withValues(27 to 4, 36 to 8)
 
         assertEquals(
-            BoardValidationResult.InvalidRow(3),
-            ValidateGrid.hasAnyConflicts(board)
+            false,
+            ValidateGrid.hasNoConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateColumn(board, index))
@@ -92,8 +92,8 @@ class ValidateGridTest {
         val board = PuzzleSampleBoards.solvedBoard.withValues(3 to 7, 4 to 6)
 
         assertEquals(
-            BoardValidationResult.InvalidColumn(3),
-            ValidateGrid.hasAnyConflicts(board)
+            false,
+            ValidateGrid.hasNoConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateRow(board, index))
@@ -108,8 +108,8 @@ class ValidateGridTest {
         )
 
         assertEquals(
-            BoardValidationResult.InvalidBox(1),
-            ValidateGrid.hasAnyConflicts(board)
+            false,
+            ValidateGrid.hasNoConflicts(board)
         )
         for (index in 0 until 9) {
             assertTrue(ValidateGrid.validateRow(board, index))
@@ -120,8 +120,8 @@ class ValidateGridTest {
     @Test
     fun validateGrid_solvedSampleBoard_isValid() {
         assertEquals(
-            BoardValidationResult.Valid,
-            ValidateGrid.hasAnyConflicts(PuzzleSampleBoards.solvedBoard)
+            true,
+            ValidateGrid.hasNoConflicts(PuzzleSampleBoards.solvedBoard)
         )
     }
 

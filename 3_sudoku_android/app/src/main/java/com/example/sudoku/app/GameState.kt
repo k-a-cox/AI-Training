@@ -8,6 +8,7 @@ data class GameState(
     val board: SudokuBoardState = SudokuBoardState(),
     val boardPhase: GamePhase = GamePhase.EnteringGivens,
     val notesOn: Boolean = false,
+    val cellsToHighlight: Set<Int> = mutableSetOf(),
     val showLockGivensDialog: Boolean = false,
     val showSubmitBoardDialog: Boolean = false,
 ) {
@@ -15,19 +16,22 @@ data class GameState(
     fun lockInGivens(): GameState = copy(
         board = GivensValidator.lockInGivens(board),
         boardPhase = GamePhase.Playing,
-        showLockGivensDialog = false
+        cellsToHighlight = emptySet(),
+        showLockGivensDialog = false,
     )
 
     fun lockBoard(): GameState = copy(
         boardPhase = GamePhase.Solved,
-        showSubmitBoardDialog = false
+        cellsToHighlight = emptySet(),
+        showSubmitBoardDialog = false,
     )
 
     fun newGame(): GameState = copy(
         board = SudokuBoardState(),
         boardPhase = GamePhase.EnteringGivens,
         notesOn = false,
+        cellsToHighlight = emptySet(),
         showLockGivensDialog = false,
-        showSubmitBoardDialog = false
+        showSubmitBoardDialog = false,
     )
 }

@@ -1,7 +1,6 @@
 package com.example.sudoku.domain.samples
 
 import com.example.sudoku.domain.state.SudokuBoardState
-import com.example.sudoku.domain.validators.BoardValidationResult
 import com.example.sudoku.domain.validators.ValidateGrid
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -32,8 +31,8 @@ class PuzzleSampleBoardsTest {
         boards.forEach { (name, board) ->
             assertEquals(
                 name,
-                BoardValidationResult.Valid,
-                ValidateGrid.hasAnyConflicts(board)
+                true,
+                ValidateGrid.hasNoConflicts(board)
             )
         }
     }
