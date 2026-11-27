@@ -1,6 +1,5 @@
 package com.example.sudoku.app
 
-import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.InputMode
 import com.example.sudoku.ui.controls.ControlAction
 
@@ -14,7 +13,7 @@ fun GameState.reduce(action: ControlAction): GameState = when (action) {
 
     ControlAction.Erase -> copy(board = board.clearValue())
     ControlAction.ToggleNotes -> copy(notesOn = !notesOn)
-    is ControlAction.PickBoard -> copy(board = action.value, boardPhase = GamePhase.EnteringGivens)
+    is ControlAction.PickBoard -> newGame().copy(board = action.value)
     ControlAction.Restart -> newGame()
     ControlAction.LockGivens -> copy(showLockGivensDialog = true)
     ControlAction.SubmitBoard -> copy(showSubmitBoardDialog = true)
