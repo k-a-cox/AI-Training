@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">Sudoku</string>
+
+    <string name="controlAction_erase">Clear cell</string>
+    <string name="controlAction_lock_givens">Lock in Givens</string>
+    <string name="controlAction_toggle_notes">Toggle Notes</string>
+    <string name="controlAction_submit_board">Validate solution</string>
+    <string name="controlAction_restart">Reset game</string>
+    <string name="controlAction_pick_board">Load sample board</string>
+
+    <string name="sample_unique_easy">Unique easy</string>
+    <string name="sample_unique_medium">Unique medium</string>
+    <string name="sample_unique_sparse">Unique sparse</string>
+    <string name="sample_multiple_solutions">Multiple solutions</string>
+    <string name="sample_no_solution">No solution</string>
+    <string name="sample_solved_board">Solved board</string>
+
+    <string name="BoardValidationResult_incomplete_message">The board isn\'t fully filled in yet.</string>
+    <string name="BoardValidationResult_conflicting_message">The board has conflicting values (highlighted). Please fix them.</string>
+    <string name="BoardValidationResult_impossible_message">The game engine has messed up. Please click the \"Reset game\" button to fix.</string>
+
+    <string name="lockGivens_title">Confirm givens</string>
+    <string name="lockGivens_valid_body">Are you sure you want to lock in the givens?</string>
+    <string name="lockGivens_empty">The current board needs givens. Please add some.</string>
+    <string name="lockGivens_confirm">Lock in givens</string>
+    <string name="lockGivens_dismiss">Continue updating</string>
+
+    <string name="solutionValidation_valid_title">Game Over</string>
+    <string name="solutionValidation_valid_solution">You win!</string>
+    <string name="solutionValidation_valid_confirm">New game</string>
+    <string name="solutionValidation_valid_dismiss">Review board</string>
+    <string name="solutionValidation_invalid_title">Game needs more work</string>
+    <string name="solutionValidation_invalid_dismiss">I\'ll fix that</string>
 </resources>

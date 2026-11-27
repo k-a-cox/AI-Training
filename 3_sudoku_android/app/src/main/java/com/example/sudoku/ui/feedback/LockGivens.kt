@@ -4,6 +4,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.sudoku.R
 import com.example.sudoku.domain.validators.BoardValidationResult
 
 
@@ -14,19 +16,19 @@ fun LockGivens(
     onDismiss: () -> Unit,
 ) {
     val message = when (validationAnswer) {
-        BoardValidationResult.Valid -> "Are you sure you want to lock in the givens?"
-        BoardValidationResult.Incomplete -> "The current board needs givens. Please add some."
-        BoardValidationResult.ImpossibleSate -> "The game engine has messed up. Please click the \"Reset game\" button to fix."
-        is BoardValidationResult.ConflictingCells -> "The board has conflicting values (highlighted). Please fix them."
+        BoardValidationResult.Valid -> stringResource(R.string.lockGivens_valid_body)
+        BoardValidationResult.Incomplete -> stringResource(R.string.lockGivens_empty)
+        BoardValidationResult.ImpossibleSate -> stringResource(R.string.BoardValidationResult_impossible_message)
+        is BoardValidationResult.ConflictingCells -> stringResource(R.string.BoardValidationResult_conflicting_message)
     }
 
     val isValid = validationAnswer == BoardValidationResult.Valid
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Confirm givens") },
+        title = { Text(stringResource(R.string.lockGivens_title)) },
         text = { Text(message) },
-        confirmButton = { if (isValid) TextButton(onClick = onConfirm) { Text("Lock in givens") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Continue updating") } }
+        confirmButton = { if (isValid) TextButton(onClick = onConfirm) { Text(stringResource(R.string.lockGivens_confirm)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.lockGivens_dismiss)) } }
     )
 }

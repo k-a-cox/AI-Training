@@ -1,5 +1,6 @@
 package com.example.sudoku.domain.samples
 
+import com.example.sudoku.R
 import com.example.sudoku.domain.state.SudokuBoardState
 import com.example.sudoku.domain.state.SudokuCellState
 
@@ -108,13 +109,12 @@ object PuzzleSampleBoards {
         345286179
         """
     )
-
-    val all: List<Pair<String, SudokuBoardState>> = listOf(
-        "Unique easy" to uniqueEasyBoard,
-        "Unique medium" to uniqueMediumBoard,
-        "Unique sparse" to uniqueSparseBoard,
-        "Multiple solutions" to multipleSolutionsBoard,
-        "No solution" to noSolutionBoard,
-        "Solved board" to solvedBoard,
+    val all: List<Pair<Int, SudokuBoardState>> = listOf(
+        R.string.sample_unique_easy to uniqueEasyBoard,
+        R.string.sample_unique_medium to uniqueMediumBoard,
+        R.string.sample_unique_sparse to uniqueSparseBoard,
+        R.string.sample_multiple_solutions to multipleSolutionsBoard,
+        R.string.sample_no_solution to noSolutionBoard,
+        R.string.sample_solved_board to solvedBoard,
     )
 }

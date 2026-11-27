@@ -11,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.sudoku.R
 import com.example.sudoku.domain.GamePhase
 import com.example.sudoku.domain.samples.PuzzleSampleBoards
 
@@ -28,19 +30,19 @@ fun ControlBoard(
             GamePhase.EnteringGivens -> {
                 DigitPad(showNotes, onAction)
                 ButtonRow {
-                    ButtonWrapper("Clear cell", ControlAction.Erase, onAction)
-                    ButtonWrapper("Lock in Givens", ControlAction.LockGivens, onAction)
+                    ButtonWrapper(stringResource(R.string.controlAction_erase), ControlAction.Erase, onAction)
+                    ButtonWrapper(stringResource(R.string.controlAction_lock_givens), ControlAction.LockGivens, onAction)
                 }
             }
 
             GamePhase.Playing -> {
                 DigitPad(showNotes, onAction)
                 ButtonRow {
-                    ButtonWrapper("Clear cell", ControlAction.Erase, onAction)
-                    ButtonWrapper("Toggle Notes", ControlAction.ToggleNotes, onAction)
+                    ButtonWrapper(stringResource(R.string.controlAction_erase), ControlAction.Erase, onAction)
+                    ButtonWrapper(stringResource(R.string.controlAction_toggle_notes), ControlAction.ToggleNotes, onAction)
                 }
                 ButtonRow {
-                    ButtonWrapper("Validate solution", ControlAction.SubmitBoard, onAction)
+                    ButtonWrapper(stringResource(R.string.controlAction_submit_board), ControlAction.SubmitBoard, onAction)
                 }
             }
 
@@ -48,7 +50,7 @@ fun ControlBoard(
             }
         }
         ButtonRow {
-            ButtonWrapper("Reset game", ControlAction.Restart, onAction)
+            ButtonWrapper(stringResource(R.string.controlAction_restart), ControlAction.Restart, onAction)
             SampleBoardPicker(
                 boards = PuzzleSampleBoards.all,
                 onBoardSelected = { board -> onAction(ControlAction.PickBoard(board)) },

@@ -23,8 +23,8 @@ import com.example.sudoku.domain.validators.GivensValidator
 import com.example.sudoku.domain.validators.SubmitBoardValidator
 import com.example.sudoku.ui.board.SudokuGrid
 import com.example.sudoku.ui.controls.ControlBoard
-import com.example.sudoku.ui.feedback.BoardValidationPrompt
 import com.example.sudoku.ui.feedback.LockGivens
+import com.example.sudoku.ui.feedback.SolutionValidation
 import com.example.sudoku.ui.theme.SudokuTheme
 
 class MainActivity : ComponentActivity() {
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
 
                     if (state.showSubmitBoardDialog) {
                         val validationAnswer = SubmitBoardValidator.validateSolution(state.board)
-                        BoardValidationPrompt(validationAnswer, onConfirm = {
+                        SolutionValidation(validationAnswer, onConfirm = {
                             state = state.newGame()
                         }, onValidDismiss = {
                             state = state.lockBoard()

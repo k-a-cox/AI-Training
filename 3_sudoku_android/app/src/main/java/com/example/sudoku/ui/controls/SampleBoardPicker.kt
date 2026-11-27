@@ -11,23 +11,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.sudoku.R
 import com.example.sudoku.domain.state.SudokuBoardState
 
 @Composable
 fun SampleBoardPicker(
-    boards: List<Pair<String, SudokuBoardState>>,
+    boards: List<Pair<Int, SudokuBoardState>>,
     onBoardSelected: (SudokuBoardState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var label by remember { mutableStateOf("Load sample board") }
+    var label by remember { mutableStateOf(R.string.controlAction_pick_board) }
 
     Box(modifier = modifier) {
-        Button(onClick = { expanded = true }) { Text(label) }
+        Button(onClick = { expanded = true }) { Text(stringResource(label)) }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             boards.forEach { (name, board) ->
                 DropdownMenuItem(
-                    text = { Text(name) },
+                    text = { Text(stringResource(name)) },
                     onClick = {
                         label = name
                         onBoardSelected(board)
