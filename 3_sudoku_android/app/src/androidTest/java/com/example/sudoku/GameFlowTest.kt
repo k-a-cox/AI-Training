@@ -3,6 +3,7 @@ package com.example.sudoku
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
@@ -50,6 +51,23 @@ class GameFlowTest {
         composeRule.onNodeWithText(text(R.string.lockGivens_confirm)).performClick()
     }
 
+    private fun addAndRemoveCandidateNotes(): SemanticsNodeInteraction {
+        enterGiven5AtIndex0AndStartPlaying()
+
+        val emptyCell = composeRule.onAllNodes(hasClickAction())[1]
+        emptyCell.performClick()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).performClick()
+        pressDigit(5)
+        pressDigit(9)
+        emptyCell.assert(hasText("5"))
+        emptyCell.assert(hasText("9"))
+
+        pressDigit(5)
+        emptyCell.assert(!hasText("5"))
+        emptyCell.assert(hasText("9"))
+        return emptyCell
+    }
+
     @Test
     fun enteringAndErasingDigitUpdatesSelectedCell() {
         val cells = composeRule.onAllNodes(hasClickAction())
@@ -64,24 +82,23 @@ class GameFlowTest {
     }
 
     @Test
-    fun notesModeAddsAndRemovesCandidates() {
-        enterGiven5AtIndex0AndStartPlaying()
-
-        val emptyCell = composeRule.onAllNodes(hasClickAction())[1]
-        emptyCell.performClick()
-        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).performClick()
-        pressDigit(5)
-        pressDigit(9)
-        emptyCell.assert(hasText("5"))
-        emptyCell.assert(hasText("9"))
-
-        pressDigit(5)
-        emptyCell.assert(!hasText("5"))
-        emptyCell.assert(hasText("9"))
-
+    fun enteringValueReplacesCandidateNotes() {
+        val emptyCell = addAndRemoveCandidateNotes()
         composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).performClick()
         pressDigit(4)
         emptyCell.assert(hasText("4"))
+        emptyCell.assert(!hasText("9"))
+    }
+
+    @Test
+    fun clearCellRemovesCandidateNotes() {
+        val emptyCell = addAndRemoveCandidateNotes()
+        pressDigit(5)
+        emptyCell.assert(hasText("5"))
+        emptyCell.assert(hasText("9"))
+        
+        composeRule.onNodeWithText(text(R.string.controlAction_erase)).performClick()
+        emptyCell.assert(!hasText("5"))
         emptyCell.assert(!hasText("9"))
     }
 
@@ -187,6 +204,91 @@ class GameFlowTest {
         cells.assertCountEquals(81)
         cells.assertAll(!SemanticsMatcher.keyIsDefined(SemanticsProperties.Text))
         composeRule.onNodeWithText(text(R.string.controlAction_lock_givens)).assertExists()
+    }
+
+    @Test
+    fun emptyGivensAreRejectedAndCanBeEntered() {
+        composeRule.onNodeWithText(text(R.string.controlAction_lock_givens)).performClick()
+        composeRule.onNodeWithText(text(R.string.lockGivens_empty)).assertExists()
+        composeRule.onNodeWithText(text(R.string.lockGivens_confirm)).assertDoesNotExist()
+        composeRule.onNodeWithText(text(R.string.lockGivens_dismiss)).performClick()
+
+        composeRule.onAllNodes(hasClickAction())[0].performClick()
+        pressDigit(5)
+        confirmGivens()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).assertExists()
+    }
+
+    @Test
+    fun conflictingGivensAreRejectedAndCanBeCorrected() {
+        val firstCell = composeRule.onAllNodes(hasClickAction())[0]
+        val secondCell = composeRule.onAllNodes(hasClickAction())[1]
+        firstCell.performClick()
+        pressDigit(5)
+        secondCell.performClick()
+        pressDigit(5)
+
+        composeRule.onNodeWithText(text(R.string.controlAction_lock_givens)).performClick()
+        composeRule.onNodeWithText(text(R.string.BoardValidationResult_conflicting_message))
+            .assertExists()
+        composeRule.onNodeWithText(text(R.string.lockGivens_confirm)).assertDoesNotExist()
+        composeRule.onNodeWithText(text(R.string.lockGivens_dismiss)).performClick()
+
+        pressDigit(4)
+        secondCell.assert(hasText("4"))
+        confirmGivens()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).assertExists()
+    }
+
+    @Test
+    fun cancellingGivensConfirmationAllowsFurtherEditing() {
+        val firstCell = composeRule.onAllNodes(hasClickAction())[0]
+        firstCell.performClick()
+        pressDigit(5)
+        composeRule.onNodeWithText(text(R.string.controlAction_lock_givens)).performClick()
+        composeRule.onNodeWithText(text(R.string.lockGivens_valid_body)).assertExists()
+        composeRule.onNodeWithText(text(R.string.lockGivens_dismiss)).performClick()
+
+        pressDigit(4)
+        firstCell.assert(hasText("4"))
+        confirmGivens()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).assertExists()
+    }
+
+    @Test
+    fun resettingDuringPlayClearsBoardAndReturnsToGivensEntry() {
+        enterGiven5AtIndex0AndStartPlaying()
+        composeRule.onAllNodes(hasClickAction())[1].performClick()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).performClick()
+        pressDigit(4)
+        composeRule.onNodeWithText(text(R.string.controlAction_restart)).performClick()
+
+        composeRule.onNodeWithText(text(R.string.controlAction_lock_givens)).assertExists()
+        composeRule.onNodeWithText(text(R.string.controlAction_toggle_notes)).assertDoesNotExist()
+        pressDigit(3)
+        val cells = composeRule.onAllNodes(hasClickAction() and !hasRole(Role.Button))
+        cells.assertCountEquals(81)
+        cells.assertAll(!SemanticsMatcher.keyIsDefined(SemanticsProperties.Text))
+        cells[0].performClick()
+        pressDigit(3)
+        cells[0].assert(hasText("3"))
+    }
+
+    @Test
+    fun correctingConflictAllowsSuccessfulValidation() {
+        startPlayingWithOneEmptyCell()
+        val cell = composeRule.onAllNodes(hasClickAction())[0]
+        cell.performClick()
+        pressDigit(3)
+        composeRule.onNodeWithText(text(R.string.controlAction_submit_board)).performClick()
+        composeRule.onNodeWithText(text(R.string.BoardValidationResult_conflicting_message))
+            .assertExists()
+        composeRule.onNodeWithText(text(R.string.solutionValidation_invalid_dismiss)).performClick()
+
+        pressDigit(5)
+        cell.assert(hasText("5"))
+        composeRule.onNodeWithText(text(R.string.controlAction_submit_board)).performClick()
+        composeRule.onNodeWithText(text(R.string.solutionValidation_valid_solution)).assertExists()
     }
 
 }
