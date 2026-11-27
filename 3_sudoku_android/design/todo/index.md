@@ -31,7 +31,7 @@ Folder: [phase_1_5/](phase_1_5)
 
 | Step | Status | File |
 |---|---|---|
-| 1. Check conflicts on full boards | todo | [01](phase_1_5/01_conflict_checks.md) |
+| 1. Check conflicts on full boards | done | [01](phase_1_5/01_conflict_checks.md) |
 | 2. Deferred cleanup | todo | [02](phase_1_5/02_deferred_cleanup.md) |
 | 3. Deferred: uniqueness check | deferred (needs Goal 2 solver) | [03](phase_1_5/03_deferred_uniqueness_check.md) |
 | 4. Polish the UI | todo | [04](phase_1_5/04_ui_polish.md) |

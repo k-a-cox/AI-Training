@@ -5,15 +5,13 @@ import com.example.sudoku.domain.state.SudokuBoardState
 object GivensValidator {
 
     fun validateGivens(boardState: SudokuBoardState): BoardValidationResult {
-        if (!isStartingEmpty(boardState)) return BoardValidationResult.ImpossibleSate
+        if (!startingOnlyHasValues(boardState)) return BoardValidationResult.ImpossibleSate
         return validateGrid(boardState)
     }
 
-    fun isStartingEmpty(boardState: SudokuBoardState): Boolean {
-        for ((_, _, isGiven) in boardState.cells) {
-            if (isGiven)
-                return false
-        }
+    fun startingOnlyHasValues(boardState: SudokuBoardState): Boolean {
+        if (boardState.cells.any { it.isGiven }) return false;
+        if (boardState.cells.any { it.notes.isNotEmpty() }) return false;
         return true
     }
 

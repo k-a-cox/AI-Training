@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (state.showSubmitBoardDialog) {
-                        val validationAnswer = SubmitBoardValidator().validateSolution(state.board)
+                        val validationAnswer = SubmitBoardValidator.validateSolution(state.board)
                         BoardValidationPrompt(validationAnswer, onConfirm = {
                             state = state.newGame()
                         }, onValidDismiss = {
