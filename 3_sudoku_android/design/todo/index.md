@@ -64,3 +64,13 @@ Start after Phase 2 and the deferred uniqueness check in Phase 1.5, Step 3 are c
 | 3. Recognize the grid and clues | todo | [03](phase_3/03_grid_recognition.md) |
 | 4. Review and confirm scanned clues | todo | [04](phase_3/04_review_and_confirmation.md) |
 | 5. Exercise the camera flow | todo | [05](phase_3/05_camera_acceptance.md) |
+
+## Phase 4: Future Enhancement Ideas
+
+Folder: [phase_4/](phase_4)
+
+Unscheduled running list; not part of the ordered steps above.
+
+| Step | Status | File |
+|---|---|---|
+| 1. Future enhancement ideas | idea | [01](phase_4/01_future_enhancement_ideas.md) |
