@@ -31,8 +31,9 @@ class SudokuCellTest {
             SudokuCell(
                 state = SudokuCellState(index = 0, notes = notes),
                 isSelected = false,
+                hasConflict = false,
                 onClick = { clicks++ },
-                modifier = Modifier.width(48.dp)
+                modifier = Modifier.width(48.dp),
             )
         }
 
@@ -62,8 +63,9 @@ class SudokuCellTest {
             SudokuCell(
                 state = SudokuCellState(index = 0, value = 7),
                 isSelected = false,
+                hasConflict = false,
                 onClick = {},
-                modifier = Modifier.width(48.dp)
+                modifier = Modifier.width(48.dp),
             )
         }
 
